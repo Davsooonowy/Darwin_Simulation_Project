@@ -13,12 +13,12 @@ public class World {
             List<Vector2d> positions2 = List.of(new Vector2d(2, 2), new Vector2d(3, 2));
 
             List<MoveDirection> directions3 = OptionsParser.parse(new String[]{"f", "b", "r", "l", "f"});
-            List<Vector2d> positions3 = List.of(new Vector2d(2, 2), new Vector2d(3, 2));
+            List<Vector2d> positions3 = List.of(new Vector2d(21, 37), new Vector2d(42, 0));
 
             ArrayList<Simulation> simulations = new ArrayList<>();
 
             MapChangeListener mapChangeListener = new ConsoleMapDisplay();
-            for(int i =0; i < 2137; i++) {
+            for(int i =0; i < 420; i++) {
                 AbstractWorldMap map = new RectangularMap(10, 10);
                 AbstractWorldMap map1 = new GrassField(10);
                 map.addMapChangeListener(mapChangeListener);
