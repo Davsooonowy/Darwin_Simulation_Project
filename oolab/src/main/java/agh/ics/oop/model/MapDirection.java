@@ -1,47 +1,58 @@
 package agh.ics.oop.model;
 
+import java.util.Random;
+
 public enum MapDirection {
     NORTH,
+    NORTHEAST,
+    EAST,
+    SOUTHEAST,
     SOUTH,
+    SOUTHWEST,
     WEST,
-    EAST;
+    NORTHWEST;
 
     public String toString(){
         return switch (this) {
+            case NORTHEAST -> "Północny Wschód";
             case EAST -> "Wschód";
             case WEST -> "Zachód";
             case NORTH -> "Północ";
+            case SOUTHEAST -> "Południowy Wschód";
             case SOUTH -> "Południe";
+            case SOUTHWEST -> "Południowy Zachód";
+            case NORTHWEST -> "Północny Zachód";
         };
     }
 
     public MapDirection next(){
         return switch (this) {
-            case NORTH -> EAST;
-            case EAST -> SOUTH;
-            case SOUTH -> WEST;
-            case WEST -> NORTH;
-            default -> null;
+            case NORTH -> NORTHEAST;
+            case NORTHEAST -> EAST;
+            case EAST -> SOUTHEAST;
+            case SOUTHEAST -> SOUTH;
+            case SOUTH -> SOUTHWEST;
+            case SOUTHWEST -> WEST;
+            case WEST -> NORTHWEST;
+            case NORTHWEST -> NORTH;
         };
     }
-
-    public MapDirection previous(){
-        return switch (this) {
-            case NORTH -> WEST;
-            case WEST -> SOUTH;
-            case SOUTH -> EAST;
-            case EAST -> NORTH;
-            default -> null;
-        };
+    public static MapDirection randomDirection() {
+        MapDirection[] directions = values();
+        int randomIndex = new Random().nextInt(directions.length);
+        return directions[randomIndex];
     }
 
     public Vector2d toUnitVector(){
         return switch (this) {
             case NORTH -> new Vector2d(0, 1);
+            case NORTHEAST -> new Vector2d(1, 1);
             case WEST -> new Vector2d(-1, 0);
+            case NORTHWEST -> new Vector2d(-1, 1);
             case SOUTH -> new Vector2d(0, -1);
+            case SOUTHWEST -> new Vector2d(-1, -1);
+            case SOUTHEAST -> new Vector2d(1, -1);
             case EAST -> new Vector2d(1, 0);
-            default -> null;
         };
     }
 

@@ -1,10 +1,12 @@
     package agh.ics.oop.model;
 
+    import java.util.Map;
+
     public class Animal implements WorldElement {
         private MapDirection direction;
         private Vector2d position;
-        public Animal(Vector2d initialPosition, MapDirection initialDirection) {
-            this.direction = initialDirection;
+        public Animal(Vector2d initialPosition) {
+            this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
         }
         public Animal() {
@@ -15,9 +17,13 @@
         public String toString() {
             return switch (this.direction) {
                 case NORTH -> "N";
-                case SOUTH -> "S";
+                case NORTHEAST -> "NE";
                 case EAST -> "E";
+                case SOUTHEAST -> "SE";
+                case SOUTH -> "S";
+                case SOUTHWEST -> "SW";
                 case WEST -> "W";
+                case NORTHWEST -> "NW";
             };
         }
 
@@ -25,23 +31,17 @@
             return this.position.equals(position);
         }
 
-        public void move(MoveDirection direction, MoveValidator validator) {
-            switch (direction) {
-                case FORWARD, BACKWARD -> {
-                    Vector2d newPosition;
-                    if (direction == MoveDirection.FORWARD) {
-                        newPosition = this.position.add(this.direction.toUnitVector());
-                    } else {
-                        newPosition = this.position.subtract(this.direction.toUnitVector());
-                    }
-                    if (validator.canMoveTo(newPosition)) {
-                        this.position = newPosition;
-                    }
-                }
-                case RIGHT -> this.direction = this.direction.next();
-                case LEFT -> this.direction = this.direction.previous();
+        public void move(Integer direction, MoveValidator validator) {
+            for(int i = 0; i < direction; i++) {
+                this.direction = this.direction.next();
+            }
+            Vector2d newPosition;
+            newPosition = this.position.add(this.direction.toUnitVector());
+            if (validator.canMoveTo(newPosition)) {
+                this.position = newPosition;
             }
         }
+
         MapDirection getDirection() {
             return this.direction;
         }

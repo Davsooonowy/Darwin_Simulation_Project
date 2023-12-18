@@ -118,7 +118,7 @@ private Label createLabelForElement(WorldElement element) {
     public void onSimulationStartClicked() {
         String movesString = movesListTextField.getText();
     try {
-        List<MoveDirection> movesList = OptionsParser.parse(movesString.split(""));
+        List<Integer> movesList = OptionsParser.parse(movesString.split(""));
         Simulation simulation = new Simulation(movesList, List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap);
         SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
         simulationEngine.runAsync();

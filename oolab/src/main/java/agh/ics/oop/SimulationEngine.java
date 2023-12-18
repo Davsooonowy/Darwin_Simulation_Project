@@ -1,7 +1,5 @@
 package agh.ics.oop;
 
-import agh.ics.oop.Simulation;
-
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,7 +24,9 @@ public class SimulationEngine implements Runnable {
     public void runAsync() {
 
         for(Simulation simulation : this.simulations) {
-            simulation.start();
+            while(true) {
+                simulation.start();
+            }
         }
     }
 

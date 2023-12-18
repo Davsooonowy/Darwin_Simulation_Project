@@ -9,10 +9,10 @@ public class World {
         //Application.launch(SimulationApp.class, args);
         try {
             System.out.println("Start");
-            List<MoveDirection> directions2 = OptionsParser.parse(new String[]{"f", "b", "r", "l", "f"});
+            List<Integer> directions2 = OptionsParser.parse(new String[]{"f", "b", "r", "l", "f"});
             List<Vector2d> positions2 = List.of(new Vector2d(2, 2), new Vector2d(3, 2));
 
-            List<MoveDirection> directions3 = OptionsParser.parse(new String[]{"f", "b", "r", "l", "f"});
+            List<Integer> directions3 = OptionsParser.parse(new String[]{"f", "b", "r", "l", "f"});
             List<Vector2d> positions3 = List.of(new Vector2d(21, 37), new Vector2d(42, 0));
 
             ArrayList<Simulation> simulations = new ArrayList<>();

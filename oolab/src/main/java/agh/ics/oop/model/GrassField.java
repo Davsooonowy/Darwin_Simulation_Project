@@ -10,7 +10,6 @@ public class GrassField extends AbstractWorldMap {
     public GrassField(int grassQauntity) {
         super();
         grassUpperRange = (int) Math.sqrt(grassQauntity * 10);
-
         placeGrass(grassQauntity);
     }
 
