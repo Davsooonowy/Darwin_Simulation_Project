@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 public class RandomPositionGenerator implements Iterable<Vector2d> {
     private final int maxWidth;
@@ -28,9 +29,26 @@ public class RandomPositionGenerator implements Iterable<Vector2d> {
 
             private List<Vector2d> generateRandomPositions() {
                 List<Vector2d> allPositions = new ArrayList<>(maxWidth * maxHeight);
+
+                Random random = new Random();
+                int equatorStart = maxHeight / 3;
+                int equatorEnd = 2 * maxHeight / 3;
+
                 for (int x = 0; x < maxWidth; x++) {
                     for (int y = 0; y < maxHeight; y++) {
-                        allPositions.add(new Vector2d(x, y));
+                        Vector2d position = new Vector2d(x, y);
+
+                        // Preferowany pas w centralnej części mapy
+                        if (y >= equatorStart && y < equatorEnd) {
+                            allPositions.add(position);
+                        }
+
+                        // Dodatkowe losowanie dla nieatrakcyjnych miejsc
+                        if (y < equatorStart || y >= equatorEnd) {
+                            if (random.nextDouble() <= 0.2) {
+                                allPositions.add(position);
+                            }
+                        }
                     }
                 }
 

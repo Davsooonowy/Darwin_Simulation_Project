@@ -23,8 +23,8 @@ public class World {
                 AbstractWorldMap map1 = new GrassField(10);
                 map.addMapChangeListener(mapChangeListener);
                 map1.addMapChangeListener(mapChangeListener);
-                simulations.add(new Simulation(directions2, positions2, map));
-                simulations.add(new Simulation(directions3, positions3, map1));
+//                simulations.add(new Simulation(directions2, positions2, map));
+//                simulations.add(new Simulation(directions3, positions3, map1));
             }
 
             SimulationEngine engine = new SimulationEngine(simulations);

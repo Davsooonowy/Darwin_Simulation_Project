@@ -13,7 +13,7 @@
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
             this.energy = initialenergy;
-            this.genome = randomGenome();
+            this.genome = List.of(0, 1, 2, 3, 4, 5, 6, 7);
         }
 
         public Animal(Vector2d initialPosition, int initialenergy, List<Integer> genome) {
@@ -64,5 +64,12 @@
 
         public Vector2d getPosition() {
             return this.position;
+        }
+
+        public Integer getGenome(int index) {
+            return this.genome.get(index);
+        }
+        public int getGenomesize(){
+            return this.genome.size();
         }
     }

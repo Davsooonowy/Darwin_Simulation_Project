@@ -31,7 +31,7 @@ public class Simulation extends Thread {
 
     private void addAnimals() {
         for (Vector2d move : coordinates) {
-            Animal animal = new Animal(move, initialEnergy, genome);
+            Animal animal = new Animal(move, initialEnergy);
             try {
                 map.place(animal);
                 animals.add(animal);
@@ -43,12 +43,26 @@ public class Simulation extends Thread {
 
     public void run() {
         try {
-        for (int i = 0; i < 16; i++) { // TODO: nieskonczona petla ze zwierzakami, dopoki zyja
-            Thread.sleep(1000);
-            Animal animal = animals.get(i % animals.size());
-            Integer direction = directions.get(i % directions.size());
-            map.move(animal, direction);
-        }
+//        for (int i = 0; i < 16; i++) { // TODO: nieskonczona petla ze zwierzakami, dopoki zyja
+//            Thread.sleep(1000);
+//            Animal animal = animals.get(i % animals.size());
+//            Integer direction = directions.get(i % directions.size());
+//            map.move(animal, direction);
+//        }
+            int day = 0;
+            while(map.getElements() != null) {
+                Thread.sleep(1000);
+                for (Animal animal : animals) {
+//                    if (animal.isDead()) {
+//                        map.remove(animal);
+//                        animals.remove(animal);
+//                    } else {
+                        //Integer direction = directions.get(animals.indexOf(animal) % directions.size());
+                        map.move(animal, animal.getGenome(day%animal.getGenomesize()));
+                        animal.animalEnergyChange(-moveEnergy);
+                    }
+                day++;
+                }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
