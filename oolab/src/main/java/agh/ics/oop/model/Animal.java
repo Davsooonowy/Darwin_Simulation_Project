@@ -3,6 +3,8 @@
     import java.util.List;
     import java.util.Map;
 
+    import static java.lang.Math.abs;
+
     public class Animal implements WorldElement {
         private MapDirection direction;
         private Vector2d position;
@@ -13,7 +15,7 @@
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
             this.energy = initialenergy;
-            this.genome = List.of(0, 1, 2, 3, 4, 5, 6, 7);
+            this.genome = List.of(0, 0,0,0,0,0,0,0,0,0);
         }
 
         public Animal(Vector2d initialPosition, int initialenergy, List<Integer> genome) {
@@ -57,6 +59,41 @@
                 this.position = newPosition;
             }
         }
+public void move(Integer direction, AbstractWorldMap validator) {
+    for(int i = 0; i < direction; i++) {
+        this.direction = this.direction.next();
+    }
+    Vector2d newPosition;
+    newPosition = this.position.add(this.direction.toUnitVector());
+
+    if(validator.horizontaledge(newPosition) && validator.verticaledge(newPosition)){
+        this.position = newPosition;
+    }
+    if(!validator.horizontaledge(newPosition)){
+        for(int i = 0; i < 4; i++) {
+            this.direction = this.direction.next();
+        }
+        newPosition = this.position.add(this.direction.toUnitVector());
+        if(!validator.verticaledge(newPosition)){
+            if(this.direction.toUnitVector().getX() >0){
+                newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+            } else{
+                newPosition = newPosition.add(new Vector2d(validator.width,0));
+            }
+        }
+        this.position=newPosition;
+    } else{
+        if(!validator.verticaledge(newPosition)){
+            if(this.direction.toUnitVector().getX() >0){
+                newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+            } else{
+                newPosition = newPosition.add(new Vector2d(validator.width,0));
+            }
+
+        }
+        this.position=newPosition;
+    }
+}
 
         MapDirection getDirection() {
             return this.direction;

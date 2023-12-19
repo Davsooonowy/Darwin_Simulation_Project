@@ -1,6 +1,6 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.OptionsParser;
+
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
@@ -9,9 +9,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,15 +113,16 @@ private Label createLabelForElement(WorldElement element) {
     }
     @FXML
     public void onSimulationStartClicked() {
-    try {
-        Simulation simulation = new Simulation(List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap, 10, 10, 1);
-        SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
-        simulationEngine.runAsync();
-        Platform.runLater(() -> startButton.setDisable(true));
-    } catch (Exception e) {
-        System.out.println(e.getMessage());
+        try {
+            Simulation simulation = new Simulation(List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap, 10, 10, 1);
+            SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
+            simulationEngine.runAsync();
+            Platform.runLater(() -> startButton.setDisable(true));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
-}
+
     @FXML
     private GridPane mapGrid;
 }

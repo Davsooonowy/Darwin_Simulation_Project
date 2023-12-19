@@ -19,10 +19,10 @@ public class World {
 
             MapChangeListener mapChangeListener = new ConsoleMapDisplay();
             for(int i =0; i < 420; i++) {
-                AbstractWorldMap map = new RectangularMap(10, 10);
-                AbstractWorldMap map1 = new GrassField(10);
-                map.addMapChangeListener(mapChangeListener);
-                map1.addMapChangeListener(mapChangeListener);
+//                AbstractWorldMap map = new RectangularMap(10, 10);
+//                AbstractWorldMap map1 = new GrassField(10);
+//                map.addMapChangeListener(mapChangeListener);
+//                map1.addMapChangeListener(mapChangeListener);
 //                simulations.add(new Simulation(directions2, positions2, map));
 //                simulations.add(new Simulation(directions3, positions3, map1));
             }
