@@ -11,19 +11,27 @@ public class Simulation extends Thread {
     private  List<Integer> directions;
     private List<Vector2d> coordinates;
     private WorldMap map;
-    public Simulation(List<Integer> directions, List<Vector2d> coordinates, WorldMap map) {
+
+    private int initialEnergy;
+    private int moveEnergy;
+    private int plantEnergy;
+
+    public Simulation(List<Integer> directions, List<Vector2d> coordinates, WorldMap map, int initialEnergy, int moveEnergy, int plantEnergy) {
         List<Integer> reversedDirections = new ArrayList<>(directions);
         Collections.reverse(reversedDirections);
         this.directions = directions;
         this.directions.addAll(reversedDirections);
         this.coordinates = coordinates;
         this.map = map;
+        this.initialEnergy = initialEnergy;
+        this.moveEnergy = moveEnergy;
+        this.plantEnergy = plantEnergy;
         addAnimals();
     }
 
     private void addAnimals() {
         for (Vector2d move : coordinates) {
-            Animal animal = new Animal(move);
+            Animal animal = new Animal(move, initialEnergy, genome);
             try {
                 map.place(animal);
                 animals.add(animal);

@@ -1,17 +1,37 @@
     package agh.ics.oop.model;
 
+    import java.util.List;
     import java.util.Map;
 
     public class Animal implements WorldElement {
         private MapDirection direction;
         private Vector2d position;
-        public Animal(Vector2d initialPosition) {
+        private int energy;
+        private final List<Integer> genome;
+
+        public Animal(Vector2d initialPosition, int initialenergy) {
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
+            this.energy = initialenergy;
+            this.genome = randomGenome();
         }
-        public Animal() {
-            this.direction = MapDirection.NORTH;
-            this.position = new Vector2d(2,2);
+
+        public Animal(Vector2d initialPosition, int initialenergy, List<Integer> genome) {
+            this.direction = MapDirection.randomDirection();
+            this.position = initialPosition;
+            this.energy = initialenergy;
+            this.genome = genome;
+        }
+
+        public void animalEnergyChange(int val) {
+            this.energy = val + this.energy;
+            if(this.energy < 0) {
+                this.energy = 0;
+            }
+        }
+
+        public boolean isDead() {
+            return this.energy == 0;
         }
 
         public String toString() {
@@ -25,10 +45,6 @@
                 case WEST -> "W";
                 case NORTHWEST -> "NW";
             };
-        }
-
-        public boolean isAt(Vector2d position){
-            return this.position.equals(position);
         }
 
         public void move(Integer direction, MoveValidator validator) {
@@ -49,5 +65,4 @@
         public Vector2d getPosition() {
             return this.position;
         }
-
     }
