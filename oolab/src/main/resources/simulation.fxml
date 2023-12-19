@@ -15,7 +15,7 @@
     <center>
         <VBox alignment="CENTER">
             <HBox alignment="CENTER">
-                <TextField fx:id="movesListTextField"/>
+<!--                <TextField fx:id="movesListTextField"/>-->
                 <Button fx:id="startButton" minWidth="100" text="Start" onAction="#onSimulationStartClicked" />
             </HBox>
             <Label fx:id="moveInfoLabel" alignment="CENTER"/>

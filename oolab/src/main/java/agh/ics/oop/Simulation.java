@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class Simulation extends Thread {
     private  List<Animal> animals = new ArrayList<>();
-    private  List<Integer> directions;
     private List<Vector2d> coordinates;
     private WorldMap map;
 
@@ -16,11 +15,11 @@ public class Simulation extends Thread {
     private int moveEnergy;
     private int plantEnergy;
 
-    public Simulation(List<Integer> directions, List<Vector2d> coordinates, WorldMap map, int initialEnergy, int moveEnergy, int plantEnergy) {
-        List<Integer> reversedDirections = new ArrayList<>(directions);
-        Collections.reverse(reversedDirections);
-        this.directions = directions;
-        this.directions.addAll(reversedDirections);
+    public Simulation(List<Vector2d> coordinates, WorldMap map, int initialEnergy, int moveEnergy, int plantEnergy) {
+//        List<Integer> reversedDirections = new ArrayList<>(directions);
+//        Collections.reverse(reversedDirections);
+//        this.directions = directions;
+//        this.directions.addAll(reversedDirections);
         this.coordinates = coordinates;
         this.map = map;
         this.initialEnergy = initialEnergy;

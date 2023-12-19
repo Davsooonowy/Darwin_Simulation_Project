@@ -24,8 +24,7 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private Label infoLabel;
-    @FXML
-    private TextField movesListTextField;
+
     @FXML
     private Label moveInfoLabel;
     @FXML
@@ -116,10 +115,8 @@ private Label createLabelForElement(WorldElement element) {
     }
     @FXML
     public void onSimulationStartClicked() {
-        String movesString = movesListTextField.getText();
     try {
-        List<Integer> movesList = OptionsParser.parse(movesString.split(""));
-        Simulation simulation = new Simulation(movesList, List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap, 10, 10, 1);
+        Simulation simulation = new Simulation(List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap, 10, 10, 1);
         SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
         simulationEngine.runAsync();
         Platform.runLater(() -> startButton.setDisable(true));

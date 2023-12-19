@@ -14,14 +14,18 @@ public class SimulationApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        // Set up initial configuration
+        GrassField grassField = new GrassField(7);
+
+        // Load FXML file and set up presenter
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("simulation.fxml"));
         BorderPane viewRoot = loader.load();
         SimulationPresenter presenter = loader.getController();
-        GrassField grassField = new GrassField(7);
         presenter.setWorldMap(grassField);
         grassField.addMapChangeListener(presenter);
 
+        // Configure stage and show
         configureStage(primaryStage, viewRoot);
         primaryStage.show();
     }

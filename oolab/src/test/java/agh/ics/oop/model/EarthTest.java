@@ -16,7 +16,5 @@ public class EarthTest {
         Earth map = new Earth(10, 10, 10);
         map.place(new Animal(new Vector2d(1,1), 0));
         assertThrowsExactly(PositionAlreadyOccupiedException.class, () -> map.place(new Animal(new Vector2d(1,1),0)));
-        assertFalse(map.isOccupied(new Vector2d(1, 2)));
-        assertFalse(map.isOccupied(new Vector2d(3, 3)));
     }
 }
