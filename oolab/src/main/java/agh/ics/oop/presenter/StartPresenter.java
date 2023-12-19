@@ -16,8 +16,7 @@ public class StartPresenter {
 
     @FXML
     public Label infoLabel;
-    @FXML
-    private Button startButton;
+
 
     @FXML
     public void onStartClicked() {
@@ -36,7 +35,6 @@ public class StartPresenter {
             Stage simulationStage = new Stage();
             simulationStage.setScene(new Scene(root));
             simulationStage.show();
-//            Platform.runLater(() -> startButton.setDisable(true));
         } catch (IOException e) {
             e.printStackTrace();
         }

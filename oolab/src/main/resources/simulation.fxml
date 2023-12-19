@@ -12,11 +12,6 @@
             fx:controller="agh.ics.oop.presenter.SimulationPresenter">
     <center>
         <VBox alignment="CENTER">
-<!--            <HBox alignment="CENTER">-->
-<!--                <Button fx:id="startButton" minWidth="100" text="Start" onAction="#onSimulationStartClicked" />-->
-<!--            </HBox>-->
-            <Label fx:id="moveInfoLabel" alignment="CENTER"/>
-            <Label fx:id="infoLabel" text="All animals will be living here!" alignment="CENTER"/>
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"  />
         </VBox>
     </center>

@@ -1,13 +1,11 @@
 package agh.ics.oop.presenter;
 
-
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -19,14 +17,6 @@ public class SimulationPresenter implements MapChangeListener {
     public void setWorldMap(WorldMap worldMap) {
         this.worldMap = worldMap;
     }
-
-    @FXML
-    private Label infoLabel;
-
-    @FXML
-    private Label moveInfoLabel;
-    @FXML
-    private Button startButton;
 
     private void clearGrid() {
         mapGrid.getChildren().retainAll(mapGrid.getChildren().get(0));
@@ -52,7 +42,7 @@ private void drawXAxis(Boundary boundary) {
         label.setMinWidth(50);
         label.setMinHeight(50);
         label.setAlignment(Pos.CENTER);
-        mapGrid.add(label, j + 1 - boundary.lowerLeft().getX(), 0); // Dodajemy etykiety osi X na górze siatki
+        mapGrid.add(label, j + 1 - boundary.lowerLeft().getX(), 0);
     }
 }
 
@@ -62,7 +52,7 @@ private void drawYAxis(Boundary boundary) {
         label.setMinWidth(50);
         label.setMinHeight(50);
         label.setAlignment(Pos.CENTER);
-        mapGrid.add(label, 0, boundary.upperRight().getY() - i + 1); // Dodajemy etykiety osi Y po lewej stronie siatki
+        mapGrid.add(label, 0, boundary.upperRight().getY() - i + 1);
     }
 }
 
@@ -72,7 +62,6 @@ public void drawMap() {
     Boundary boundary = worldMap.getCurrentBounds();
     drawAxes(boundary);
     drawGrid(boundary);
-    infoLabel.setText("");
 }
 
 private void drawGrid(Boundary boundary) {
@@ -105,24 +94,19 @@ private Label createLabelForElement(WorldElement element) {
 
 
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
-        Platform.runLater(() -> {
-            this.drawMap();
-            moveInfoLabel.setText(message);
-        });
+    public void mapChanged(WorldMap worldMap) {
+        Platform.runLater(this::drawMap);
     }
     @FXML
     public void onSimulationStartClicked() {
         try {
-            Simulation simulation = new Simulation(List.of(new Vector2d(2,2) , new Vector2d(5,5)), worldMap, 10, 10, 1);
+            Simulation simulation = new Simulation(7, worldMap, 10, 10, 1);
             SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
             simulationEngine.runAsync();
-            Platform.runLater(() -> startButton.setDisable(true));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
-
     @FXML
     private GridPane mapGrid;
 }

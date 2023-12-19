@@ -29,11 +29,16 @@ public class RandomPositionGenerator implements Iterable<Vector2d> {
 
             private List<Vector2d> generateRandomPositions() {
                 List<Vector2d> allPositions = new ArrayList<>(maxWidth * maxHeight);
-
+                int equatorStart;
+                int equatorEnd;
                 Random random = new Random();
-                int equatorStart = maxHeight / 3;
-                int equatorEnd = 2 * maxHeight / 3;
-
+                if(maxHeight%2==0) {
+                    equatorStart = maxHeight / 2 - maxWidth/10;
+                    equatorEnd = maxHeight / 2 + maxWidth/10;
+                } else{
+                    equatorStart = (maxHeight+1) / 2 - maxWidth/10;
+                    equatorEnd = (maxHeight+1) / 2 + maxWidth/10;
+                }
                 for (int x = 0; x < maxWidth; x++) {
                     for (int y = 0; y < maxHeight; y++) {
                         Vector2d position = new Vector2d(x, y);

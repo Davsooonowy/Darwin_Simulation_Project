@@ -9,8 +9,6 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected Map<Vector2d, Animal> animals = new HashMap<>();
     protected MapVisualizer visualizer;
     protected ArrayList<MapChangeListener> mapChangeListeners;
-    protected ArrayList<MapChangeListener> listeners;
-    protected UUID id;
     protected final int height;
     protected final int width;
     protected final Vector2d lowerLeft;
@@ -26,8 +24,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.lowerLeft = new Vector2d(0, 0);
         this.upperRight = new Vector2d(width - 1, height - 1);
         visualizer = new MapVisualizer(this);
-        listeners = new ArrayList<>();
-        id = UUID.randomUUID();
         mapChangeListeners = new ArrayList<>();
     }
 
@@ -37,29 +33,19 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void place(Animal animal) throws PositionAlreadyOccupiedException {
+    public void place(Animal animal){
         if (canMoveTo(animal.getPosition())) {
             animals.put(animal.getPosition(), animal);
-            mapChanged("New animal " + animal + " placed on the map at " + animal.getPosition().toString());
-        } else {
-            throw new PositionAlreadyOccupiedException(animal.getPosition());
+            mapChanged();
         }
     }
 
     @Override
     public void move(Animal animal, Integer direction) {
-        Vector2d oldPosition = animal.getPosition();
-        MapDirection oldDirection = animal.getDirection();
         animals.remove(animal.getPosition());
         animal.move(direction, this);
         animals.put(animal.getPosition(), animal);
-        if (!oldPosition.equals(animal.getPosition())) {
-            mapChanged("Animal " + animal + " moved from " + oldPosition + " to " + animal.getPosition().toString());
-        } else if (oldPosition.equals(animal.getPosition()) && !oldDirection.equals(animal.getDirection())) {
-            mapChanged("Animal " + animal + " changed orientation from: " + oldDirection + " to " + animal.getDirection().toString());
-        } else {
-            System.out.println("Animal " + animal + " did not move\n");
-        }
+        mapChanged();
     }
 
     @Override
@@ -77,13 +63,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         return animals.containsKey(position);
     }
 
-    public void addListener(MapChangeListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(MapChangeListener listener) {
-        listeners.remove(listener);
-    }
 
     public void addMapChangeListener(MapChangeListener listener) {
         mapChangeListeners.add(listener);
@@ -91,16 +70,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void removeMapChangeListener(MapChangeListener listener) {
         mapChangeListeners.remove(listener);
-    }
-
-    private synchronized void mapChanged(String result) {
-        for (MapChangeListener listener : mapChangeListeners) {
-            listener.mapChanged(this, result);
-        }
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public abstract Boundary getCurrentBounds();
@@ -111,5 +80,11 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public Boolean verticaledge(Vector2d position) {
         return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
+    }
+
+    private synchronized void mapChanged() {
+        for (MapChangeListener listener : mapChangeListeners) {
+            listener.mapChanged(this);
+        }
     }
 }

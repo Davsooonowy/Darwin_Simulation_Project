@@ -20,6 +20,7 @@ public class Earth extends AbstractWorldMap {
         }
     }
 
+
     @Override
     public WorldElement objectAt(Vector2d position) {
         if (super.isOccupied(position)) {

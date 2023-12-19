@@ -1,6 +1,7 @@
 package agh.ics.oop.model;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class Vector2d {
     private final int x, y;
@@ -54,5 +55,9 @@ public class Vector2d {
         }
 
         return this.x == that.x && this.y == that.y;
+    }
+    public static Vector2d randVector(int width, int height){
+        Random random = new Random();
+        return new Vector2d(random.nextInt(width), random.nextInt(height));
     }
 }

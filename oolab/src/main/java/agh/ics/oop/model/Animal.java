@@ -7,6 +7,7 @@
 
     public class Animal implements WorldElement {
         private MapDirection direction;
+        private int mapsize = 10;
         private Vector2d position;
         private int energy;
         private final List<Integer> genome;
@@ -49,51 +50,41 @@
             };
         }
 
-        public void move(Integer direction, MoveValidator validator) {
-            for(int i = 0; i < direction; i++) {
-                this.direction = this.direction.next();
-            }
-            Vector2d newPosition;
-            newPosition = this.position.add(this.direction.toUnitVector());
-            if (validator.canMoveTo(newPosition)) {
-                this.position = newPosition;
-            }
-        }
-public void move(Integer direction, AbstractWorldMap validator) {
-    for(int i = 0; i < direction; i++) {
-        this.direction = this.direction.next();
-    }
-    Vector2d newPosition;
-    newPosition = this.position.add(this.direction.toUnitVector());
-
-    if(validator.horizontaledge(newPosition) && validator.verticaledge(newPosition)){
-        this.position = newPosition;
-    }
-    if(!validator.horizontaledge(newPosition)){
-        for(int i = 0; i < 4; i++) {
+    public void move(Integer direction, AbstractWorldMap validator) {
+        for(int i = 0; i < direction; i++) {
             this.direction = this.direction.next();
         }
+        Vector2d newPosition;
         newPosition = this.position.add(this.direction.toUnitVector());
-        if(!validator.verticaledge(newPosition)){
-            if(this.direction.toUnitVector().getX() >0){
-                newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
-            } else{
-                newPosition = newPosition.add(new Vector2d(validator.width,0));
-            }
-        }
-        this.position=newPosition;
-    } else{
-        if(!validator.verticaledge(newPosition)){
-            if(this.direction.toUnitVector().getX() >0){
-                newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
-            } else{
-                newPosition = newPosition.add(new Vector2d(validator.width,0));
-            }
 
+        if(validator.horizontaledge(newPosition) && validator.verticaledge(newPosition)){
+            this.position = newPosition;
         }
-        this.position=newPosition;
+        if(!validator.horizontaledge(newPosition)){
+            for(int i = 0; i < 4; i++) {
+                this.direction = this.direction.next();
+            }
+            newPosition = this.position.add(this.direction.toUnitVector());
+            if(!validator.verticaledge(newPosition)){
+                if(this.direction.toUnitVector().getX() >0){
+                    newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+                } else{
+                    newPosition = newPosition.add(new Vector2d(validator.width,0));
+                }
+            }
+            this.position=newPosition;
+        } else{
+            if(!validator.verticaledge(newPosition)){
+                if(this.direction.toUnitVector().getX() >0){
+                    newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+                } else{
+                    newPosition = newPosition.add(new Vector2d(validator.width,0));
+                }
+
+            }
+            this.position=newPosition;
+        }
     }
-}
 
         MapDirection getDirection() {
             return this.direction;
@@ -109,4 +100,5 @@ public void move(Integer direction, AbstractWorldMap validator) {
         public int getGenomesize(){
             return this.genome.size();
         }
+
     }
