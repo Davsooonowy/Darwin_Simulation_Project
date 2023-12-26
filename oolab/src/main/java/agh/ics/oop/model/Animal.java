@@ -1,6 +1,7 @@
     package agh.ics.oop.model;
 
     import java.util.ArrayList;
+    import java.util.List;
     import java.util.Random;
 
     import static java.lang.Math.abs;
@@ -11,14 +12,14 @@
         private static final Random RANDOM = new Random();
         private Vector2d position;
         private int energy = 6;
-        private final Genomes genome;
+        private final List<Integer> genome;
         private Genomes genomes;
 
         public Animal(Vector2d initialPosition, int initialenergy) {
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
             this.energy = initialenergy;
-            this.genome = new Genomes(69);
+            this.genome = List.of(0, 1, 2, 3, 4, 5, 6, 7);
         }
 
         public void animalEnergyChange(int val) {
@@ -169,11 +170,11 @@
             return this.position;
         }
 
-//        public Integer getGenome(int index) {
-//            return this.genome.get(index);
-//        }
-//        public int getGenomesize(){
-//            return this.genome.size();
-//        }
+        public Integer getGenome(int index) {
+            return this.genome.get(index);
+        }
+        public int getGenomesize(){
+            return this.genome.size();
+        }
 
     }

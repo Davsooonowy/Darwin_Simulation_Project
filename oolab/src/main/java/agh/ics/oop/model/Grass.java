@@ -11,6 +11,17 @@ public class Grass implements WorldElement {
         return position;
 
     }
+
+    @Override
+    public boolean isAnimal() {
+        return false;
+    }
+
+    @Override
+    public Animal asAnimal() {
+        return null;
+    }
+
     public String toString(){
         return "*";
     }

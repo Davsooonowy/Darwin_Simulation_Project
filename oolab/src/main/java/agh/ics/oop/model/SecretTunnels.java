@@ -1,16 +1,29 @@
 package agh.ics.oop.model;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SecretTunnels extends AbstractWorldMap{
     private final HashMap<Vector2d, Grass> grasses = new HashMap<>();
     private final HashMap<Vector2d,Tunnel> tunnels = new HashMap<>();
+    private List<List<Vector2d>> tunnelsConnections = new ArrayList<>();
+
+    private List<WorldElement> elements = new ArrayList<>();
 
     public SecretTunnels(int height, int width, int initialGrassQuantity) {
         super(width,height);
         placeGrass(initialGrassQuantity);
+        Random random = new Random();
+        int tunnelsQuantity = random.nextInt(width*height/10+2);
+        if (tunnelsQuantity%2==1){
+            tunnelsQuantity +=1;
+        }
+        TunnelGenerator generator = new TunnelGenerator(width, height, tunnelsQuantity);
+        generator.iterator(); // This will fill the positionTuples list
+        tunnelsConnections = generator.getPositionTuples();
+        placeTunnels();
+        System.out.println(tunnels);
+        System.out.println(tunnelsConnections);
     }
 
     void placeGrass(int grassQuantity) {
@@ -21,15 +34,9 @@ public class SecretTunnels extends AbstractWorldMap{
     }
 
     void placeTunnels(){
-        Random random = new Random();
-        int tunnelsQuantity = random.nextInt(width*height/10+2);
-        if (tunnelsQuantity%2==1){
-            tunnelsQuantity +=1;
-        }
-        RandomPositionGenerator randomPositionGenerator = new RandomPositionGenerator(width,height,tunnelsQuantity);
-        int i = 0;
-        for(Vector2d tunnelsPosition: randomPositionGenerator){
-            if ()
+        for(List<Vector2d> tunnelConnection : tunnelsConnections){
+            tunnels.put(tunnelConnection.get(0),new Tunnel(tunnelConnection.get(0)));
+            tunnels.put(tunnelConnection.get(1),new Tunnel(tunnelConnection.get(1)));
         }
     }
 
@@ -66,5 +73,12 @@ public class SecretTunnels extends AbstractWorldMap{
 
     int getGrassSize() {
         return grasses.size();
+    }
+
+    @Override
+    public List<WorldElement> objectsAt(Vector2d position) {
+        return elements.stream()
+                .filter(element -> element.getPosition().equals(position))
+                .collect(Collectors.toList());
     }
 }

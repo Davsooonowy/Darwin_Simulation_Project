@@ -2,17 +2,26 @@ package agh.ics.oop.model;
 
 public class Tunnel implements WorldElement{
     private final Vector2d position;
-    private final Tunnel connectingTunnel;
 
-    public Tunnel(Vector2d position, Tunnel connectingTunnel) {
+    public Tunnel(Vector2d position) {
         this.position = position;
-        this.connectingTunnel = connectingTunnel;
     }
 
     public Vector2d getPosition() {
         return position;
 
     }
+
+    @Override
+    public boolean isAnimal() {
+        return false;
+    }
+
+    @Override
+    public Animal asAnimal() {
+        return null;
+    }
+
     public String toString(){
         return "[]";
     }

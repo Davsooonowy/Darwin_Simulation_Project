@@ -1,6 +1,7 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.model.Earth;
+import agh.ics.oop.model.SecretTunnels;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +22,7 @@ public class StartPresenter {
     @FXML
     public void onStartClicked() {
         try {
-            Earth earth = new Earth(10,10,10);
+            SecretTunnels earth = new SecretTunnels(10,10,10);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
             Parent root = loader.load();
 
