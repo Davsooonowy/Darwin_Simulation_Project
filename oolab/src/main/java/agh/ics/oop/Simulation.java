@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Simulation extends Thread {
     private final int numOfAnimals;
@@ -24,6 +25,9 @@ public class Simulation extends Thread {
         this.plantEnergy = plantEnergy;
         addAnimals();
     }
+    public List<Animal> getAnimals() {
+        return this.animals;
+    }
 
 private void addAnimals() {
     Boundary worldBoundary = map.getCurrentBounds();
@@ -38,6 +42,29 @@ private void addAnimals() {
         animals.add(animal);
     }
 }
+
+    public void reproduceAnimals() {
+        List<Animal> newAnimals = new ArrayList<>();
+        for (Animal animal : animals) {
+            if (animal.canReproduce()) {
+                List<Animal> possiblePartners = map.objectsAt(animal.getPosition())
+                        .stream()
+                        .filter(WorldElement::isAnimal)
+                        .map(WorldElement::asAnimal)
+                        .filter(Animal::canReproduce)
+                        .collect(Collectors.toList());
+                if (possiblePartners.size() > 1) {
+                    possiblePartners.remove(animal);
+                    Animal partner = possiblePartners.get(new Random().nextInt(possiblePartners.size()));
+                    newAnimals.add(animal.reproduce(partner));
+                }
+            }
+        }
+        animals.addAll(newAnimals);
+        for (Animal newAnimal : newAnimals) {
+            map.place(newAnimal);
+        }
+    }
 
     public void run() {
         try {
