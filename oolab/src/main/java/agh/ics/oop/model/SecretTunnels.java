@@ -35,8 +35,8 @@ public class SecretTunnels extends AbstractWorldMap{
 
     void placeTunnels(){
         for(List<Vector2d> tunnelConnection : tunnelsConnections){
-            tunnels.put(tunnelConnection.get(0),new Tunnel(tunnelConnection.get(0)));
-            tunnels.put(tunnelConnection.get(1),new Tunnel(tunnelConnection.get(1)));
+            tunnels.put(tunnelConnection.get(0),new Tunnel(tunnelConnection.get(0),tunnelConnection.get(1)));
+            tunnels.put(tunnelConnection.get(1),new Tunnel(tunnelConnection.get(1),tunnelConnection.get(0)));
         }
     }
 
@@ -46,9 +46,9 @@ public class SecretTunnels extends AbstractWorldMap{
     public WorldElement objectAt(Vector2d position) {
         if (super.isOccupied(position)) {
             return super.objectAt(position);
-        } else if (grasses.containsKey(position)){
-            return grasses.get(position);
-        } else return tunnels.getOrDefault(position, null);
+        } else if (tunnels.containsKey(position)){
+            return tunnels.get(position);
+        } else return grasses.getOrDefault(position, null);
     }
 
     @Override
@@ -80,5 +80,16 @@ public class SecretTunnels extends AbstractWorldMap{
         return elements.stream()
                 .filter(element -> element.getPosition().equals(position))
                 .collect(Collectors.toList());
+    }
+
+    public Tunnel getTunnel(Vector2d position){
+        return tunnels.get(position);
+    }
+
+    public void wentThroughTunnel(Animal animal, Vector2d newPosition){
+        animals.remove(animal.getPosition());
+        animal.goThroughTunnel(newPosition,this);
+        animals.put(animal.getPosition(), animal);
+        mapChanged();
     }
 }

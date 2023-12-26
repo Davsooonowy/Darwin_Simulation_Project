@@ -22,7 +22,7 @@ public class StartPresenter {
     @FXML
     public void onStartClicked() {
         try {
-            SecretTunnels earth = new SecretTunnels(10,10,10);
+            Earth earth = new Earth(10,10,10);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
             Parent root = loader.load();
 
@@ -31,7 +31,7 @@ public class StartPresenter {
             simulationPresenter.setWorldMap(earth);
             earth.addMapChangeListener(simulationPresenter);
 
-            simulationPresenter.onSimulationStartClicked();
+            simulationPresenter.onStartStopButtonClicked();
 
             Stage simulationStage = new Stage();
             simulationStage.setScene(new Scene(root));

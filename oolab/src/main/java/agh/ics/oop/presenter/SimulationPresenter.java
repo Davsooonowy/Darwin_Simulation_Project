@@ -6,6 +6,7 @@ import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -24,89 +25,117 @@ public class SimulationPresenter implements MapChangeListener {
         mapGrid.getRowConstraints().clear();
     }
 
-private void drawAxes(Boundary boundary) {
-    drawXAxis(boundary);
-    drawYAxis(boundary);
-    Label label = new Label("x/y");
-    label.setMinWidth(50);
-    label.setMinHeight(50);
-    label.setAlignment(Pos.CENTER);
-    mapGrid.add(label, 0, 0);
-
-
-}
-
-private void drawXAxis(Boundary boundary) {
-    for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
-        Label label = new Label(Integer.toString(j));
+    private void drawAxes(Boundary boundary) {
+        drawXAxis(boundary);
+        drawYAxis(boundary);
+        Label label = new Label("x/y");
         label.setMinWidth(50);
         label.setMinHeight(50);
         label.setAlignment(Pos.CENTER);
-        mapGrid.add(label, j + 1 - boundary.lowerLeft().getX(), 0);
+        mapGrid.add(label, 0, 0);
+
+
     }
-}
 
-private void drawYAxis(Boundary boundary) {
-    for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
-        Label label = new Label(Integer.toString(i));
-        label.setMinWidth(50);
-        label.setMinHeight(50);
-        label.setAlignment(Pos.CENTER);
-        mapGrid.add(label, 0, boundary.upperRight().getY() - i + 1);
-    }
-}
-
-@FXML
-public void drawMap() {
-    clearGrid();
-    Boundary boundary = worldMap.getCurrentBounds();
-    drawAxes(boundary);
-    drawGrid(boundary);
-}
-
-private void drawGrid(Boundary boundary) {
-    for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
+    private void drawXAxis(Boundary boundary) {
         for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
-            Vector2d position = new Vector2d(j, i);
-            drawGridCell(position, j - boundary.lowerLeft().getX() + 1, boundary.upperRight().getY() - i + 1);
+            Label label = new Label(Integer.toString(j));
+            label.setMinWidth(50);
+            label.setMinHeight(50);
+            label.setAlignment(Pos.CENTER);
+            mapGrid.add(label, j + 1 - boundary.lowerLeft().getX(), 0);
         }
     }
-}
 
-private void drawGridCell(Vector2d position, int column, int row) {
-    WorldElement element = worldMap.objectAt(position);
-    Label label = createLabelForElement(element);
-    mapGrid.add(label, column, row);
-}
-
-private Label createLabelForElement(WorldElement element) {
-    Label label;
-    if (element != null) {
-        label = new Label(element.toString());
-    } else {
-        label = new Label(" ");
+    private void drawYAxis(Boundary boundary) {
+        for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
+            Label label = new Label(Integer.toString(i));
+            label.setMinWidth(50);
+            label.setMinHeight(50);
+            label.setAlignment(Pos.CENTER);
+            mapGrid.add(label, 0, boundary.upperRight().getY() - i + 1);
+        }
     }
-    label.setMinWidth(50);
-    label.setMinHeight(50);
-    label.setAlignment(Pos.CENTER);
-    return label;
-}
+
+    @FXML
+    public void drawMap() {
+        clearGrid();
+        Boundary boundary = worldMap.getCurrentBounds();
+        drawAxes(boundary);
+        drawGrid(boundary);
+    }
+
+    private void drawGrid(Boundary boundary) {
+        for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
+            for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
+                Vector2d position = new Vector2d(j, i);
+                drawGridCell(position, j - boundary.lowerLeft().getX() + 1, boundary.upperRight().getY() - i + 1);
+            }
+        }
+    }
+
+    private void drawGridCell(Vector2d position, int column, int row) {
+        WorldElement element = worldMap.objectAt(position);
+        Label label = createLabelForElement(element);
+        mapGrid.add(label, column, row);
+    }
+
+    private Label createLabelForElement(WorldElement element) {
+        Label label;
+        if (element != null) {
+            label = new Label(element.toString());
+        } else {
+            label = new Label(" ");
+        }
+        label.setMinWidth(50);
+        label.setMinHeight(50);
+        label.setAlignment(Pos.CENTER);
+        return label;
+    }
 
 
     @Override
     public void mapChanged(WorldMap worldMap) {
         Platform.runLater(this::drawMap);
     }
+
+    private Simulation simulation;
+
     @FXML
-    public void onSimulationStartClicked() {
+    private Button startStopButton;
+
+    @FXML
+    public void initialize() {
+        startStopButton.setText("Start");
+    }
+
+    @FXML
+    public void onStartStopButtonClicked() {
         try {
-            Simulation simulation = new Simulation(7, worldMap, 10, 10, 1);
-            SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
-            simulationEngine.runAsync();
-        } catch (Exception e) {
+            if (simulation == null) {
+                simulation = new Simulation(3, worldMap, 10, 0, 1);
+                simulation.start();
+                startStopButton.setText("Stop");
+            } else if (simulation.isRunning()) {
+                simulation.pauseSimulation();
+                startStopButton.setText("Start");
+            } else {
+                simulation.resumeSimulation();
+                startStopButton.setText("Stop");
+            }} catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
+    //    @FXML
+//    public void onSimulationStartClicked() {
+//        try {
+//            Simulation simulation = new Simulation(0, worldMap, 10, 0, 1);
+//            SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
+//            simulationEngine.runAsync();
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
     @FXML
     private GridPane mapGrid;
 }

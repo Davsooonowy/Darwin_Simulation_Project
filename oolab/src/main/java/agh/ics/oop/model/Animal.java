@@ -12,14 +12,13 @@
         private static final Random RANDOM = new Random();
         private Vector2d position;
         private int energy = 6;
-        private final List<Integer> genome;
         private Genomes genomes;
 
-        public Animal(Vector2d initialPosition, int initialenergy) {
+        public Animal(Vector2d initialPosition, int initialenergy,  int genomeLength) {
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
             this.energy = initialenergy;
-            this.genome = List.of(0, 1, 2, 3, 4, 5, 6, 7);
+            this.genomes = new Genomes(genomeLength);
         }
 
         public void animalEnergyChange(int val) {
@@ -96,7 +95,7 @@
         this.energy -= this.energy / 4;
         other.energy -= other.energy / 4;
 
-        Animal child = new Animal(this.position, childEnergy);
+        Animal child = new Animal(this.position, childEnergy, this.genomes.getGenes().size());
         child.genomes = new Genomes(childGenes);
 
         child.mutate();
@@ -162,6 +161,12 @@
         }
     }
 
+    public void goThroughTunnel(Vector2d Position, SecretTunnels validator){
+            if(validator.objectAt(Position) instanceof Tunnel){
+                this.position = validator.getTunnel(Position).getConnected();
+            }
+    }
+
         MapDirection getDirection() {
             return this.direction;
         }
@@ -170,11 +175,11 @@
             return this.position;
         }
 
-        public Integer getGenome(int index) {
-            return this.genome.get(index);
-        }
-        public int getGenomesize(){
-            return this.genome.size();
-        }
+//        public Integer getGenome(int index) {
+//            return this.genome.get(index);
+//        }
+//        public int getGenomesize(){
+//            return this.genome.size();
+//        }
 
     }

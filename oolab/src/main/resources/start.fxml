@@ -6,11 +6,87 @@
             minHeight="550.0" minWidth="850.0"
             fx:controller="agh.ics.oop.presenter.StartPresenter">
     <center>
-        <VBox alignment="CENTER">
-            <HBox alignment="CENTER">
-                <Button fx:id="startButton" minWidth="100" text="Start Simulation" onAction="#onStartClicked" />
-            </HBox>
-            <Label fx:id="infoLabel" text="All animals will be living here!" alignment="CENTER"/>
-        </VBox>
+        <HBox spacing="10">
+            <GridPane hgap="10" vgap="5">
+                <Label text="Width:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="widthField" promptText="Width" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Height:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="heightField" promptText="Height" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Animal Starting Energy:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="startEnergyField" promptText="Animal Starting Energy" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <Label text="Energy Received From Eating Plant:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <TextField fx:id="plantEnergyField" promptText="Animal energy Received From Eating Plant" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <Label text="Initial Animals Number:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <TextField fx:id="initialanimalsNumberField" promptText="Initial Animals Number" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                <Label text="Initial Grass Number:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <TextField fx:id="initialgrassNumberField" promptText="Initial Grass Number" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                <Label text="Plant Spawn Rate:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <TextField fx:id="plantSpawnRate" promptText="Plant Spawn Rate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                <Label text="Reproduce Energy:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                <TextField fx:id="reproduceEnergy" promptText="Reproduce Energy" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+                <Label text="Parent Energy:" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+                <TextField fx:id="parentEnergy" promptText="Parent Energy" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+                <Label text="Min Number Of Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+                <TextField fx:id="minGeneMutation" promptText="Min Number Of Mutations" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+                <Label text="Max Number Of Mutations:" GridPane.columnIndex="0" GridPane.rowIndex="10"/>
+                <TextField fx:id="maxGeneMutation" promptText="Max Number Of Mutations" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+
+                <Label text="Map Variant:" GridPane.columnIndex="0" GridPane.rowIndex="11"/>
+                <TextField fx:id="MapVariant" promptText="Wariant mapy" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+
+                <Label text="Behaviour Variant:" GridPane.columnIndex="0" GridPane.rowIndex="12"/>
+                <TextField fx:id="BehaviourVariant" promptText="Wariant zachowania" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            </GridPane>
+
+            <VBox spacing="10">
+                <Button fx:id="startButton" minWidth="150" text="Start Simulation" onAction="#onStartClicked" />
+                <Label fx:id="infoLabel" text="All animals will be living here!" alignment="CENTER"/>
+            </VBox>
+        </HBox>
     </center>
 </BorderPane>
+
+
+        <!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<?import javafx.scene.control.*?>-->
+<!--<?import javafx.scene.layout.*?>-->
+<!--<BorderPane xmlns="http://javafx.com/javafx"-->
+<!--            xmlns:fx="http://javafx.com/fxml"-->
+<!--            minHeight="550.0" minWidth="850.0"-->
+<!--            fx:controller="agh.ics.oop.presenter.StartPresenter">-->
+<!--    <center>-->
+<!--        <VBox alignment="CENTER">-->
+<!--            <HBox alignment="CENTER">-->
+<!--                <TextField fx:id="widthField" promptText="Width" />-->
+<!--                <TextField fx:id="heightField" promptText="Height" />-->
+<!--                <TextField fx:id="startEnergyField" promptText="Animal Starting Energy" />-->
+<!--                <TextField fx:id="plantEnergyField" promptText="Animal energy Recieved From Eating Plant" />-->
+<!--                <TextField fx:id="initialanimalsNumberField" promptText="Initial Animals Number" />-->
+<!--                <TextField fx:id="initialgrassNumberField" promptText="Initial Grass Number" />-->
+<!--                <TextField fx:id="plantSpawnRate" promptText="Plant Spawn Rate" />-->
+<!--                <TextField fx:id="reproduceEnergy" promptText="Reproduce Energy" />-->
+<!--                <TextField fx:id="parentEnergy" promptText="Parent Energy" />-->
+<!--                <TextField fx:id="minGeneMutation" promptText="Min Number Of Mutations" />-->
+<!--                <TextField fx:id="maxGeneMutation" promptText="Max Number Of Mutations" />-->
+<!--                <TextField fx:id="MapVariant" promptText="Wariant mapy" />-->
+<!--                <TextField fx:id="BehaviourVariant" promptText="Wariant zachowania" />-->
+
+
+<!--                <Button fx:id="startButton" minWidth="100" text="Start Simulation" onAction="#onStartClicked" />-->
+<!--            </HBox>-->
+<!--            <Label fx:id="infoLabel" text="All animals will be living here!" alignment="CENTER"/>-->
+<!--        </VBox>-->
+<!--    </center>-->
+<!--</BorderPane>-->
+
+

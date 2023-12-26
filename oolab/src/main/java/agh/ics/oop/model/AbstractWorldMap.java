@@ -48,6 +48,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         mapChanged();
     }
 
+
     @Override
     public WorldElement objectAt(Vector2d position) {
         return animals.get(position);
@@ -82,7 +83,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
     }
 
-    private synchronized void mapChanged() {
+    synchronized void mapChanged() {
         for (MapChangeListener listener : mapChangeListeners) {
             listener.mapChanged(this);
         }
