@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
@@ -15,8 +16,26 @@ import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
     private WorldMap worldMap;
+    private int initialAnimalsNumber;
+    private int initialEnergy;
+    private int genomeLength;
+
+    public void setGenomeLength(int genomeLength){
+        this.genomeLength=genomeLength;
+    }
+
+    public void setInitialEnergy(int initialEnergy){
+        this.initialEnergy = initialEnergy;
+    }
+
+
+
     public void setWorldMap(WorldMap worldMap) {
         this.worldMap = worldMap;
+    }
+
+    public void setInitialanimalsNumberField(int initialanimalsNumberField) {
+        this.initialAnimalsNumber = initialanimalsNumberField;
     }
 
     private void clearGrid() {
@@ -113,7 +132,7 @@ public class SimulationPresenter implements MapChangeListener {
     public void onStartStopButtonClicked() {
         try {
             if (simulation == null) {
-                simulation = new Simulation(3, worldMap, 10, 0, 1);
+                simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength);
                 simulation.start();
                 startStopButton.setText("Stop");
             } else if (simulation.isRunning()) {
@@ -126,16 +145,6 @@ public class SimulationPresenter implements MapChangeListener {
             System.out.println(e.getMessage());
         }
     }
-    //    @FXML
-//    public void onSimulationStartClicked() {
-//        try {
-//            Simulation simulation = new Simulation(0, worldMap, 10, 0, 1);
-//            SimulationEngine simulationEngine = new SimulationEngine(new ArrayList<>(List.of(simulation)));
-//            simulationEngine.runAsync();
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
     @FXML
     private GridPane mapGrid;
 }

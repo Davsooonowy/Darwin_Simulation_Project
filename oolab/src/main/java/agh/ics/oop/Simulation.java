@@ -14,17 +14,14 @@ public class Simulation extends Thread {
     private final WorldMap map;
     private final Object lock = new Object();
     private final int initialEnergy;
-    private final int moveEnergy;
-    private int plantEnergy;
-
+    private final int genomeLength;
     private volatile boolean running = true;
 
-    public Simulation(int numOfAnimals, WorldMap map, int initialEnergy, int moveEnergy, int plantEnergy) {
+    public Simulation(int numOfAnimals, WorldMap map, int initialEnergy, int genomeLength) {
         this.numOfAnimals = numOfAnimals;
         this.map = map;
         this.initialEnergy = initialEnergy;
-        this.moveEnergy = moveEnergy;
-        this.plantEnergy = plantEnergy;
+        this.genomeLength=genomeLength;
         addAnimals();
     }
 
@@ -40,7 +37,7 @@ public class Simulation extends Thread {
             int y = random.nextInt(worldBoundary.upperRight().getY());
             Vector2d randomPosition = new Vector2d(x, y);
 
-            Animal animal = new Animal(randomPosition, initialEnergy, 7);
+            Animal animal = new Animal(randomPosition, initialEnergy, genomeLength);
             map.place(animal);
             animals.add(animal);
         }
@@ -61,58 +58,22 @@ public class Simulation extends Thread {
         return running;
     }
 
-    public void reproduceAnimals() {
-        List<Animal> newAnimals = new ArrayList<>();
-        for (Animal animal : animals) {
-            if (animal.canReproduce()) {
-                List<Animal> possiblePartners = map.objectsAt(animal.getPosition())
-                        .stream()
-                        .filter(WorldElement::isAnimal)
-                        .map(WorldElement::asAnimal)
-                        .filter(Animal::canReproduce)
-                        .collect(Collectors.toList());
-                if (possiblePartners.size() > 1) {
-                    possiblePartners.remove(animal);
-                    Animal partner = possiblePartners.get(new Random().nextInt(possiblePartners.size()));
-                    newAnimals.add(animal.reproduce(partner));
-                }
-            }
-        }
-        animals.addAll(newAnimals);
-        for (Animal newAnimal : newAnimals) {
-            map.place(newAnimal);
-        }
-    }
-
-
-//    public void run() {
-//        try {
-////        for (int i = 0; i < 16; i++) { // TODO: nieskonczona petla ze zwierzakami, dopoki zyja
-////            Thread.sleep(1000);
-////            Animal animal = animals.get(i % animals.size());
-////            Integer direction = directions.get(i % directions.size());
-////            map.move(animal, direction);
-////        }
-//            int day = 0;
-//            while(map.getElements() != null) {
-//                Thread.sleep(1000);
-//                for (Animal animal : animals) {
-////                    if (animal.isDead()) {
-////                        map.remove(animal);
-////                        animals.remove(animal);
-////                    } else {
-//                        //Integer direction = directions.get(animals.indexOf(animal) % directions.size());
-//                        map.move(animal, animal.getGenome(day % animal.getGenomesize()));
-//                        if(map.getClass().equals(SecretTunnels.class)){
-//                        ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
-//                        }
-//                        animal.animalEnergyChange(-moveEnergy);
-//                    }
-//                day++;
-//                }
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
+//    public void animalsEatGrass() {
+//    List<Animal> animalsToEatGrass = new ArrayList<>();
+//    for (Animal animal : animals) {
+//        Vector2d animalPosition = animal.getPosition();
+//        if (map.objectAt(animalPosition) instanceof Grass) {
+//            animalsToEatGrass.add(animal);
 //        }
+//    }
+//
+//    for (Animal animal : animalsToEatGrass) {
+//        Vector2d animalPosition = animal.getPosition();
+//        Grass grass = (Grass) map.objectAt(animalPosition);
+//        animal.animalEnergyChange(plantEnergy);
+//        //((Earth) map).removeGrass(animalPosition);
+//    }
+//}
 
     @Override
     public void run() {
@@ -125,19 +86,29 @@ public class Simulation extends Thread {
                     }
                 }
                 Thread.sleep(1000);
+
+                // moving
                 for (Animal animal : animals) {
                     map.move(animal, animal.getGenomes().getGenes().get(day % animal.getGenomes().getGenes().size()));
                     if(map.getClass().equals(SecretTunnels.class)){
                         ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
                     }
-                    animal.animalEnergyChange(-moveEnergy);
-                    System.out.println(animals.size());
+                    animal.animalEnergyChange(-1);
                 }
-                //reproduceAnimals();
+
+                // eating
+                for (Vector2d grassPosition : map.getGrassPositions()) {
+                    Animal chosenAnimal = map.chooseAnimal(grassPosition);
+                    if (chosenAnimal != null) {
+                        map.eat(chosenAnimal);
+                    }
+                }
                 day++;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
+
 }

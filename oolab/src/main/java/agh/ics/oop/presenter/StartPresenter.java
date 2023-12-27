@@ -2,6 +2,7 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
+import agh.ics.oop.model.WorldMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,18 +20,51 @@ public class StartPresenter {
     @FXML
     public Label infoLabel;
 
+    @FXML
+    private TextField widthField;
+    @FXML
+    private TextField heightField;
+    @FXML
+    private TextField initialgrassNumberField;
+    @FXML
+    private TextField MapVariant;
+    @FXML
+    private TextField initialanimalsNumberField;
+    @FXML
+    private TextField startEnergyField;
+    @FXML
+    private TextField plantEnergyField;
+    @FXML
+    private TextField genomeLength;
+
 
     @FXML
     public void onStartClicked() {
         try {
-            Earth earth = new Earth(10,10,10);
+            int mapWidth = Integer.parseInt(widthField.getText());
+            int mapHeight = Integer.parseInt(heightField.getText());
+            int initialGrassNumber = Integer.parseInt(initialgrassNumberField.getText());
+            int mapVariant = Integer.parseInt(MapVariant.getText());
+            int animalNumber = Integer.parseInt(initialanimalsNumberField.getText());
+            int initialEnergy = Integer.parseInt(startEnergyField.getText());
+            int plantEnergy = Integer.parseInt(plantEnergyField.getText());
+            int genomelength = Integer.parseInt(genomeLength.getText());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
             Parent root = loader.load();
 
-
             SimulationPresenter simulationPresenter = loader.getController();
-            simulationPresenter.setWorldMap(earth);
-            earth.addMapChangeListener(simulationPresenter);
+            simulationPresenter.setInitialanimalsNumberField(animalNumber);
+            simulationPresenter.setInitialEnergy(initialEnergy);
+            simulationPresenter.setGenomeLength(genomelength);
+            if (mapVariant == 0) {
+                Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber);
+                simulationPresenter.setWorldMap(worldMap);
+                worldMap.addMapChangeListener(simulationPresenter);
+            } else {
+                SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber);
+                simulationPresenter.setWorldMap(worldMap);
+                worldMap.addMapChangeListener(simulationPresenter);
+            }
 
             simulationPresenter.onStartStopButtonClicked();
 

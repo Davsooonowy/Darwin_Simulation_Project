@@ -10,11 +10,14 @@ public interface WorldMap extends MoveValidator {
 
     void move(Animal animal, Integer direction);
 
+    void eat(Animal animal);
+
     boolean isOccupied(Vector2d position);
 
     WorldElement objectAt(Vector2d position);
     Set<WorldElement> getElements();
 
     Boundary getCurrentBounds();
-    List<WorldElement> objectsAt(Vector2d position);
+    Set<Vector2d> getGrassPositions();
+    Animal chooseAnimal(Vector2d position);
 }

@@ -8,29 +8,13 @@ import java.util.stream.Collectors;
 
 public class Earth extends AbstractWorldMap {
 
-    private final HashMap<Vector2d, Grass> grasses = new HashMap<>();
-    private final HashMap<Vector2d, Vector2d> tunnels = new HashMap<>();
+
     private List<WorldElement> elements = new ArrayList<>();
 
 
-    public Earth(int height, int width, int initialGrassQuantity) {
-        super(width,height);
+    public Earth(int height, int width, int plantEnergy,int initialGrassQuantity) {
+        super(width,height,plantEnergy,initialGrassQuantity);
 
-        placeGrass(initialGrassQuantity);
-    }
-
-    void placeGrass(int grassQuantity) {
-        RandomPositionGenerator randomPositionGenerator = new RandomPositionGenerator(width, height, grassQuantity);
-        for (Vector2d grassPosition : randomPositionGenerator) {
-            grasses.put(grassPosition, new Grass(grassPosition));
-        }
-    }
-
-    @Override
-        public List<WorldElement> objectsAt(Vector2d position) {
-        return elements.stream()
-            .filter(element -> element.getPosition().equals(position))
-            .collect(Collectors.toList());
     }
     @Override
     public WorldElement objectAt(Vector2d position) {
@@ -53,7 +37,6 @@ public class Earth extends AbstractWorldMap {
         elements.addAll(grasses.values());
         return elements;
     }
-
 
     @Override
     public Boundary getCurrentBounds() {

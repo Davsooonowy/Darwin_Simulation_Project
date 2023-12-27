@@ -4,15 +4,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SecretTunnels extends AbstractWorldMap{
-    private final HashMap<Vector2d, Grass> grasses = new HashMap<>();
+
     private final HashMap<Vector2d,Tunnel> tunnels = new HashMap<>();
     private List<List<Vector2d>> tunnelsConnections = new ArrayList<>();
 
     private List<WorldElement> elements = new ArrayList<>();
 
-    public SecretTunnels(int height, int width, int initialGrassQuantity) {
-        super(width,height);
-        placeGrass(initialGrassQuantity);
+    public SecretTunnels(int height, int width,int plantEnergy, int initialGrassQuantity) {
+        super(width,height,plantEnergy,initialGrassQuantity);
         Random random = new Random();
         int tunnelsQuantity = random.nextInt(width*height/10+2);
         if (tunnelsQuantity%2==1){
@@ -73,13 +72,6 @@ public class SecretTunnels extends AbstractWorldMap{
 
     int getGrassSize() {
         return grasses.size();
-    }
-
-    @Override
-    public List<WorldElement> objectsAt(Vector2d position) {
-        return elements.stream()
-                .filter(element -> element.getPosition().equals(position))
-                .collect(Collectors.toList());
     }
 
     public Tunnel getTunnel(Vector2d position){

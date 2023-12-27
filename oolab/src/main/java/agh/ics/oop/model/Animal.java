@@ -1,24 +1,30 @@
     package agh.ics.oop.model;
 
-    import java.util.ArrayList;
-    import java.util.List;
-    import java.util.Random;
-
-    import static java.lang.Math.abs;
 
     public class Animal implements WorldElement {
         private MapDirection direction;
         private static final int REPRODUCTION_ENERGY = 50;
-        private static final Random RANDOM = new Random();
         private Vector2d position;
-        private int energy = 6;
+        private int energy;
         private Genomes genomes;
+        private int age = 4;
+        private int childrenCount = 2;
 
-        public Animal(Vector2d initialPosition, int initialenergy,  int genomeLength) {
+        public Animal(Vector2d initialPosition, int initialenergy, int genomeLength) {
             this.direction = MapDirection.randomDirection();
             this.position = initialPosition;
             this.energy = initialenergy;
             this.genomes = new Genomes(genomeLength);
+        }
+
+        public int getEnergy() {
+            return this.energy;
+        }
+        public int getAge() {
+            return this.age;
+        }
+        public int getChildrenCount() {
+            return this.childrenCount;
         }
 
         public void animalEnergyChange(int val) {
@@ -39,77 +45,6 @@
             return this.energy <= 0;
         }
 
-        @Override
-        public boolean isAnimal() {
-            return true;
-        }
-
-        @Override
-        public Animal asAnimal() {
-            return this;
-        }
-//        public Animal reproduce(Animal other) {
-//            int totalEnergy = this.energy + other.energy;
-//            int thisGenes = (int) ((double) this.energy / totalEnergy * this.genomes.getGenes().size());
-//            int otherGenes = this.genomes.getGenes().size() - thisGenes;
-//
-//            ArrayList<Integer> childGenes = new ArrayList<>();
-//            childGenes.addAll(this.genomes.getGenes().subList(0, thisGenes));
-//            childGenes.addAll(other.genomes.getGenes().subList(other.genomes.getGenes().size() - otherGenes, other.genomes.getGenes().size()));
-//
-//            int childEnergy = this.energy / 4 + other.energy / 4;
-//            this.energy -= this.energy / 4;
-//            other.energy -= other.energy / 4;
-//
-//            Animal child = new Animal(this.position, childEnergy);
-//            child.genomes = new Genomes(childGenes);
-//
-//            child.mutate();
-//
-//            return child;
-//        }
-
-
-//        private void mutate() {
-//            int mutations = RANDOM.nextInt(this.genomes.getGenes().size());
-//            for (int i = 0; i < mutations; i++) {
-//                int index = RANDOM.nextInt(this.genomes.getGenes().size());
-//                this.genomes.getGenes().set(index, RANDOM.nextInt(8));
-//            }
-//        }
-    public Animal reproduce(Animal other) {
-        int totalEnergy = this.energy + other.energy;
-        int thisGenes = (int) ((double) this.energy / totalEnergy * this.genomes.getGenes().size());
-        int otherGenes = this.genomes.getGenes().size() - thisGenes;
-
-        ArrayList<Integer> childGenes = new ArrayList<>();
-        if (RANDOM.nextBoolean()) {
-            childGenes.addAll(this.genomes.getGenes().subList(0, thisGenes));
-            childGenes.addAll(other.genomes.getGenes().subList(other.genomes.getGenes().size() - otherGenes, other.genomes.getGenes().size()));
-        } else {
-            childGenes.addAll(other.genomes.getGenes().subList(0, otherGenes));
-            childGenes.addAll(this.genomes.getGenes().subList(this.genomes.getGenes().size() - thisGenes, this.genomes.getGenes().size()));
-        }
-
-        int childEnergy = this.energy / 4 + other.energy / 4;
-        this.energy -= this.energy / 4;
-        other.energy -= other.energy / 4;
-
-        Animal child = new Animal(this.position, childEnergy, this.genomes.getGenes().size());
-        child.genomes = new Genomes(childGenes);
-
-        child.mutate();
-
-        return child;
-    }
-
-    private void mutate() {
-        int mutations = RANDOM.nextInt(this.genomes.getGenes().size());
-        for (int i = 0; i < mutations; i++) {
-            int index = RANDOM.nextInt(this.genomes.getGenes().size());
-            this.genomes.getGenes().set(index, RANDOM.nextInt(8));
-        }
-    }
 
 
         public String toString() {
@@ -161,6 +96,7 @@
         }
     }
 
+    
     public void goThroughTunnel(Vector2d Position, SecretTunnels validator){
             if(validator.objectAt(Position) instanceof Tunnel){
                 this.position = validator.getTunnel(Position).getConnected();
@@ -174,12 +110,5 @@
         public Vector2d getPosition() {
             return this.position;
         }
-
-//        public Integer getGenome(int index) {
-//            return this.genome.get(index);
-//        }
-//        public int getGenomesize(){
-//            return this.genome.size();
-//        }
 
     }

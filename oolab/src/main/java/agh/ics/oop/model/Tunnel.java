@@ -17,15 +17,6 @@ public class Tunnel implements WorldElement{
         return connected;
     }
 
-    @Override
-    public boolean isAnimal() {
-        return false;
-    }
-
-    @Override
-    public Animal asAnimal() {
-        return null;
-    }
 
     public String toString(){
         return "[]";
