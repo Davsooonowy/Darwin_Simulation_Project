@@ -2,10 +2,7 @@ package agh.ics.oop;
 
 import agh.ics.oop.model.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Simulation extends Thread {
@@ -96,13 +93,16 @@ public class Simulation extends Thread {
                     animal.animalEnergyChange(-1);
                 }
 
-                // eating
-                for (Vector2d grassPosition : map.getGrassPositions()) {
+//                 eating
+                Set<Vector2d> grassesToEat = map.getGrassPositions();
+                for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
                     Animal chosenAnimal = map.chooseAnimal(grassPosition);
                     if (chosenAnimal != null) {
                         map.eat(chosenAnimal);
                     }
                 }
+
+
                 day++;
             }
         } catch (InterruptedException e) {

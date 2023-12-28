@@ -65,11 +65,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void eat(Animal animal){
-        if (this.grassAt(animal.getPosition()) instanceof Grass){
-            animal.animalEnergyChange(plantEnergy);
-            grasses.remove(animal.getPosition());
-            mapChanged();
-        }
+        animal.animalEnergyChange(plantEnergy);
+        grasses.remove(animal.getPosition());
+        mapChanged();
     }
     public List<Animal> getAnimalsOnField(Vector2d position) {
     List<Animal> animalsOnField = new ArrayList<>();
