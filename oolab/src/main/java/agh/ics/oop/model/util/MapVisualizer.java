@@ -1,7 +1,11 @@
 package agh.ics.oop.model.util;
 
-import agh.ics.oop.model.Vector2d;
-import agh.ics.oop.model.WorldMap;
+import agh.ics.oop.model.*;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 public class MapVisualizer {
     private static final String EMPTY_CELL = " ";
@@ -15,7 +19,7 @@ public class MapVisualizer {
 
     public String draw(Vector2d lowerLeft, Vector2d upperRight) {
         StringBuilder builder = new StringBuilder();
-        for (int i = upperRight.getY() + 1; i >= lowerLeft.getY() - 1; i--) {
+        for (int i = upperRight.getY() + 1; i >=lowerLeft.getY() - 1; i--) {
             if (i == upperRight.getY() + 1) {
                 builder.append(drawHeader(lowerLeft, upperRight));
             }
@@ -53,13 +57,33 @@ public class MapVisualizer {
         return builder.toString();
     }
 
-    private String drawObject(Vector2d currentPosition) {
+    private Rectangle drawObject(Vector2d currentPosition) {
         if (this.map.isOccupied(currentPosition)) {
-            Object object = this.map.objectAt(currentPosition);
+            WorldElement object = this.map.objectAt(currentPosition);
             if (object != null) {
-                return object.toString();
+                return object.toRectangle();
             }
         }
         return EMPTY_CELL;
     }
+//
+//    private Node drawObject(Vector2d currentPosition) {
+//        if (this.map.isOccupied(currentPosition)) {
+//            Object object = this.map.objectAt(currentPosition);
+//            if (object instanceof Animal) {
+//                return ((Animal) object);
+//            } else if (object instanceof Grass) {
+//                Rectangle rectangle = new Rectangle(10, 10);
+//                rectangle.setFill(Color.GREEN);
+//                return rectangle;
+//            } else if (object instanceof Tunnel) {
+//                Rectangle circle = new Rectangle(5,5);
+//                circle.setFill(Color.BLACK);
+//                return circle;
+//            }
+//        }
+//        Rectangle rectangle = new Rectangle(10, 10);
+//        rectangle.setFill(Color.BROWN);
+//        return rectangle;
+//    }
 }

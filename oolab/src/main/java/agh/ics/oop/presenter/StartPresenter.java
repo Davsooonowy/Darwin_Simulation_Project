@@ -19,6 +19,16 @@ public class StartPresenter {
 
     @FXML
     public Label infoLabel;
+    @FXML
+    public TextField parentEnergy;
+    @FXML
+    public TextField reproduceEnergy;
+    @FXML
+    public TextField minGeneMutation;
+    @FXML
+    public TextField maxGeneMutation;
+    @FXML
+    public TextField BehaviourVariant;
 
     @FXML
     private TextField widthField;
@@ -52,6 +62,11 @@ public class StartPresenter {
             int plantEnergy = Integer.parseInt(plantEnergyField.getText());
             int genomelength = Integer.parseInt(genomeLength.getText());
             int plantspawnRate = Integer.parseInt(plantSpawnRate.getText());
+            int behaviourvariant = Integer.parseInt(BehaviourVariant.getText());
+            int parentenergy = Integer.parseInt(parentEnergy.getText());
+            int reproduceenergy = Integer.parseInt(reproduceEnergy.getText());
+            int mingeneMutation = Integer.parseInt(minGeneMutation.getText());
+            int maxgeneMutation = Integer.parseInt(maxGeneMutation.getText());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
             Parent root = loader.load();
 

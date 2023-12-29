@@ -29,7 +29,6 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
 
-
     public void setWorldMap(AbstractWorldMap worldMap) {
         this.worldMap = worldMap;
     }

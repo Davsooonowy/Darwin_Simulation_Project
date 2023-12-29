@@ -1,13 +1,16 @@
     package agh.ics.oop.model;
+    import javafx.scene.shape.Circle;
+
+    import java.awt.Color;
 
 
     public class Animal implements WorldElement {
         private MapDirection direction;
-        private static final int REPRODUCTION_ENERGY = 50;
+        private int REPRODUCTION_ENERGY;
         private Vector2d position;
         private int energy;
         private Genomes genomes;
-        private int age = 4;
+        private int age = 0;
         private int childrenCount = 2;
 
         public Animal(Vector2d initialPosition, int initialenergy, int genomeLength) {
@@ -24,23 +27,8 @@
             this.genomes = genomes;
         }
 
-        public Animal reproduce(Animal other) {
-            int childEnergy = this.energy / 4 + other.energy / 4;
-            this.energy -= this.energy / 4;
-            other.energy -= other.energy / 4;
-
-            Genomes childGenomes = this.genomes.crossover(other.genomes);
-            childGenomes.mutate();
-
-            return new Animal(this.position, childEnergy, childGenomes);
-        }
-
-
         public int getEnergy() {
             return this.energy;
-        }
-        public int getAge() {
-            return this.age;
         }
         public int getChildrenCount() {
             return this.childrenCount;
@@ -52,6 +40,16 @@
                 this.energy = 0;
             }
         }
+
+        // age management
+        public void increaseAge() {
+            this.age++;
+        }
+
+        public int getAge() {
+            return this.age;
+        }
+
         public Genomes getGenomes() {
             return this.genomes;
         }
@@ -65,7 +63,7 @@
         }
 
 
-
+        // TODO: zmiana kolorków w zależności ile mu zostało energii, zamiast kierunku na mapie
         public String toString() {
             return switch (this.direction) {
                 case NORTH -> "N";
@@ -78,6 +76,21 @@
                 case NORTHWEST -> "NW";
             };
         }
+
+    public Color toColor(int startEnergy) {
+        if (energy == 0) return new Color(222, 221, 224);
+        if (energy < 0.2 * startEnergy) return new Color(224, 179, 173);
+        if (energy < 0.4 * startEnergy) return new Color(224, 142, 127);
+        if (energy < 0.6 * startEnergy) return new Color(201, 124, 110);
+        if (energy < 0.8 * startEnergy) return new Color(182, 105, 91);
+        if (energy < startEnergy) return new Color(164, 92, 82);
+        if (energy < 2 * startEnergy) return new Color(146, 82, 73);
+        if (energy < 4 * startEnergy) return new Color(128, 72, 64);
+        if (energy < 6 * startEnergy) return new Color(119, 67, 59);
+        if (energy < 8 * startEnergy) return new Color(88, 50, 44);
+        if (energy < 10 * startEnergy) return new Color(74, 42, 37);
+        return new Color(55, 31, 27);
+    }
 
     public void move(Integer direction, AbstractWorldMap validator) {
         for(int i = 0; i < direction; i++) {

@@ -1,7 +1,9 @@
 package agh.ics.oop.model;
 
+import javafx.scene.shape.Rectangle;
+
 public interface WorldElement {
 
-    String toString();
+    Rectangle toRectangle();
     Vector2d getPosition();
 }

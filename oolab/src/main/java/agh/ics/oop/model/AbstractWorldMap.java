@@ -50,6 +50,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         for (Vector2d grassPosition : grassGenerator) {
             grasses.put(grassPosition, new Grass(grassPosition));
         }
+        mapChanged();
     }
 
     @Override
@@ -65,6 +66,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         animals.remove(animal.getPosition());
         animal.move(direction, this);
         animals.put(animal.getPosition(), animal);
+        mapChanged();
+    }
+
+    public void removeDeadAnimal(Animal animal){
+        animals.remove(animal.getPosition());
         mapChanged();
     }
 
@@ -184,7 +190,7 @@ public void sortAnimals(List<Animal> animalsOnField) {
 
 
 
-    synchronized void mapChanged() {
+    public synchronized void mapChanged() {
         for (MapChangeListener listener : mapChangeListeners) {
             listener.mapChanged(this);
         }

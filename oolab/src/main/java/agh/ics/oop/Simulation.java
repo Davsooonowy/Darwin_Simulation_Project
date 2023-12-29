@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 public class Simulation extends Thread {
     private final int numOfAnimals;
     private List<Animal> animals = new ArrayList<>();
+    private List<Animal> deadAnimals = new ArrayList<>();
     private final AbstractWorldMap map;
     private final Object lock = new Object();
     private final int initialEnergy;
@@ -24,6 +25,10 @@ public class Simulation extends Thread {
 
     public List<Animal> getAnimals() {
         return this.animals;
+    }
+
+    public List<Animal> getDeadAnimals() {
+        return this.deadAnimals;
     }
 
     private void addAnimals() {
@@ -59,13 +64,23 @@ public class Simulation extends Thread {
     public void run() {
         try {
             int day = 0;
-            while(map.getElements() != null) {
+            while(true) {
                 synchronized (lock) {
                     while (!running) {
                         lock.wait();
                     }
                 }
                 Thread.sleep(1000);
+
+                // removing dead bodies
+                for(Animal animal: animals){
+                    if(animal.isDead()){
+                        deadAnimals.add(animal);
+                        map.removeDeadAnimal(animal);
+                    }
+                }
+
+                animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
 
                 // moving
                 for (Animal animal : animals) {
@@ -74,14 +89,17 @@ public class Simulation extends Thread {
                         ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
                     }
                     animal.animalEnergyChange(-1);
+                    animal.increaseAge();
                 }
 
-//                 eating
-                Set<Vector2d> grassesToEat = map.getGrassPositions();
-                for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
-                    Animal chosenAnimal = map.chooseAnimal(grassPosition);
-                    if (chosenAnimal != null) {
-                        map.eat(chosenAnimal);
+//              eating
+                if(!animals.isEmpty()) {
+                    Set<Vector2d> grassesToEat = map.getGrassPositions();
+                    for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
+                        Animal chosenAnimal = map.chooseAnimal(grassPosition);
+                        if (chosenAnimal != null) {
+                            map.eat(chosenAnimal);
+                        }
                     }
                 }
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
@@ -90,7 +108,5 @@ public class Simulation extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
-
 }
