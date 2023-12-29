@@ -36,6 +36,8 @@ public class StartPresenter {
     private TextField plantEnergyField;
     @FXML
     private TextField genomeLength;
+    @FXML
+    private TextField plantSpawnRate;
 
 
     @FXML
@@ -49,6 +51,7 @@ public class StartPresenter {
             int initialEnergy = Integer.parseInt(startEnergyField.getText());
             int plantEnergy = Integer.parseInt(plantEnergyField.getText());
             int genomelength = Integer.parseInt(genomeLength.getText());
+            int plantspawnRate = Integer.parseInt(plantSpawnRate.getText());
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
             Parent root = loader.load();
 
@@ -57,11 +60,11 @@ public class StartPresenter {
             simulationPresenter.setInitialEnergy(initialEnergy);
             simulationPresenter.setGenomeLength(genomelength);
             if (mapVariant == 0) {
-                Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber);
+                Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
                 simulationPresenter.setWorldMap(worldMap);
                 worldMap.addMapChangeListener(simulationPresenter);
             } else {
-                SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber);
+                SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
                 simulationPresenter.setWorldMap(worldMap);
                 worldMap.addMapChangeListener(simulationPresenter);
             }

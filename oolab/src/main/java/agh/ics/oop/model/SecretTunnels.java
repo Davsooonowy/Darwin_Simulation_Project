@@ -1,7 +1,6 @@
 package agh.ics.oop.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SecretTunnels extends AbstractWorldMap{
 
@@ -10,8 +9,8 @@ public class SecretTunnels extends AbstractWorldMap{
 
     private List<WorldElement> elements = new ArrayList<>();
 
-    public SecretTunnels(int height, int width,int plantEnergy, int initialGrassQuantity) {
-        super(width,height,plantEnergy,initialGrassQuantity);
+    public SecretTunnels(int height, int width,int plantEnergy, int initialGrassQuantity, int plantSpawnRate) {
+        super(width,height,plantEnergy,initialGrassQuantity,plantSpawnRate);
         Random random = new Random();
         int tunnelsQuantity = random.nextInt(width*height/10+2);
         if (tunnelsQuantity%2==1){
@@ -26,8 +25,8 @@ public class SecretTunnels extends AbstractWorldMap{
     }
 
     void placeGrass(int grassQuantity) {
-        RandomPositionGenerator randomPositionGenerator = new RandomPositionGenerator(width, height, grassQuantity);
-        for (Vector2d grassPosition : randomPositionGenerator) {
+        GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, getGrassPositions());
+        for (Vector2d grassPosition : grassGenerator) {
             grasses.put(grassPosition, new Grass(grassPosition));
         }
     }

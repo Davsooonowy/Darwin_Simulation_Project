@@ -1,19 +1,13 @@
 package agh.ics.oop.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Earth extends AbstractWorldMap {
 
-
-    private List<WorldElement> elements = new ArrayList<>();
-
-
-    public Earth(int height, int width, int plantEnergy,int initialGrassQuantity) {
-        super(width,height,plantEnergy,initialGrassQuantity);
+    public Earth(int height, int width, int plantEnergy, int initialGrassQuantity, int plantspawnRate) {
+        super(width,height,plantEnergy,initialGrassQuantity,plantspawnRate);
 
     }
     @Override

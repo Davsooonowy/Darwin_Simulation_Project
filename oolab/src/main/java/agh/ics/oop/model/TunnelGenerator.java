@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class TunnelGenerator extends GrassGenerator {
+public class TunnelGenerator extends AbstractGenerator {
     private final List<List<Vector2d>> positionTuples = new ArrayList<>();
 
     public TunnelGenerator(int maxWidth, int maxHeight, int maxPositions) {

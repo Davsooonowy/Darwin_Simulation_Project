@@ -17,6 +17,25 @@
             this.genomes = new Genomes(genomeLength);
         }
 
+        public Animal(Vector2d position, int energy, Genomes genomes) {
+            this.direction = MapDirection.randomDirection();
+            this.position = position;
+            this.energy = energy;
+            this.genomes = genomes;
+        }
+
+        public Animal reproduce(Animal other) {
+            int childEnergy = this.energy / 4 + other.energy / 4;
+            this.energy -= this.energy / 4;
+            other.energy -= other.energy / 4;
+
+            Genomes childGenomes = this.genomes.crossover(other.genomes);
+            childGenomes.mutate();
+
+            return new Animal(this.position, childEnergy, childGenomes);
+        }
+
+
         public int getEnergy() {
             return this.energy;
         }

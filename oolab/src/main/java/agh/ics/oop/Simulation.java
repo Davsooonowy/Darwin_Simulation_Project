@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 public class Simulation extends Thread {
     private final int numOfAnimals;
     private List<Animal> animals = new ArrayList<>();
-    private final WorldMap map;
+    private final AbstractWorldMap map;
     private final Object lock = new Object();
     private final int initialEnergy;
     private final int genomeLength;
     private volatile boolean running = true;
 
-    public Simulation(int numOfAnimals, WorldMap map, int initialEnergy, int genomeLength) {
+    public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength) {
         this.numOfAnimals = numOfAnimals;
         this.map = map;
         this.initialEnergy = initialEnergy;
@@ -55,23 +55,6 @@ public class Simulation extends Thread {
         return running;
     }
 
-//    public void animalsEatGrass() {
-//    List<Animal> animalsToEatGrass = new ArrayList<>();
-//    for (Animal animal : animals) {
-//        Vector2d animalPosition = animal.getPosition();
-//        if (map.objectAt(animalPosition) instanceof Grass) {
-//            animalsToEatGrass.add(animal);
-//        }
-//    }
-//
-//    for (Animal animal : animalsToEatGrass) {
-//        Vector2d animalPosition = animal.getPosition();
-//        Grass grass = (Grass) map.objectAt(animalPosition);
-//        animal.animalEnergyChange(plantEnergy);
-//        //((Earth) map).removeGrass(animalPosition);
-//    }
-//}
-
     @Override
     public void run() {
         try {
@@ -101,8 +84,7 @@ public class Simulation extends Thread {
                         map.eat(chosenAnimal);
                     }
                 }
-
-
+                map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
                 day++;
             }
         } catch (InterruptedException e) {

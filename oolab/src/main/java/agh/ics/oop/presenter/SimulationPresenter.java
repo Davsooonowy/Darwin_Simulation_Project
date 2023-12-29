@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationPresenter implements MapChangeListener {
-    private WorldMap worldMap;
+    private AbstractWorldMap worldMap;
     private int initialAnimalsNumber;
     private int initialEnergy;
     private int genomeLength;
@@ -30,7 +30,7 @@ public class SimulationPresenter implements MapChangeListener {
 
 
 
-    public void setWorldMap(WorldMap worldMap) {
+    public void setWorldMap(AbstractWorldMap worldMap) {
         this.worldMap = worldMap;
     }
 

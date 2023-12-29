@@ -16,8 +16,7 @@ public interface WorldMap extends MoveValidator {
 
     WorldElement objectAt(Vector2d position);
     Set<WorldElement> getElements();
-
     Boundary getCurrentBounds();
-    Set<Vector2d> getGrassPositions();
-    Animal chooseAnimal(Vector2d position);
+
+
 }

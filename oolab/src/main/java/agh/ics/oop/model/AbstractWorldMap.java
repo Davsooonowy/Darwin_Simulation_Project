@@ -3,7 +3,6 @@ package agh.ics.oop.model;
 import agh.ics.oop.model.util.MapVisualizer;
 
 import java.util.*;
-import java.util.UUID;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected Map<Vector2d, Animal> animals = new HashMap<>();
@@ -15,16 +14,21 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Vector2d lowerLeft;
     protected final Vector2d upperRight;
     protected final int plantEnergy;
+    protected final int plantSpawnRate;
 
     public Set<WorldElement> getElements() {
         return new HashSet<>(animals.values());
     }
-    @Override
+
     public Set<Vector2d> getGrassPositions() {
         return grasses.keySet();
     }
 
-    public AbstractWorldMap(int width, int height,int plantEnergy,int initialGrassQuantity) {
+    public int getPlantSpawnRate(){
+        return plantSpawnRate;
+    }
+
+    public AbstractWorldMap(int width, int height,int plantEnergy,int initialGrassQuantity, int plantSpawnRate) {
         this.height = height;
         this.width = width;
         this.plantEnergy=plantEnergy;
@@ -32,7 +36,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.upperRight = new Vector2d(width - 1, height - 1);
         visualizer = new MapVisualizer(this);
         mapChangeListeners = new ArrayList<>();
-        placeGrass(initialGrassQuantity);
+        this.plantSpawnRate = plantSpawnRate;
+        placeGrass(initialGrassQuantity,getGrassPositions());
     }
 
     public synchronized String toString() {
@@ -40,9 +45,9 @@ public abstract class AbstractWorldMap implements WorldMap {
         return visualizer.draw(boundaries.lowerLeft(), boundaries.upperRight());
     }
 
-    void placeGrass(int grassQuantity) {
-        RandomPositionGenerator randomPositionGenerator = new RandomPositionGenerator(width, height, grassQuantity);
-        for (Vector2d grassPosition : randomPositionGenerator) {
+    public void placeGrass(int grassQuantity, Set<Vector2d> grassPositions) {
+        GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, grassPositions);
+        for (Vector2d grassPosition : grassGenerator) {
             grasses.put(grassPosition, new Grass(grassPosition));
         }
     }
@@ -111,7 +116,6 @@ public void sortAnimals(List<Animal> animalsOnField) {
         return topAnimals.get(random.nextInt(topAnimals.size()));
     }
 
-    @Override
     public Animal chooseAnimal(Vector2d position) {
         List<Animal> animalsOnField = getAnimalsOnField(position);
 
@@ -161,6 +165,24 @@ public void sortAnimals(List<Animal> animalsOnField) {
     public Boolean verticaledge(Vector2d position) {
         return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
     }
+
+//    public void growGrass(int plantSpawnRate) {
+//    GrassGenerator grassGenerator = new GrassGenerator(width, height, plantSpawnRate, getGrassPositions());
+//    int placedGrass = 0;
+//
+//    for (Vector2d grassPosition : grassGenerator) {
+//        if (!grasses.containsKey(grassPosition)) {
+//            grasses.put(grassPosition, new Grass(grassPosition));
+//            placedGrass++;
+//        }
+//
+//        if (placedGrass == plantSpawnRate) {
+//            break;
+//        }
+//    }
+//}
+
+
 
     synchronized void mapChanged() {
         for (MapChangeListener listener : mapChangeListeners) {
