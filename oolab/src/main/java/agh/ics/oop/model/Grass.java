@@ -11,8 +11,4 @@ public class Grass implements WorldElement {
         return position;
 
     }
-
-    public String toString(){
-        return "*";
-    }
 }

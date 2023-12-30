@@ -1,18 +1,16 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 public class SimulationPresenter implements MapChangeListener {
     private AbstractWorldMap worldMap;
@@ -43,43 +41,10 @@ public class SimulationPresenter implements MapChangeListener {
         mapGrid.getRowConstraints().clear();
     }
 
-    private void drawAxes(Boundary boundary) {
-        drawXAxis(boundary);
-        drawYAxis(boundary);
-        Label label = new Label("x/y");
-        label.setMinWidth(50);
-        label.setMinHeight(50);
-        label.setAlignment(Pos.CENTER);
-        mapGrid.add(label, 0, 0);
-
-
-    }
-
-    private void drawXAxis(Boundary boundary) {
-        for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
-            Label label = new Label(Integer.toString(j));
-            label.setMinWidth(50);
-            label.setMinHeight(50);
-            label.setAlignment(Pos.CENTER);
-            mapGrid.add(label, j + 1 - boundary.lowerLeft().getX(), 0);
-        }
-    }
-
-    private void drawYAxis(Boundary boundary) {
-        for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
-            Label label = new Label(Integer.toString(i));
-            label.setMinWidth(50);
-            label.setMinHeight(50);
-            label.setAlignment(Pos.CENTER);
-            mapGrid.add(label, 0, boundary.upperRight().getY() - i + 1);
-        }
-    }
-
     @FXML
     public void drawMap() {
         clearGrid();
         Boundary boundary = worldMap.getCurrentBounds();
-        drawAxes(boundary);
         drawGrid(boundary);
     }
 
@@ -94,21 +59,55 @@ public class SimulationPresenter implements MapChangeListener {
 
     private void drawGridCell(Vector2d position, int column, int row) {
         WorldElement element = worldMap.objectAt(position);
-        Label label = createLabelForElement(element);
-        mapGrid.add(label, column, row);
+        Node node = createNodeForElement(element, position);
+        mapGrid.add(node, column, row);
     }
 
-    private Label createLabelForElement(WorldElement element) {
-        Label label;
-        if (element != null) {
-            label = new Label(element.toString());
+    private Node createNodeForElement(WorldElement element, Vector2d position) {
+    StackPane stackPane = createStackPane();
+    Rectangle cell = createCell(position);
+    stackPane.getChildren().add(cell);
+
+    if (element instanceof Animal) {
+        Circle circle = createAnimalCircle((Animal) element);
+        stackPane.getChildren().add(circle);
+    }
+
+    if (worldMap instanceof SecretTunnels && ((SecretTunnels) worldMap).getTunnel(position) != null) {
+        Rectangle tunnel = createTunnelRectangle();
+        stackPane.getChildren().add(tunnel);
+    }
+
+    return stackPane;
+}
+
+    private StackPane createStackPane() {
+        StackPane stackPane = new StackPane();
+        stackPane.setMinSize(50, 50);
+        stackPane.setMaxSize(50, 50);
+        return stackPane;
+    }
+
+    private Rectangle createCell(Vector2d position) {
+        Rectangle cell = new Rectangle(50, 50);
+        if (worldMap.grassAt(position) != null) {
+            cell.setFill(javafx.scene.paint.Color.GREEN);
         } else {
-            label = new Label(" ");
+            cell.setFill(javafx.scene.paint.Color.rgb(69, 38, 38));
         }
-        label.setMinWidth(50);
-        label.setMinHeight(50);
-        label.setAlignment(Pos.CENTER);
-        return label;
+        return cell;
+    }
+
+    private Circle createAnimalCircle(Animal animal) {
+        Circle circle = new Circle(10);
+        circle.setFill(animal.toColor(initialEnergy));
+        return circle;
+    }
+
+    private Rectangle createTunnelRectangle() {
+        Rectangle tunnel = new Rectangle(10, 10);
+        tunnel.setFill(javafx.scene.paint.Color.BLACK);
+        return tunnel;
     }
 
 

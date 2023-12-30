@@ -102,6 +102,7 @@ public class Simulation extends Thread {
                         }
                     }
                 }
+                Thread.sleep(1000);
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
                 day++;
             }

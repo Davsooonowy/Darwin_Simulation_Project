@@ -14,12 +14,15 @@ public class Genomes {
             this.genes.add(random.nextInt(8));
         }
     }
-
-    public Genomes(List<Integer> genes) {
-            this.genes = new ArrayList<>(genes);
-    }
-
     public List<Integer> getGenes() {
         return this.genes;
+    }
+
+    public Genomes GeneMerger(Animal mommy, Animal daddy){
+        int energysum = mommy.getEnergy() + daddy.getEnergy();
+        Animal stronger = mommy;
+        if (!(mommy.getEnergy() > daddy.getEnergy())){
+            stronger = daddy;
+        }
     }
 }

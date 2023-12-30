@@ -1,13 +1,11 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.model.util.MapVisualizer;
 
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap {
     protected Map<Vector2d, Animal> animals = new HashMap<>();
     public final HashMap<Vector2d, Grass> grasses = new HashMap<>();
-    protected MapVisualizer visualizer;
     protected ArrayList<MapChangeListener> mapChangeListeners;
     protected final int height;
     protected final int width;
@@ -34,15 +32,9 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.plantEnergy=plantEnergy;
         this.lowerLeft = new Vector2d(0, 0);
         this.upperRight = new Vector2d(width - 1, height - 1);
-        visualizer = new MapVisualizer(this);
         mapChangeListeners = new ArrayList<>();
         this.plantSpawnRate = plantSpawnRate;
         placeGrass(initialGrassQuantity,getGrassPositions());
-    }
-
-    public synchronized String toString() {
-        Boundary boundaries = getCurrentBounds();
-        return visualizer.draw(boundaries.lowerLeft(), boundaries.upperRight());
     }
 
     public void placeGrass(int grassQuantity, Set<Vector2d> grassPositions) {
@@ -81,26 +73,26 @@ public abstract class AbstractWorldMap implements WorldMap {
         mapChanged();
     }
     public List<Animal> getAnimalsOnField(Vector2d position) {
-    List<Animal> animalsOnField = new ArrayList<>();
-    for (Animal animal : animals.values()) {
-        if (animal.getPosition().equals(position)) {
-            animalsOnField.add(animal);
+        List<Animal> animalsOnField = new ArrayList<>();
+        for (Animal animal : animals.values()) {
+            if (animal.getPosition().equals(position)) {
+                animalsOnField.add(animal);
+            }
         }
+        return animalsOnField;
     }
-    return animalsOnField;
-}
 
-public void sortAnimals(List<Animal> animalsOnField) {
-    animalsOnField.sort((a1, a2) -> {
-        int energyComparison = Integer.compare(a2.getEnergy(), a1.getEnergy());
-        if (energyComparison != 0) return energyComparison;
+    public void sortAnimals(List<Animal> animalsOnField) {
+        animalsOnField.sort((a1, a2) -> {
+            int energyComparison = Integer.compare(a2.getEnergy(), a1.getEnergy());
+            if (energyComparison != 0) return energyComparison;
 
-        int ageComparison = Integer.compare(a2.getAge(), a1.getAge());
-        if (ageComparison != 0) return ageComparison;
+            int ageComparison = Integer.compare(a2.getAge(), a1.getAge());
+            if (ageComparison != 0) return ageComparison;
 
-        return Integer.compare(a2.getChildrenCount(), a1.getChildrenCount());
-    });
-}
+            return Integer.compare(a2.getChildrenCount(), a1.getChildrenCount());
+        });
+    }
 
     public Animal chooseTopAnimal(List<Animal> animalsOnField) {
         List<Animal> topAnimals = new ArrayList<>();
@@ -110,8 +102,8 @@ public void sortAnimals(List<Animal> animalsOnField) {
         for (int i = 1; i < animalsOnField.size(); i++) {
             Animal animal = animalsOnField.get(i);
             if (animal.getEnergy() == topAnimal.getEnergy() &&
-                animal.getAge() == topAnimal.getAge() &&
-                animal.getChildrenCount() == topAnimal.getChildrenCount()) {
+                    animal.getAge() == topAnimal.getAge() &&
+                    animal.getChildrenCount() == topAnimal.getChildrenCount()) {
                 topAnimals.add(animal);
             } else {
                 break;
@@ -171,24 +163,6 @@ public void sortAnimals(List<Animal> animalsOnField) {
     public Boolean verticaledge(Vector2d position) {
         return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
     }
-
-//    public void growGrass(int plantSpawnRate) {
-//    GrassGenerator grassGenerator = new GrassGenerator(width, height, plantSpawnRate, getGrassPositions());
-//    int placedGrass = 0;
-//
-//    for (Vector2d grassPosition : grassGenerator) {
-//        if (!grasses.containsKey(grassPosition)) {
-//            grasses.put(grassPosition, new Grass(grassPosition));
-//            placedGrass++;
-//        }
-//
-//        if (placedGrass == plantSpawnRate) {
-//            break;
-//        }
-//    }
-//}
-
-
 
     public synchronized void mapChanged() {
         for (MapChangeListener listener : mapChangeListeners) {

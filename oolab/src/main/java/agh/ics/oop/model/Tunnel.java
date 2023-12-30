@@ -16,10 +16,5 @@ public class Tunnel implements WorldElement{
     public Vector2d getConnected() {
         return connected;
     }
-
-
-    public String toString(){
-        return "[]";
-    }
 }
 
