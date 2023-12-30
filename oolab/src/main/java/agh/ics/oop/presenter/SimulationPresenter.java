@@ -17,9 +17,28 @@ public class SimulationPresenter implements MapChangeListener {
     private int initialAnimalsNumber;
     private int initialEnergy;
     private int genomeLength;
+    private int mingeneMutation;
+    private int maxgeneMutation;
+    private int reproduceEnergy;
+    private int parentEnergy;
+    private Animal trackedAnimal;
+
+
+
+    public void setMingeneMutation(int mingeneMutation){
+        this.mingeneMutation=mingeneMutation;
+    }
+
+    public void setMaxgeneMutation(int maxgeneMutation){
+        this.maxgeneMutation=maxgeneMutation;
+    }
 
     public void setGenomeLength(int genomeLength){
         this.genomeLength=genomeLength;
+    }
+
+    public void setreproduceEnergy(int reproduceEnergy){
+        this.reproduceEnergy=reproduceEnergy;
     }
 
     public void setInitialEnergy(int initialEnergy){
@@ -33,6 +52,10 @@ public class SimulationPresenter implements MapChangeListener {
 
     public void setInitialanimalsNumberField(int initialanimalsNumberField) {
         this.initialAnimalsNumber = initialanimalsNumberField;
+    }
+
+    public void setParentEnergy(int parentEnergy){
+        this.parentEnergy=parentEnergy;
     }
 
     private void clearGrid() {
@@ -130,7 +153,7 @@ public class SimulationPresenter implements MapChangeListener {
     public void onStartStopButtonClicked() {
         try {
             if (simulation == null) {
-                simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength);
+                simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation);
                 simulation.start();
                 startStopButton.setText("Stop");
             } else if (simulation.isRunning()) {

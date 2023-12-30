@@ -1,26 +1,33 @@
 package agh.ics.oop;
 
-import agh.ics.oop.model.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
+import agh.ics.oop.model.*;
 
 public class Simulation extends Thread {
     private final int numOfAnimals;
+    private final int parentEnergy;
     private List<Animal> animals = new ArrayList<>();
     private List<Animal> deadAnimals = new ArrayList<>();
     private final AbstractWorldMap map;
     private final Object lock = new Object();
     private final int initialEnergy;
     private final int genomeLength;
+    private final int reproductionEnergy;
+    private final int mingeneMutation;
+    private final int maxgeneMutation;
     private volatile boolean running = true;
 
-    public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength) {
+    public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
         this.numOfAnimals = numOfAnimals;
         this.map = map;
         this.initialEnergy = initialEnergy;
         this.genomeLength=genomeLength;
-        addAnimals();
+        this.reproductionEnergy = reproductionEnergy;
+        this.parentEnergy=parentEnergy;
+        this.mingeneMutation=mingeneMutation;
+        this.maxgeneMutation=maxgeneMutation;
+        addInitialAnimals();
     }
 
     public List<Animal> getAnimals() {
@@ -31,7 +38,8 @@ public class Simulation extends Thread {
         return this.deadAnimals;
     }
 
-    private void addAnimals() {
+
+    private void addInitialAnimals() {
         Boundary worldBoundary = map.getCurrentBounds();
         Random random = new Random();
         for (int i = 0; i < numOfAnimals; i++) {
@@ -39,7 +47,7 @@ public class Simulation extends Thread {
             int y = random.nextInt(worldBoundary.upperRight().getY());
             Vector2d randomPosition = new Vector2d(x, y);
 
-            Animal animal = new Animal(randomPosition, initialEnergy, genomeLength);
+            Animal animal = new Animal(randomPosition, initialEnergy, genomeLength, new HashSet<>(), reproductionEnergy, parentEnergy,mingeneMutation,maxgeneMutation);
             map.place(animal);
             animals.add(animal);
         }
@@ -59,7 +67,49 @@ public class Simulation extends Thread {
     public boolean isRunning() {
         return running;
     }
+    public void groupAndReproduceAnimals() {
 
+        HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
+        for (Animal animal : animals) {
+            if (animal.getEnergy() >= reproductionEnergy) {
+                Vector2d position = animal.getPosition();
+                if (!groupedAnimals.containsKey(position)) {
+                    groupedAnimals.put(position, new ArrayList<>());
+                }
+                groupedAnimals.get(position).add(animal);
+            }
+        }
+
+        for (List<Animal> group : groupedAnimals.values()) {
+            if (group.size() >= 2) {
+
+                Animal parent1 = map.chooseTopAnimal(group);
+                List<Animal> groupWithoutParent1 = new ArrayList<>(group);
+                groupWithoutParent1.remove(map.chooseTopAnimal(group));
+                Animal parent2 = map.chooseTopAnimal(groupWithoutParent1);
+
+                Animal child = parent1.reproduce(parent2);
+                animals.add(child);
+                map.place(child);
+
+                for (Animal animal : animals) {
+                    if (animal.offspring.contains(parent1) || animal.offspring.contains(parent2)) {
+                        animal.offspring.add(child);
+                        child.parents.add(animal);
+                    }
+                }
+
+                for (Animal deadAnimal : deadAnimals) {
+                    if (deadAnimal.offspring.contains(parent1) || deadAnimal.offspring.contains(parent2)) {
+                        deadAnimal.offspring.add(child);
+                        child.parents.add(deadAnimal);
+                    }
+                }
+
+            }
+
+        }
+    }
     @Override
     public void run() {
         try {
@@ -70,11 +120,11 @@ public class Simulation extends Thread {
                         lock.wait();
                     }
                 }
-                Thread.sleep(1000);
+                Thread.sleep(25);
 
                 // removing dead bodies
-                for(Animal animal: animals){
-                    if(animal.isDead()){
+                for (Animal animal : animals) {
+                    if (animal.isDead()) {
                         deadAnimals.add(animal);
                         map.removeDeadAnimal(animal);
                     }
@@ -85,7 +135,7 @@ public class Simulation extends Thread {
                 // moving
                 for (Animal animal : animals) {
                     map.move(animal, animal.getGenomes().getGenes().get(day % animal.getGenomes().getGenes().size()));
-                    if(map.getClass().equals(SecretTunnels.class)){
+                    if (map.getClass().equals(SecretTunnels.class)) {
                         ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
                     }
                     animal.animalEnergyChange(-1);
@@ -93,7 +143,7 @@ public class Simulation extends Thread {
                 }
 
 //              eating
-                if(!animals.isEmpty()) {
+                if (!animals.isEmpty()) {
                     Set<Vector2d> grassesToEat = map.getGrassPositions();
                     for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
                         Animal chosenAnimal = map.chooseAnimal(grassPosition);
@@ -102,9 +152,14 @@ public class Simulation extends Thread {
                         }
                     }
                 }
-                Thread.sleep(1000);
+                // reproducing
+                groupAndReproduceAnimals();
+                Thread.sleep(25);
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
+                System.out.println("Animals: " + animals.size());
+                System.out.println("Day: " + day);
                 day++;
+                System.out.println(deadAnimals.size());
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

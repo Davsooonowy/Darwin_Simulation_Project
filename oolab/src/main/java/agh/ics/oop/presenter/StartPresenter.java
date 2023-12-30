@@ -2,13 +2,10 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
-import agh.ics.oop.model.WorldMap;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -50,6 +47,7 @@ public class StartPresenter {
     private TextField plantSpawnRate;
 
 
+
     @FXML
     public void onStartClicked() {
         try {
@@ -74,6 +72,10 @@ public class StartPresenter {
             simulationPresenter.setInitialanimalsNumberField(animalNumber);
             simulationPresenter.setInitialEnergy(initialEnergy);
             simulationPresenter.setGenomeLength(genomelength);
+            simulationPresenter.setMingeneMutation(mingeneMutation);
+            simulationPresenter.setMaxgeneMutation(maxgeneMutation);
+            simulationPresenter.setreproduceEnergy(reproduceenergy);
+            simulationPresenter.setParentEnergy(parentenergy);
             if (mapVariant == 0) {
                 Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
                 simulationPresenter.setWorldMap(worldMap);
