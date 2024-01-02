@@ -3,6 +3,7 @@ package agh.ics.oop;
 import java.util.*;
 import java.util.stream.Collectors;
 import agh.ics.oop.model.*;
+import agh.ics.oop.model.AbstractWorldMap;
 
 public class Simulation extends Thread {
     private final int numOfAnimals;
@@ -52,6 +53,7 @@ public class Simulation extends Thread {
             animals.add(animal);
         }
     }
+
 
     public void pauseSimulation() {
         running = false;
@@ -110,59 +112,76 @@ public class Simulation extends Thread {
 
         }
     }
+    private void move_animals(int day){
+        for (Animal animal : animals) {
+            map.move(animal, animal.getGenomes().getGenes().get(day % animal.getGenomes().getGenes().size()));
+            if (map.getClass().equals(SecretTunnels.class)) {
+                ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
+            }
+            animal.animalEnergyChange(-1);
+            animal.increaseAge();
+        }
+    }
+
+    private void eat() {
+        if (!animals.isEmpty()) {
+            Set<Vector2d> grassesToEat = map.getGrassPositions();
+            for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
+                Animal chosenAnimal = map.chooseAnimal(grassPosition);
+                if (chosenAnimal != null) {
+                    map.eat(chosenAnimal);
+                }
+            }
+        }
+    }
+
+    private void removeDeadBodies(){
+        for (Animal animal : animals) {
+            if (animal.isDead()) {
+                deadAnimals.add(animal);
+                map.removeDeadAnimal(animal);
+            }
+        }
+        animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
+    }
+
+
     @Override
     public void run() {
         try {
             int day = 0;
-            while(true) {
+            while(!Thread.currentThread().isInterrupted()) {
                 synchronized (lock) {
                     while (!running) {
                         lock.wait();
                     }
                 }
-                Thread.sleep(25);
+                //thread sleep
+                Thread.sleep(100);
 
                 // removing dead bodies
-                for (Animal animal : animals) {
-                    if (animal.isDead()) {
-                        deadAnimals.add(animal);
-                        map.removeDeadAnimal(animal);
-                    }
-                }
-
-                animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
+                removeDeadBodies();
 
                 // moving
-                for (Animal animal : animals) {
-                    map.move(animal, animal.getGenomes().getGenes().get(day % animal.getGenomes().getGenes().size()));
-                    if (map.getClass().equals(SecretTunnels.class)) {
-                        ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
-                    }
-                    animal.animalEnergyChange(-1);
-                    animal.increaseAge();
-                }
+                move_animals(day);
 
-//              eating
-                if (!animals.isEmpty()) {
-                    Set<Vector2d> grassesToEat = map.getGrassPositions();
-                    for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
-                        Animal chosenAnimal = map.chooseAnimal(grassPosition);
-                        if (chosenAnimal != null) {
-                            map.eat(chosenAnimal);
-                        }
-                    }
-                }
+                //eating
+                eat();
                 // reproducing
                 groupAndReproduceAnimals();
-                Thread.sleep(25);
+
+                //thread sleep
+                Thread.sleep(100);
+
+                // spawning grass
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
-                System.out.println("Animals: " + animals.size());
-                System.out.println("Day: " + day);
+
+                //day increment
+                System.out.println("chuj");
                 day++;
-                System.out.println(deadAnimals.size());
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
     }
 }

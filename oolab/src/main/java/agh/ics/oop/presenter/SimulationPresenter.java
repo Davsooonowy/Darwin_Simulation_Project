@@ -2,6 +2,7 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.*;
+import agh.ics.oop.model.AbstractWorldMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -166,6 +167,10 @@ public class SimulationPresenter implements MapChangeListener {
             System.out.println(e.getMessage());
         }
     }
+    public Simulation getSimulation() {
+        return this.simulation;
+    }
+
     @FXML
     private GridPane mapGrid;
 }

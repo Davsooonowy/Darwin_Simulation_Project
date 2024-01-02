@@ -1,6 +1,8 @@
 package agh.ics.oop.model;
 
 
+import agh.ics.oop.model.*;
+
 import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap {

@@ -45,10 +45,9 @@
                 <TextField fx:id="genomeLength" promptText="Length of Genome" GridPane.columnIndex="1" GridPane.rowIndex="11" />
 
                 <Label text="Map Variant:" GridPane.columnIndex="0" GridPane.rowIndex="12"/>
-                <TextField fx:id="MapVariant" promptText="Wariant mapy" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-
+                <ChoiceBox fx:id="MapVariant" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                 <Label text="Behaviour Variant:" GridPane.columnIndex="0" GridPane.rowIndex="13"/>
-                <TextField fx:id="BehaviourVariant" promptText="Wariant zachowania" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                <ChoiceBox fx:id="BehaviourVariant" GridPane.columnIndex="1" GridPane.rowIndex="13" />
             </GridPane>
 
             <VBox spacing="10">

@@ -50,7 +50,12 @@ public class Genomes {
     public void Mutate(int mingeneMutation,int maxgeneMutation){
         List<Integer> allGenes = new ArrayList<>();
         Random random = new Random();
-        int numberOfMutations = random.nextInt(maxgeneMutation-mingeneMutation)+mingeneMutation;
+        int numberOfMutations;
+        if(mingeneMutation == maxgeneMutation){
+            numberOfMutations = mingeneMutation;
+        } else {
+            numberOfMutations = random.nextInt(maxgeneMutation - mingeneMutation) + mingeneMutation;
+        }
         for(int i = 0; i < this.genes.size(); i++){
             allGenes.add(i);
         }

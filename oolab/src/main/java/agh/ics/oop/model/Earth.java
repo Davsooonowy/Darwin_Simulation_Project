@@ -1,7 +1,5 @@
 package agh.ics.oop.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class Earth extends AbstractWorldMap {

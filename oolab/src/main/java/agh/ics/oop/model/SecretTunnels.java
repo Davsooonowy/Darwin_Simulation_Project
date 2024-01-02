@@ -2,7 +2,7 @@ package agh.ics.oop.model;
 
 import java.util.*;
 
-public class SecretTunnels extends AbstractWorldMap{
+public class SecretTunnels extends AbstractWorldMap {
 
     private final HashMap<Vector2d,Tunnel> tunnels = new HashMap<>();
     private List<List<Vector2d>> tunnelsConnections = new ArrayList<>();
