@@ -2,11 +2,14 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -48,6 +51,8 @@ public class StartPresenter {
     private TextField genomeLength;
     @FXML
     private TextField plantSpawnRate;
+    @FXML
+    private Button startButton;
 
 
     private void validateTextField(TextField textField, Predicate<String> validationFunction) {
@@ -100,6 +105,39 @@ public class StartPresenter {
         validateTextField(maxGeneMutation, this::isInRange0To8);
         validateTextFieldWithComparison(minGeneMutation,maxGeneMutation);
         validateTextFieldWithComparison(parentEnergy,reproduceEnergy);
+
+        BooleanBinding areFieldsEmpty = Bindings.createBooleanBinding(() ->
+                        startEnergyField.getText().isEmpty() ||
+                                plantEnergyField.getText().isEmpty() ||
+                                widthField.getText().isEmpty() ||
+                                heightField.getText().isEmpty() ||
+                                initialgrassNumberField.getText().isEmpty() ||
+                                initialanimalsNumberField.getText().isEmpty() ||
+                                genomeLength.getText().isEmpty() ||
+                                plantSpawnRate.getText().isEmpty() ||
+                                parentEnergy.getText().isEmpty() ||
+                                reproduceEnergy.getText().isEmpty() ||
+                                minGeneMutation.getText().isEmpty() ||
+                                maxGeneMutation.getText().isEmpty() ||
+                                MapVariant.getValue() == null ||
+                                BehaviourVariant.getValue() == null,
+                startEnergyField.textProperty(),
+                plantEnergyField.textProperty(),
+                widthField.textProperty(),
+                heightField.textProperty(),
+                initialgrassNumberField.textProperty(),
+                initialanimalsNumberField.textProperty(),
+                genomeLength.textProperty(),
+                plantSpawnRate.textProperty(),
+                parentEnergy.textProperty(),
+                reproduceEnergy.textProperty(),
+                minGeneMutation.textProperty(),
+                maxGeneMutation.textProperty(),
+                MapVariant.valueProperty(),
+                BehaviourVariant.valueProperty()
+        );
+
+        startButton.disableProperty().bind(areFieldsEmpty);
     }
 
 
