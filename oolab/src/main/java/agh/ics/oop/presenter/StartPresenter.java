@@ -1,5 +1,7 @@
 package agh.ics.oop.presenter;
 
+import agh.ics.oop.Simulation;
+import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
 import javafx.beans.binding.Bindings;
@@ -13,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -53,6 +56,8 @@ public class StartPresenter {
     private TextField plantSpawnRate;
     @FXML
     private Button startButton;
+    private SimulationEngine simulationEngine;
+    private Simulation simulation;
 
 
     private void validateTextField(TextField textField, Predicate<String> validationFunction) {
@@ -67,23 +72,32 @@ public class StartPresenter {
         return value.matches("\\d*") && Integer.parseInt(value) >= 0;
     }
 
-    private boolean isInRange0To8(String value) {
-        return value.matches("[0-8]*");
-    }
-
-    private void validateTextFieldWithComparison(TextField textFieldToValidate, TextField textFieldToCompare) {
-    textFieldToValidate.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (!newValue.matches("\\d*") || Integer.parseInt(newValue) > Integer.parseInt(textFieldToCompare.getText())) {
-            textFieldToValidate.setText(oldValue);
+    private void validateTextFieldWithComparison(TextField lowerValue, TextField biggerValue) {
+    lowerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        String text = lowerValue.getText();
+        if (!newValue) {
+            if (!text.matches("\\d*") || Integer.parseInt(text) > Integer.parseInt(biggerValue.getText())) {
+                lowerValue.setText("");
+                infoLabel.setText(text + " is not legal input in " + lowerValue.getId() + "TextField");
+            }
+        } else {
+            infoLabel.setText("");
         }
     });
 
-    textFieldToCompare.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (!newValue.matches("\\d*") || Integer.parseInt(newValue) < Integer.parseInt(textFieldToValidate.getText())) {
-            textFieldToCompare.setText(oldValue);
+    biggerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        String text = biggerValue.getText();
+        if (!newValue) {
+            if (!text.matches("\\d*") || Integer.parseInt(text) < Integer.parseInt(lowerValue.getText())) {
+                biggerValue.setText("");
+                infoLabel.setText(text + " is not legal input in " + biggerValue.getId() + "TextField");
+            }
+        } else {
+            infoLabel.setText("");
         }
     });
 }
+
     private int parseTextFieldToInt(TextField textField) {
         return Integer.parseInt(textField.getText());
     }
@@ -101,26 +115,28 @@ public class StartPresenter {
         validateTextField(plantSpawnRate, this::isNonNegativeInteger);
         validateTextField(parentEnergy, this::isNonNegativeInteger);
         validateTextField(reproduceEnergy, this::isNonNegativeInteger);
-        validateTextField(minGeneMutation, this::isInRange0To8);
-        validateTextField(maxGeneMutation, this::isInRange0To8);
+        validateTextField(minGeneMutation, this::isNonNegativeInteger);
+        validateTextField(maxGeneMutation, this::isNonNegativeInteger);
         validateTextFieldWithComparison(minGeneMutation,maxGeneMutation);
         validateTextFieldWithComparison(parentEnergy,reproduceEnergy);
+        validateTextFieldWithComparison(maxGeneMutation,genomeLength);
+        validateTextFieldWithComparison(minGeneMutation, genomeLength);
 
         BooleanBinding areFieldsEmpty = Bindings.createBooleanBinding(() ->
                         startEnergyField.getText().isEmpty() ||
-                                plantEnergyField.getText().isEmpty() ||
-                                widthField.getText().isEmpty() ||
-                                heightField.getText().isEmpty() ||
-                                initialgrassNumberField.getText().isEmpty() ||
-                                initialanimalsNumberField.getText().isEmpty() ||
-                                genomeLength.getText().isEmpty() ||
-                                plantSpawnRate.getText().isEmpty() ||
-                                parentEnergy.getText().isEmpty() ||
-                                reproduceEnergy.getText().isEmpty() ||
-                                minGeneMutation.getText().isEmpty() ||
-                                maxGeneMutation.getText().isEmpty() ||
-                                MapVariant.getValue() == null ||
-                                BehaviourVariant.getValue() == null,
+                        plantEnergyField.getText().isEmpty() ||
+                        widthField.getText().isEmpty() ||
+                        heightField.getText().isEmpty() ||
+                        initialgrassNumberField.getText().isEmpty() ||
+                        initialanimalsNumberField.getText().isEmpty() ||
+                        genomeLength.getText().isEmpty() ||
+                        plantSpawnRate.getText().isEmpty() ||
+                        parentEnergy.getText().isEmpty() ||
+                        reproduceEnergy.getText().isEmpty() ||
+                        minGeneMutation.getText().isEmpty() ||
+                        maxGeneMutation.getText().isEmpty() ||
+                        MapVariant.getValue() == null ||
+                        BehaviourVariant.getValue() == null,
                 startEnergyField.textProperty(),
                 plantEnergyField.textProperty(),
                 widthField.textProperty(),
@@ -183,6 +199,9 @@ public class StartPresenter {
 
             Stage simulationStage = new Stage();
             simulationStage.setScene(new Scene(root));
+            simulationStage.setOnCloseRequest(event -> {
+                simulationEngine.interruptSimulation(simulation.getSimulationId());
+            });
             simulationStage.show();
         } catch (IOException e) {
             e.printStackTrace();

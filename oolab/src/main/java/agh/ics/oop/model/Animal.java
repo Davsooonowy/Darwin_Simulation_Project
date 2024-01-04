@@ -1,7 +1,6 @@
     package agh.ics.oop.model;
 
     import javafx.scene.paint.Paint;
-
     import java.util.HashSet;
     import java.util.List;
 

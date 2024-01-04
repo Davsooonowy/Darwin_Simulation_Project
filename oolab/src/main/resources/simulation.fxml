@@ -7,7 +7,8 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
-            fx:controller="agh.ics.oop.presenter.SimulationPresenter">
+            fx:controller="agh.ics.oop.presenter.SimulationPresenter"
+            stylesheets="@styles.css">
     <center>
         <VBox alignment="CENTER">
             <Button fx:id="startStopButton" text="Start" onAction="#onStartStopButtonClicked" />

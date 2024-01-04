@@ -6,6 +6,7 @@ import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 
 public class Simulation extends Thread {
+    private final UUID id;
     private final int numOfAnimals;
     private final int parentEnergy;
     private List<Animal> animals = new ArrayList<>();
@@ -28,7 +29,11 @@ public class Simulation extends Thread {
         this.parentEnergy=parentEnergy;
         this.mingeneMutation=mingeneMutation;
         this.maxgeneMutation=maxgeneMutation;
+        this.id = UUID.randomUUID();
         addInitialAnimals();
+    }
+    public UUID getSimulationId() {
+        return id;
     }
 
     public List<Animal> getAnimals() {
@@ -145,6 +150,9 @@ public class Simulation extends Thread {
         animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
     }
 
+    public void interruptSimulation() {
+        this.interrupt();
+    }
 
     @Override
     public void run() {
@@ -156,8 +164,10 @@ public class Simulation extends Thread {
                         lock.wait();
                     }
                 }
+
                 //thread sleep
                 Thread.sleep(100);
+
 
                 // removing dead bodies
                 removeDeadBodies();
@@ -177,8 +187,8 @@ public class Simulation extends Thread {
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
 
                 //day increment
-                System.out.println("chuj");
                 day++;
+                System.out.println("chuj");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

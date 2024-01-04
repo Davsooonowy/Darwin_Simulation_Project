@@ -1,0 +1,90 @@
+* {
+    -fx-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+BorderPane {
+    background-color: #f0f0f0;
+}
+
+
+center {
+    -fx-padding: 20;
+}
+
+
+VBox {
+    -fx-spacing: 15;
+}
+
+
+Button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-padding: 10 20;
+}
+
+
+GridPane {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+
+Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+
+TextField {
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+    -fx-background-radius: 5;
+}
+
+
+ChoiceBox {
+    -fx-font-size: 14px;
+    -fx-padding: 8;
+    -fx-background-radius: 5;
+}
+
+
+HBox {
+    -fx-spacing: 20;
+}
+
+
+#startButton {
+    -fx-background-color: #27ae60;
+}
+
+
+#mapGrid {
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-alignment: center;
+}
+
+
+#widthField, #heightField, #startEnergyField, #plantEnergyField,
+#initialanimalsNumberField, #initialgrassNumberField, #plantSpawnRate,
+#reproduceEnergy, #parentEnergy, #minGeneMutation, #maxGeneMutation,
+#genomeLength, #MapVariant, #BehaviourVariant {
+    -fx-pref-width: 200;
+}
+
+/* Center input fields */
+GridPane {
+    -fx-alignment: center;
+}
+
+/* Move StartButton below input fields */
+VBox {
+    -fx-alignment: center;
+}
+

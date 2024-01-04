@@ -1,6 +1,7 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
+import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 import javafx.application.Platform;
@@ -9,9 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+
+import java.util.ArrayList;
 
 public class SimulationPresenter implements MapChangeListener {
     private AbstractWorldMap worldMap;
@@ -22,7 +26,7 @@ public class SimulationPresenter implements MapChangeListener {
     private int maxgeneMutation;
     private int reproduceEnergy;
     private int parentEnergy;
-    private Animal trackedAnimal;
+    private SimulationEngine simulationEngine;
 
 
 
@@ -151,22 +155,24 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     @FXML
-    public void onStartStopButtonClicked() {
-        try {
-            if (simulation == null) {
-                simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation);
-                simulation.start();
-                startStopButton.setText("Stop");
-            } else if (simulation.isRunning()) {
-                simulation.pauseSimulation();
-                startStopButton.setText("Start");
-            } else {
-                simulation.resumeSimulation();
-                startStopButton.setText("Stop");
-            }} catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+public void onStartStopButtonClicked() {
+    try {
+        if (simulationEngine == null) {
+            simulationEngine = new SimulationEngine(new ArrayList<>());
+            simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation);
+            simulationEngine.getSimulations().add(simulation);
+            simulationEngine.runAsync();
+            startStopButton.setText("Stop");
+        } else if (simulationEngine.isRunning()) {
+            simulationEngine.pauseSimulation();
+            startStopButton.setText("Start");
+        } else {
+            simulationEngine.resumeSimulation();
+            startStopButton.setText("Stop");
+        }} catch (Exception e) {
+        System.out.println(e.getMessage());
     }
+}
     public Simulation getSimulation() {
         return this.simulation;
     }
