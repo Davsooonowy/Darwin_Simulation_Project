@@ -166,6 +166,19 @@ public abstract class AbstractWorldMap implements WorldMap {
         return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
     }
 
+    public int getFreeFields() {
+        List<Vector2d> freeFields = new ArrayList<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Vector2d position = new Vector2d(x, y);
+                if (objectAt(position) instanceof Grass) {
+                    freeFields.add(position);
+                }
+            }
+        }
+        return freeFields.size();
+    }
+
     public synchronized void mapChanged() {
         for (MapChangeListener listener : mapChangeListeners) {
             listener.mapChanged(this);

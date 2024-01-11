@@ -189,7 +189,6 @@ public class Simulation extends Thread {
 
                 //day increment
                 day++;
-                System.out.println("chuj");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
