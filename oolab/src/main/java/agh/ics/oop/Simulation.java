@@ -6,7 +6,6 @@ import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 
 public class Simulation extends Thread {
-    private final UUID id;
     private final int numOfAnimals;
     private final int parentEnergy;
     private List<Animal> animals = new ArrayList<>();
@@ -18,9 +17,10 @@ public class Simulation extends Thread {
     private final int reproductionEnergy;
     private final int mingeneMutation;
     private final int maxgeneMutation;
+    private final String behaviourvariant;
     private volatile boolean running = true;
 
-    public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
+    public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation, String behaviourvariant) {
         this.numOfAnimals = numOfAnimals;
         this.map = map;
         this.initialEnergy = initialEnergy;
@@ -29,11 +29,8 @@ public class Simulation extends Thread {
         this.parentEnergy=parentEnergy;
         this.mingeneMutation=mingeneMutation;
         this.maxgeneMutation=maxgeneMutation;
-        this.id = UUID.randomUUID();
+        this.behaviourvariant = behaviourvariant;
         addInitialAnimals();
-    }
-    public UUID getSimulationId() {
-        return id;
     }
 
     public List<Animal> getAnimals() {
@@ -119,7 +116,15 @@ public class Simulation extends Thread {
     }
     private void move_animals(int day){
         for (Animal animal : animals) {
-            map.move(animal, animal.getGenomes().getGenes().get(day % animal.getGenomes().getGenes().size()));
+            if(behaviourvariant.equals("Complete predestination")) {
+                map.move(animal, animal.getGenomes().getGenes().get(day % genomeLength));
+            } else{
+                if((day/genomeLength)%2==0){
+                    map.move(animal,animal.getGenomes().getGenes().get(day % genomeLength));
+                } else {
+                    map.move(animal,animal.getGenomes().getGenes().get(genomeLength - 1 - (day % genomeLength)));
+                }
+            }
             if (map.getClass().equals(SecretTunnels.class)) {
                 ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
             }
@@ -148,10 +153,6 @@ public class Simulation extends Thread {
             }
         }
         animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
-    }
-
-    public void interruptSimulation() {
-        this.interrupt();
     }
 
     @Override

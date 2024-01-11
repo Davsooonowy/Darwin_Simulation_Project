@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public abstract class AbstractApp extends Application {
-
     protected FXMLLoader loader;
     protected abstract String getFXMLPath();
 

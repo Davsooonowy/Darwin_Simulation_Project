@@ -9,8 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -26,6 +24,7 @@ public class SimulationPresenter implements MapChangeListener {
     private int maxgeneMutation;
     private int reproduceEnergy;
     private int parentEnergy;
+    private String behaviourvariant;
     private SimulationEngine simulationEngine;
 
 
@@ -61,6 +60,10 @@ public class SimulationPresenter implements MapChangeListener {
 
     public void setParentEnergy(int parentEnergy){
         this.parentEnergy=parentEnergy;
+    }
+
+    public void setBehaviourVariant(String behaviourvariant){
+        this.behaviourvariant = behaviourvariant;
     }
 
     private void clearGrid() {
@@ -159,7 +162,7 @@ public void onStartStopButtonClicked() {
     try {
         if (simulationEngine == null) {
             simulationEngine = new SimulationEngine(new ArrayList<>());
-            simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation);
+            simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation, behaviourvariant);
             simulationEngine.getSimulations().add(simulation);
             simulationEngine.runAsync();
             startStopButton.setText("Stop");
@@ -173,9 +176,6 @@ public void onStartStopButtonClicked() {
         System.out.println(e.getMessage());
     }
 }
-    public Simulation getSimulation() {
-        return this.simulation;
-    }
 
     @FXML
     private GridPane mapGrid;

@@ -19,6 +19,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class StartPresenter {
@@ -60,25 +61,30 @@ public class StartPresenter {
     private Simulation simulation;
 
 
-    private void validateTextField(TextField textField, Predicate<String> validationFunction) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!validationFunction.test(newValue)) {
-                textField.setText(oldValue);
-            }
-        });
-    }
+    private void validateTextField(TextField textField, BiPredicate<String, Integer> validationFunction, int minVal) {
+    textField.textProperty().addListener((observable, oldValue, newValue) -> {
+        if (!validationFunction.test(newValue, minVal)) {
+            textField.setText(oldValue);
+        }
+    });
+}
 
-    private boolean isNonNegativeInteger(String value) {
-        return value.matches("\\d*") && Integer.parseInt(value) >= 0;
+private boolean isNonNegativeInteger(String value, int minVal) {
+    if (value == null || value.isEmpty()) {
+        return false;
     }
+    if (!value.matches("\\d*")) {
+        return false;
+    }
+    return Integer.parseInt(value) >= minVal;
+}
 
     private void validateTextFieldWithComparison(TextField lowerValue, TextField biggerValue) {
     lowerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
         String text = lowerValue.getText();
-        if (!newValue) {
+        if (!newValue && !text.isEmpty()) {
             if (!text.matches("\\d*") || Integer.parseInt(text) > Integer.parseInt(biggerValue.getText())) {
                 lowerValue.setText("");
-                infoLabel.setText(text + " is not legal input in " + lowerValue.getId() + "TextField");
             }
         } else {
             infoLabel.setText("");
@@ -87,10 +93,9 @@ public class StartPresenter {
 
     biggerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
         String text = biggerValue.getText();
-        if (!newValue) {
+        if (!newValue && !text.isEmpty()) {
             if (!text.matches("\\d*") || Integer.parseInt(text) < Integer.parseInt(lowerValue.getText())) {
                 biggerValue.setText("");
-                infoLabel.setText(text + " is not legal input in " + biggerValue.getId() + "TextField");
             }
         } else {
             infoLabel.setText("");
@@ -104,19 +109,19 @@ public class StartPresenter {
     @FXML
     public void initialize() {
         MapVariant.setItems(FXCollections.observableArrayList("Earth", "Secret Tunnels"));
-        BehaviourVariant.setItems(FXCollections.observableArrayList("a", "dup"));
-        validateTextField(startEnergyField, this::isNonNegativeInteger);
-        validateTextField(plantEnergyField, this::isNonNegativeInteger);
-        validateTextField(widthField, this::isNonNegativeInteger);
-        validateTextField(heightField, this::isNonNegativeInteger);
-        validateTextField(initialgrassNumberField, this::isNonNegativeInteger);
-        validateTextField(initialanimalsNumberField, this::isNonNegativeInteger);
-        validateTextField(genomeLength, this::isNonNegativeInteger);
-        validateTextField(plantSpawnRate, this::isNonNegativeInteger);
-        validateTextField(parentEnergy, this::isNonNegativeInteger);
-        validateTextField(reproduceEnergy, this::isNonNegativeInteger);
-        validateTextField(minGeneMutation, this::isNonNegativeInteger);
-        validateTextField(maxGeneMutation, this::isNonNegativeInteger);
+        BehaviourVariant.setItems(FXCollections.observableArrayList("Complete predestination", "An Unexpected Journey"));
+        validateTextField(startEnergyField, this::isNonNegativeInteger, 0);
+        validateTextField(plantEnergyField, this::isNonNegativeInteger,0);
+        validateTextField(widthField, this::isNonNegativeInteger,1);
+        validateTextField(heightField, this::isNonNegativeInteger,1);
+        validateTextField(initialgrassNumberField, this::isNonNegativeInteger,0);
+        validateTextField(initialanimalsNumberField, this::isNonNegativeInteger,0);
+        validateTextField(genomeLength, this::isNonNegativeInteger,1);
+        validateTextField(plantSpawnRate, this::isNonNegativeInteger,0);
+        validateTextField(parentEnergy, this::isNonNegativeInteger, 0);
+        validateTextField(reproduceEnergy, this::isNonNegativeInteger, 0);
+        validateTextField(minGeneMutation, this::isNonNegativeInteger, 0);
+        validateTextField(maxGeneMutation, this::isNonNegativeInteger, 0);
         validateTextFieldWithComparison(minGeneMutation,maxGeneMutation);
         validateTextFieldWithComparison(parentEnergy,reproduceEnergy);
         validateTextFieldWithComparison(maxGeneMutation,genomeLength);
@@ -185,6 +190,7 @@ public class StartPresenter {
             simulationPresenter.setMaxgeneMutation(maxgeneMutation);
             simulationPresenter.setreproduceEnergy(reproduceenergy);
             simulationPresenter.setParentEnergy(parentenergy);
+            simulationPresenter.setBehaviourVariant(behaviourvariant);
             if (selectedOption.equals("Earth")) {
                 Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
                 simulationPresenter.setWorldMap(worldMap);
@@ -199,9 +205,6 @@ public class StartPresenter {
 
             Stage simulationStage = new Stage();
             simulationStage.setScene(new Scene(root));
-            simulationStage.setOnCloseRequest(event -> {
-                simulationEngine.interruptSimulation(simulation.getSimulationId());
-            });
             simulationStage.show();
         } catch (IOException e) {
             e.printStackTrace();

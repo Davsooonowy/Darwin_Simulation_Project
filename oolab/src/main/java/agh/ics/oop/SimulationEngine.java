@@ -41,15 +41,6 @@ public class SimulationEngine implements Runnable {
         return false;
     }
 
-    public void interruptSimulation(UUID simulationId) {
-        for (Simulation simulation : this.simulations) {
-            if (simulation.getSimulationId().equals(simulationId)) {
-                simulation.interruptSimulation();
-                break;
-            }
-        }
-    }
-
     @Override
     public void run() {
         System.out.println("Thread started.");
