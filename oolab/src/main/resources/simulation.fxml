@@ -4,6 +4,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.GridPane?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="800.0"
@@ -13,6 +17,17 @@
         <VBox alignment="CENTER">
             <Button fx:id="startStopButton" text="Start" onAction="#onStartStopButtonClicked" />
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"  />
+            <Label text="Simulation Statistics:" />
+<LineChart fx:id="statisticsChart" prefHeight="200" prefWidth="800">
+    <xAxis>
+        <NumberAxis />
+    </xAxis>
+    <yAxis>
+        <NumberAxis />
+    </yAxis>
+</LineChart>
+            <Label text="Most Common Genotypes:" />
+            <TextField fx:id="mostCommonGenotypesField" editable="false" prefWidth="160" />
         </VBox>
     </center>
 </BorderPane>

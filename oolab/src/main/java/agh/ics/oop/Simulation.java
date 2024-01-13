@@ -72,7 +72,6 @@ public class Simulation extends Thread {
         return running;
     }
     public void groupAndReproduceAnimals() {
-
         HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
         for (Animal animal : animals) {
             if (animal.getEnergy() >= reproductionEnergy) {
@@ -109,9 +108,7 @@ public class Simulation extends Thread {
                         child.parents.add(deadAnimal);
                     }
                 }
-
             }
-
         }
     }
     private void move_animals(int day){

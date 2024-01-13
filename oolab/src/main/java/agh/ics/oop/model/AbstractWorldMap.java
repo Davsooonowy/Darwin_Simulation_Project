@@ -167,16 +167,16 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public int getFreeFields() {
-        List<Vector2d> freeFields = new ArrayList<>();
+        List<Vector2d> occupiedFields = new ArrayList<>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Vector2d position = new Vector2d(x, y);
-                if (objectAt(position) instanceof Grass) {
-                    freeFields.add(position);
+                if (objectAt(position) instanceof Animal) {
+                    occupiedFields.add(position);
                 }
             }
         }
-        return freeFields.size();
+        return width * height - occupiedFields.size();
     }
 
     public synchronized void mapChanged() {

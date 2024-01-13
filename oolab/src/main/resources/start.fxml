@@ -49,6 +49,8 @@
                 <ChoiceBox fx:id="MapVariant" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                 <Label text="Behaviour Variant:" GridPane.columnIndex="0" GridPane.rowIndex="13"/>
                 <ChoiceBox fx:id="BehaviourVariant" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                <Label text="Generate CSV file?:" GridPane.columnIndex="0" GridPane.rowIndex="14"/>
+                <CheckBox fx:id="generateCsvCheckBox"  GridPane.columnIndex="1" GridPane.rowIndex="14"/>
             </GridPane>
 
             <VBox spacing="10">

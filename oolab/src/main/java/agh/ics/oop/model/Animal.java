@@ -50,25 +50,44 @@
         this.maxgeneMutation=maxgeneMutation;
     }
 
-    public void addParent(Animal parent){
-        this.parents.add(parent);
-    }
-    public void addChild(Animal child){
-        this.offspring.add(child);
-    }
+//    public void addParent(Animal parent){
+//        this.parents.add(parent);
+//    }
+//    public void addChild(Animal child){
+//        this.offspring.add(child);
+//    }
 
     // sex
-    public Animal reproduce(Animal partner) {
-        List<Integer> childGenes = this.genomes.GeneMerger(this, partner);
-        Genomes childGenomes = new Genomes(childGenes,this.mingeneMutation,this.maxgeneMutation);
-        HashSet<Animal> childParents = new HashSet<>();
-        childParents.add(this);
-        childParents.add(partner);
-        this.animalEnergyChange(-this.parentEnergy);
-        partner.animalEnergyChange(-this.parentEnergy);
-        return new Animal(this.position, 2 * this.parentEnergy, childGenomes, new HashSet<>(), childParents, this.REPRODUCTION_ENERGY, this.parentEnergy,this.mingeneMutation,this.maxgeneMutation);
+public Animal reproduce(Animal partner) {
+    List<Integer> childGenes = this.genomes.GeneMerger(this, partner);
+    Genomes childGenomes = new Genomes(childGenes,this.mingeneMutation,this.maxgeneMutation);
+    HashSet<Animal> childParents = new HashSet<>();
+    childParents.add(this);
+    childParents.add(partner);
+    this.animalEnergyChange(-this.parentEnergy);
+    partner.animalEnergyChange(-this.parentEnergy);
+    Animal child = new Animal(this.position, 2 * this.parentEnergy, childGenomes, new HashSet<>(), childParents, this.REPRODUCTION_ENERGY, this.parentEnergy,this.mingeneMutation,this.maxgeneMutation);
 
+
+    child.parents.add(this);
+    child.parents.add(partner);
+    this.offspring.add(child);
+    partner.offspring.add(child);
+
+
+    for (Animal grandParent : this.parents) {
+        grandParent.offspring.add(child);
     }
+    for (Animal grandParent : partner.parents) {
+        grandParent.offspring.add(child);
+    }
+
+
+    child.parents.addAll(this.parents);
+    child.parents.addAll(partner.parents);
+
+    return child;
+}
 
 
     public int getEnergy() {
@@ -76,6 +95,9 @@
     }
     public int getChildrenCount() {
         return this.offspring.size();
+    }
+    public int getParentsCount() {
+        return this.parents.size();
     }
 
     public void animalEnergyChange(int val) {

@@ -2,17 +2,24 @@ package agh.ics.oop.presenter;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.SimulationEngine;
+import agh.ics.oop.SimulationStatistics;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.control.TextField;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class SimulationPresenter implements MapChangeListener {
@@ -27,7 +34,33 @@ public class SimulationPresenter implements MapChangeListener {
     private String behaviourvariant;
     private SimulationEngine simulationEngine;
 
+    @FXML
+    private TextField totalAnimalsField;
 
+    @FXML
+    private TextField totalPlantsField;
+
+    @FXML
+    private TextField freeFieldsField;
+
+    @FXML
+    private TextField mostCommonGenotypesField;
+
+    @FXML
+    private TextField averageEnergyField;
+
+    @FXML
+    private TextField averageLifeSpanField;
+
+    @FXML
+    private TextField averageChildrenCountField;
+
+    @FXML
+    private LineChart<Number, Number> statisticsChart;
+
+    private PrintWriter csvWriter;
+    private boolean generateCsv;
+    private int day = 0;
 
     public void setMingeneMutation(int mingeneMutation){
         this.mingeneMutation=mingeneMutation;
@@ -64,6 +97,9 @@ public class SimulationPresenter implements MapChangeListener {
 
     public void setBehaviourVariant(String behaviourvariant){
         this.behaviourvariant = behaviourvariant;
+    }
+    public void setGenerateCsv(boolean generateCsv) {
+        this.generateCsv = generateCsv;
     }
 
     private void clearGrid() {
@@ -144,7 +180,41 @@ public class SimulationPresenter implements MapChangeListener {
 
     @Override
     public void mapChanged(WorldMap worldMap) {
-        Platform.runLater(this::drawMap);
+        Platform.runLater(() -> {
+            drawMap();
+            updateStatistics(worldMap);
+            day++;
+        });
+    }
+
+    private void updateStatistics(WorldMap map) {
+        SimulationStatistics stats = new SimulationStatistics(simulation, (AbstractWorldMap) map);
+        XYChart.Series<Number, Number> series = statisticsChart.getData().get(0);
+        XYChart.Series<Number, Number> totalPlantsSeries = statisticsChart.getData().get(1);
+        totalPlantsSeries.getData().add(new XYChart.Data<>(day, stats.getTotalPlants()));
+        XYChart.Series<Number, Number> freeFieldsSeries = statisticsChart.getData().get(2);
+        freeFieldsSeries.getData().add(new XYChart.Data<>(day, stats.getFreeFields()));
+        XYChart.Series<Number, Number> averageEnergySeries = statisticsChart.getData().get(3);
+        averageEnergySeries.getData().add(new XYChart.Data<>(day, stats.getAverageEnergy()));
+        XYChart.Series<Number, Number> averageLifeSpanSeries = statisticsChart.getData().get(4);
+        averageLifeSpanSeries.getData().add(new XYChart.Data<>(day, stats.getAverageLifeSpan()));
+        XYChart.Series<Number, Number> averageChildrenCountSeries = statisticsChart.getData().get(5);
+        averageChildrenCountSeries.getData().add(new XYChart.Data<>(day, stats.getAverageChildrenCount()));
+        series.getData().add(new XYChart.Data<>(day, stats.getTotalAnimals()));
+        mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
+        if(generateCsv) {
+            csvWriter.printf("%d,%d,%d,%d,%s,%.2f,%.2f,%.2f%n",
+                    day,
+                    stats.getTotalAnimals(),
+                    stats.getTotalPlants(),
+                    stats.getFreeFields(),
+                    stats.getMostCommonGenotypes().toString(),
+                    stats.getAverageEnergy(),
+                    stats.getAverageLifeSpan(),
+                    stats.getAverageChildrenCount()
+            );
+            csvWriter.flush();
+        }
     }
 
     private Simulation simulation;
@@ -155,6 +225,39 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     public void initialize() {
         startStopButton.setText("Start");
+
+        XYChart.Series<Number, Number> totalAnimalsSeries = new XYChart.Series<>();
+        totalAnimalsSeries.setName("Total Animals");
+        statisticsChart.getData().add(totalAnimalsSeries);
+
+        XYChart.Series<Number, Number> totalPlantsSeries = new XYChart.Series<>();
+        totalPlantsSeries.setName("Total Plants");
+        statisticsChart.getData().add(totalPlantsSeries);
+
+        XYChart.Series<Number, Number> freeFieldsSeries = new XYChart.Series<>();
+        freeFieldsSeries.setName("Free Fields");
+        statisticsChart.getData().add(freeFieldsSeries);
+
+        XYChart.Series<Number, Number> averageEnergySeries = new XYChart.Series<>();
+        averageEnergySeries.setName("Average Energy");
+        statisticsChart.getData().add(averageEnergySeries);
+
+        XYChart.Series<Number, Number> averageLifeSpanSeries = new XYChart.Series<>();
+        averageLifeSpanSeries.setName("Average Life Span");
+        statisticsChart.getData().add(averageLifeSpanSeries);
+
+        XYChart.Series<Number, Number> averageChildrenCountSeries = new XYChart.Series<>();
+        averageChildrenCountSeries.setName("Average Children Count");
+        statisticsChart.getData().add(averageChildrenCountSeries);
+        statisticsChart.setLegendVisible(true);
+        if(generateCsv) {
+            try {
+                csvWriter = new PrintWriter(new FileWriter("simulation_data.csv", true));
+                csvWriter.println("Day,Total Animals,Total Plants,Free Fields,Most Common Genotypes,Average Energy,Average Life Span,Average Children Count");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @FXML

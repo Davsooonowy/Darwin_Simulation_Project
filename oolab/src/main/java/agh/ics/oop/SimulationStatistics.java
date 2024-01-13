@@ -27,36 +27,51 @@ public class SimulationStatistics {
         return map.getFreeFields();
     }
 
-    public List<Integer> getMostCommonGenotypes() {
-        Map<List<Integer>, Long> genotypesCount = simulation.getAnimals().stream()
-                .collect(Collectors.groupingBy(Animal::getGenes, Collectors.counting()));
+public List<Integer> getMostCommonGenotypes() {
+    Map<Genomes, Long> genotypesCount = simulation.getAnimals().stream()
+            .collect(Collectors.groupingBy(Animal::getGenomes, Collectors.counting()));
 
-        long maxCount = Collections.max(genotypesCount.values());
+    long maxCount = Collections.max(genotypesCount.values());
 
-        return genotypesCount.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxCount)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-    }
+    return genotypesCount.entrySet().stream()
+            .filter(entry -> entry.getValue() == maxCount)
+            .map(Map.Entry::getKey)
+            .findFirst()
+            .map(Genomes::getGenes)
+            .orElse(Collections.emptyList());
+}
 
     public double getAverageEnergy() {
-        return simulation.getAnimals().stream()
+        return Math.round(simulation.getAnimals().stream()
                 .mapToInt(Animal::getEnergy)
                 .average()
-                .orElse(0);
+                .orElse(0) * 100.0) / 100.0;
     }
 
     public double getAverageLifeSpan() {
-        return simulation.getDeadAnimals().stream()
+        return Math.round(simulation.getDeadAnimals().stream()
                 .mapToInt(Animal::getAge)
                 .average()
-                .orElse(0);
+                .orElse(0) * 100.0) / 100.0;
     }
 
     public double getAverageChildrenCount() {
-        return simulation.getAnimals().stream()
+        return Math.round(simulation.getAnimals().stream()
                 .mapToInt(Animal::getChildrenCount)
                 .average()
-                .orElse(0);
+                .orElse(0) * 100.0) / 100.0;
     }
+
+    @Override
+public String toString() {
+    return "SimulationStatistics{" +
+            "totalAnimals=" + getTotalAnimals() +
+            ", totalPlants=" + getTotalPlants() +
+            ", freeFields=" + getFreeFields() +
+            ", mostCommonGenotypes=" + getMostCommonGenotypes() +
+            ", averageEnergy=" + String.format("%.2f", getAverageEnergy()) +
+            ", averageLifeSpan=" + String.format("%.2f", getAverageLifeSpan()) +
+            ", averageChildrenCount=" + String.format("%.2f", getAverageChildrenCount()) +
+            '}';
+}
 }

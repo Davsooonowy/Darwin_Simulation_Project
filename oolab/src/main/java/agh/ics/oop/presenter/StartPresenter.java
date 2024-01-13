@@ -11,10 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
@@ -57,8 +54,8 @@ public class StartPresenter {
     private TextField plantSpawnRate;
     @FXML
     private Button startButton;
-    private SimulationEngine simulationEngine;
-    private Simulation simulation;
+    @FXML
+    private CheckBox generateCsvCheckBox;
 
 
     private void validateTextField(TextField textField, BiPredicate<String, Integer> validationFunction, int minVal) {
@@ -163,51 +160,53 @@ private boolean isNonNegativeInteger(String value, int minVal) {
 
 
     @FXML
-    public void onStartClicked() {
-        try {
-            String selectedOption = (String) MapVariant.getValue();
-            String behaviourvariant = (String) BehaviourVariant.getValue();
-            int mapWidth = parseTextFieldToInt(widthField);
-            int mapHeight = parseTextFieldToInt(heightField);
-            int initialGrassNumber = parseTextFieldToInt(initialgrassNumberField);
-            int animalNumber = parseTextFieldToInt(initialanimalsNumberField);
-            int initialEnergy = parseTextFieldToInt(startEnergyField);
-            int plantEnergy = parseTextFieldToInt(plantEnergyField);
-            int genomelength = parseTextFieldToInt(genomeLength);
-            int plantspawnRate = parseTextFieldToInt(plantSpawnRate);
-            int parentenergy = parseTextFieldToInt(parentEnergy);
-            int reproduceenergy = parseTextFieldToInt(reproduceEnergy);
-            int mingeneMutation = parseTextFieldToInt(minGeneMutation);
-            int maxgeneMutation = parseTextFieldToInt(maxGeneMutation);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
-            Parent root = loader.load();
+public void onStartClicked() {
+    try {
+        boolean generateCsv = generateCsvCheckBox.isSelected();
+        String selectedOption = (String) MapVariant.getValue();
+        String behaviourvariant = (String) BehaviourVariant.getValue();
+        int mapWidth = parseTextFieldToInt(widthField);
+        int mapHeight = parseTextFieldToInt(heightField);
+        int initialGrassNumber = parseTextFieldToInt(initialgrassNumberField);
+        int animalNumber = parseTextFieldToInt(initialanimalsNumberField);
+        int initialEnergy = parseTextFieldToInt(startEnergyField);
+        int plantEnergy = parseTextFieldToInt(plantEnergyField);
+        int genomelength = parseTextFieldToInt(genomeLength);
+        int plantspawnRate = parseTextFieldToInt(plantSpawnRate);
+        int parentenergy = parseTextFieldToInt(parentEnergy);
+        int reproduceenergy = parseTextFieldToInt(reproduceEnergy);
+        int mingeneMutation = parseTextFieldToInt(minGeneMutation);
+        int maxgeneMutation = parseTextFieldToInt(maxGeneMutation);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
+        Parent root = loader.load();
 
-            SimulationPresenter simulationPresenter = loader.getController();
-            simulationPresenter.setInitialanimalsNumberField(animalNumber);
-            simulationPresenter.setInitialEnergy(initialEnergy);
-            simulationPresenter.setGenomeLength(genomelength);
-            simulationPresenter.setMingeneMutation(mingeneMutation);
-            simulationPresenter.setMaxgeneMutation(maxgeneMutation);
-            simulationPresenter.setreproduceEnergy(reproduceenergy);
-            simulationPresenter.setParentEnergy(parentenergy);
-            simulationPresenter.setBehaviourVariant(behaviourvariant);
-            if (selectedOption.equals("Earth")) {
-                Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
-                simulationPresenter.setWorldMap(worldMap);
-                worldMap.addMapChangeListener(simulationPresenter);
-            } else {
-                SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
-                simulationPresenter.setWorldMap(worldMap);
-                worldMap.addMapChangeListener(simulationPresenter);
-            }
-
-            simulationPresenter.onStartStopButtonClicked();
-
-            Stage simulationStage = new Stage();
-            simulationStage.setScene(new Scene(root));
-            simulationStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        SimulationPresenter simulationPresenter = loader.getController();
+        simulationPresenter.setGenerateCsv(generateCsv);
+        simulationPresenter.setInitialanimalsNumberField(animalNumber);
+        simulationPresenter.setInitialEnergy(initialEnergy);
+        simulationPresenter.setGenomeLength(genomelength);
+        simulationPresenter.setMingeneMutation(mingeneMutation);
+        simulationPresenter.setMaxgeneMutation(maxgeneMutation);
+        simulationPresenter.setreproduceEnergy(reproduceenergy);
+        simulationPresenter.setParentEnergy(parentenergy);
+        simulationPresenter.setBehaviourVariant(behaviourvariant);
+        if (selectedOption.equals("Earth")) {
+            Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
+            simulationPresenter.setWorldMap(worldMap);
+            worldMap.addMapChangeListener(simulationPresenter);
+        } else {
+            SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
+            simulationPresenter.setWorldMap(worldMap);
+            worldMap.addMapChangeListener(simulationPresenter);
         }
+
+        simulationPresenter.onStartStopButtonClicked();
+
+        Stage simulationStage = new Stage();
+        simulationStage.setScene(new Scene(root));
+        simulationStage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
 }
