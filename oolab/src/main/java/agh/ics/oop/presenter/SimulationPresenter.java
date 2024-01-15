@@ -9,10 +9,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.TextField;
@@ -33,27 +35,12 @@ public class SimulationPresenter implements MapChangeListener {
     private int parentEnergy;
     private String behaviourvariant;
     private SimulationEngine simulationEngine;
-
-    @FXML
-    private TextField totalAnimalsField;
-
-    @FXML
-    private TextField totalPlantsField;
-
-    @FXML
-    private TextField freeFieldsField;
+    private static final Color GRASS_COLOR = javafx.scene.paint.Color.GREEN;
+    private static final Color EMPTY_CELL_COLOR = javafx.scene.paint.Color.rgb(69, 38, 38);
+    private static final Color TUNNEL_COLOR = javafx.scene.paint.Color.BLACK;
 
     @FXML
     private TextField mostCommonGenotypesField;
-
-    @FXML
-    private TextField averageEnergyField;
-
-    @FXML
-    private TextField averageLifeSpanField;
-
-    @FXML
-    private TextField averageChildrenCountField;
 
     @FXML
     private LineChart<Number, Number> statisticsChart;
@@ -112,70 +99,91 @@ public class SimulationPresenter implements MapChangeListener {
     public void drawMap() {
         clearGrid();
         Boundary boundary = worldMap.getCurrentBounds();
-        drawGrid(boundary);
+        int gridSize = calculateGridSize(boundary);
+        drawGrid(boundary, gridSize);
     }
 
-    private void drawGrid(Boundary boundary) {
+    private int calculateGridSize(Boundary boundary) {
+        int mapWidth = boundary.upperRight().getX() - boundary.lowerLeft().getX() + 1;
+        int mapHeight = boundary.upperRight().getY() - boundary.lowerLeft().getY() + 1;
+
+        int maxGridSize = Math.max(mapWidth, mapHeight);
+        int cellSize = 800 / maxGridSize;
+
+        return cellSize;
+    }
+
+    private void drawGrid(Boundary boundary, int cellSize) {
         for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
             for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
                 Vector2d position = new Vector2d(j, i);
-                drawGridCell(position, j - boundary.lowerLeft().getX() + 1, boundary.upperRight().getY() - i + 1);
+                drawGridCell(position, j - boundary.lowerLeft().getX() + 1, boundary.upperRight().getY() - i + 1, cellSize);
             }
         }
     }
 
-    private void drawGridCell(Vector2d position, int column, int row) {
+    private void drawGridCell(Vector2d position, int column, int row, int cellSize) {
         WorldElement element = worldMap.objectAt(position);
-        Node node = createNodeForElement(element, position);
+        Node node = createNodeForElement(element, position, cellSize);
         mapGrid.add(node, column, row);
     }
 
-    private Node createNodeForElement(WorldElement element, Vector2d position) {
-    StackPane stackPane = createStackPane();
-    Rectangle cell = createCell(position);
-    stackPane.getChildren().add(cell);
+    private Node createNodeForElement(WorldElement element, Vector2d position, int cellSize) {
+        StackPane stackPane = createStackPane(cellSize);
+        Rectangle cell = createCell(position, cellSize);
+        stackPane.getChildren().add(cell);
 
-    if (element instanceof Animal) {
-        Circle circle = createAnimalCircle((Animal) element);
-        stackPane.getChildren().add(circle);
-    }
+        if (element instanceof Animal) {
+            Circle circle = createAnimalCircle((Animal) element, cellSize);
+            stackPane.getChildren().add(circle);
+        }
 
-    if (worldMap instanceof SecretTunnels && ((SecretTunnels) worldMap).getTunnel(position) != null) {
-        Rectangle tunnel = createTunnelRectangle();
-        stackPane.getChildren().add(tunnel);
-    }
+        if (worldMap instanceof SecretTunnels && ((SecretTunnels) worldMap).getTunnel(position) != null) {
+            Rectangle tunnel = createTunnelRectangle(cellSize);
+            stackPane.getChildren().add(tunnel);
+        }
 
-    return stackPane;
-}
-
-    private StackPane createStackPane() {
-        StackPane stackPane = new StackPane();
-        stackPane.setMinSize(50, 50);
-        stackPane.setMaxSize(50, 50);
         return stackPane;
     }
 
-    private Rectangle createCell(Vector2d position) {
-        Rectangle cell = new Rectangle(50, 50);
-        if (worldMap.grassAt(position) != null) {
-            cell.setFill(javafx.scene.paint.Color.GREEN);
+    private StackPane createStackPane(int cellSize) {
+        StackPane stackPane = new StackPane();
+        stackPane.setMinSize(cellSize, cellSize);
+        stackPane.setMaxSize(cellSize, cellSize);
+        return stackPane;
+    }
+
+private Rectangle createCell(Vector2d position, int cellSize) {
+    Rectangle cell = new Rectangle(cellSize, cellSize);
+    if (worldMap.grassAt(position) != null) {
+        if (position.equals(worldMap.getMostPreferredPosition())) {
+            cell.setFill(Color.YELLOW); // Wyróżniamy preferowane przez rośliny pola na żółto
         } else {
-            cell.setFill(javafx.scene.paint.Color.rgb(69, 38, 38));
+            cell.setFill(GRASS_COLOR);
         }
-        return cell;
+    } else {
+        cell.setFill(EMPTY_CELL_COLOR);
     }
+    return cell;
+}
 
-    private Circle createAnimalCircle(Animal animal) {
-        Circle circle = new Circle(10);
+    private Circle createAnimalCircle(Animal animal, int cellSize) {
+    Circle circle = new Circle(cellSize / 5);
+    SimulationStatistics stats = new SimulationStatistics(simulation, worldMap);
+    if (animal.getGenomes().equals(stats.getDominantGenotype())) {
+        circle.setFill(Color.RED); // Wyróżniamy zwierzęta z dominującym genotypem na czerwono
+    } else {
         circle.setFill(animal.toColor(initialEnergy));
-        return circle;
     }
+    return circle;
+}
 
-    private Rectangle createTunnelRectangle() {
-        Rectangle tunnel = new Rectangle(10, 10);
-        tunnel.setFill(javafx.scene.paint.Color.BLACK);
+    private Rectangle createTunnelRectangle(int cellSize) {
+        Rectangle tunnel = new Rectangle(cellSize / 5, cellSize / 5);
+        tunnel.setFill(TUNNEL_COLOR);
         return tunnel;
     }
+
 
 
     @Override
@@ -191,31 +199,37 @@ public class SimulationPresenter implements MapChangeListener {
         SimulationStatistics stats = new SimulationStatistics(simulation, (AbstractWorldMap) map);
         XYChart.Series<Number, Number> series = statisticsChart.getData().get(0);
         XYChart.Series<Number, Number> totalPlantsSeries = statisticsChart.getData().get(1);
-        totalPlantsSeries.getData().add(new XYChart.Data<>(day, stats.getTotalPlants()));
         XYChart.Series<Number, Number> freeFieldsSeries = statisticsChart.getData().get(2);
-        freeFieldsSeries.getData().add(new XYChart.Data<>(day, stats.getFreeFields()));
         XYChart.Series<Number, Number> averageEnergySeries = statisticsChart.getData().get(3);
-        averageEnergySeries.getData().add(new XYChart.Data<>(day, stats.getAverageEnergy()));
         XYChart.Series<Number, Number> averageLifeSpanSeries = statisticsChart.getData().get(4);
-        averageLifeSpanSeries.getData().add(new XYChart.Data<>(day, stats.getAverageLifeSpan()));
         XYChart.Series<Number, Number> averageChildrenCountSeries = statisticsChart.getData().get(5);
-        averageChildrenCountSeries.getData().add(new XYChart.Data<>(day, stats.getAverageChildrenCount()));
-        series.getData().add(new XYChart.Data<>(day, stats.getTotalAnimals()));
-        mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
-        if(generateCsv) {
-            csvWriter.printf("%d,%d,%d,%d,%s,%.2f,%.2f,%.2f%n",
-                    day,
-                    stats.getTotalAnimals(),
-                    stats.getTotalPlants(),
-                    stats.getFreeFields(),
-                    stats.getMostCommonGenotypes().toString(),
-                    stats.getAverageEnergy(),
-                    stats.getAverageLifeSpan(),
-                    stats.getAverageChildrenCount()
-            );
-            csvWriter.flush();
+
+        if (day % 10 == 0) { // Update the chart every 10 days
+            totalPlantsSeries.getData().add(new XYChart.Data<>(day, stats.getTotalPlants()));
+            freeFieldsSeries.getData().add(new XYChart.Data<>(day, stats.getFreeFields()));
+            averageEnergySeries.getData().add(new XYChart.Data<>(day, stats.getAverageEnergy()));
+            averageLifeSpanSeries.getData().add(new XYChart.Data<>(day, stats.getAverageLifeSpan()));
+            averageChildrenCountSeries.getData().add(new XYChart.Data<>(day, stats.getAverageChildrenCount()));
+            series.getData().add(new XYChart.Data<>(day, stats.getTotalAnimals()));
         }
-    }
+
+        mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
+}
+
+
+//        if(generateCsv) {
+//            csvWriter.printf("%d,%d,%d,%d,%s,%.2f,%.2f,%.2f%n",
+//                    day,
+//                    stats.getTotalAnimals(),
+//                    stats.getTotalPlants(),
+//                    stats.getFreeFields(),
+//                    stats.getMostCommonGenotypes().toString(),
+//                    stats.getAverageEnergy(),
+//                    stats.getAverageLifeSpan(),
+//                    stats.getAverageChildrenCount()
+//            );
+//            csvWriter.flush();
+//        }
 
     private Simulation simulation;
 
@@ -250,17 +264,17 @@ public class SimulationPresenter implements MapChangeListener {
         averageChildrenCountSeries.setName("Average Children Count");
         statisticsChart.getData().add(averageChildrenCountSeries);
         statisticsChart.setLegendVisible(true);
-        if(generateCsv) {
-            try {
-                csvWriter = new PrintWriter(new FileWriter("simulation_data.csv", true));
-                csvWriter.println("Day,Total Animals,Total Plants,Free Fields,Most Common Genotypes,Average Energy,Average Life Span,Average Children Count");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if(generateCsv) {
+//            try {
+//                csvWriter = new PrintWriter(new FileWriter("simulation_data.csv", true));
+//                csvWriter.println("Day,Total Animals,Total Plants,Free Fields,Most Common Genotypes,Average Energy,Average Life Span,Average Children Count");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
-    @FXML
+@FXML
 public void onStartStopButtonClicked() {
     try {
         if (simulationEngine == null) {
@@ -272,6 +286,7 @@ public void onStartStopButtonClicked() {
         } else if (simulationEngine.isRunning()) {
             simulationEngine.pauseSimulation();
             startStopButton.setText("Start");
+            drawMap(); // Aktualizujemy wygląd mapy po naciśnięciu przycisku stop
         } else {
             simulationEngine.resumeSimulation();
             startStopButton.setText("Stop");

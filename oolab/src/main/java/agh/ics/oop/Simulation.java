@@ -19,6 +19,8 @@ public class Simulation extends Thread {
     private final int maxgeneMutation;
     private final String behaviourvariant;
     private volatile boolean running = true;
+    HashSet<Animal> ancestors = new HashSet<>();
+    HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
 
     public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation, String behaviourvariant) {
         this.numOfAnimals = numOfAnimals;
@@ -50,7 +52,7 @@ public class Simulation extends Thread {
             int y = random.nextInt(worldBoundary.upperRight().getY());
             Vector2d randomPosition = new Vector2d(x, y);
 
-            Animal animal = new Animal(randomPosition, initialEnergy, genomeLength, new HashSet<>(), reproductionEnergy, parentEnergy,mingeneMutation,maxgeneMutation);
+            Animal animal = new Animal(randomPosition, initialEnergy, genomeLength, reproductionEnergy, parentEnergy,mingeneMutation,maxgeneMutation);
             map.place(animal);
             animals.add(animal);
         }
@@ -72,7 +74,7 @@ public class Simulation extends Thread {
         return running;
     }
     public void groupAndReproduceAnimals() {
-        HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
+        groupedAnimals.clear();
         for (Animal animal : animals) {
             if (animal.getEnergy() >= reproductionEnergy) {
                 Vector2d position = animal.getPosition();
@@ -87,27 +89,14 @@ public class Simulation extends Thread {
             if (group.size() >= 2) {
 
                 Animal parent1 = map.chooseTopAnimal(group);
-                List<Animal> groupWithoutParent1 = new ArrayList<>(group);
-                groupWithoutParent1.remove(map.chooseTopAnimal(group));
-                Animal parent2 = map.chooseTopAnimal(groupWithoutParent1);
+                group.remove(parent1);
+                Animal parent2 = map.chooseTopAnimal(group);
 
                 Animal child = parent1.reproduce(parent2);
                 animals.add(child);
                 map.place(child);
-
-                for (Animal animal : animals) {
-                    if (animal.offspring.contains(parent1) || animal.offspring.contains(parent2)) {
-                        animal.offspring.add(child);
-                        child.parents.add(animal);
-                    }
-                }
-
-                for (Animal deadAnimal : deadAnimals) {
-                    if (deadAnimal.offspring.contains(parent1) || deadAnimal.offspring.contains(parent2)) {
-                        deadAnimal.offspring.add(child);
-                        child.parents.add(deadAnimal);
-                    }
-                }
+                ancestors.clear();
+                child.offspringincrease(ancestors);
             }
         }
     }
@@ -164,7 +153,7 @@ public class Simulation extends Thread {
                 }
 
                 //thread sleep
-                Thread.sleep(100);
+                Thread.sleep(25);
 
 
                 // removing dead bodies
@@ -179,7 +168,7 @@ public class Simulation extends Thread {
                 groupAndReproduceAnimals();
 
                 //thread sleep
-                Thread.sleep(100);
+                Thread.sleep(25);
 
                 // spawning grass
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());

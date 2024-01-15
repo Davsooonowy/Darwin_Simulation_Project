@@ -1,32 +1,36 @@
-    package agh.ics.oop.model;
+package agh.ics.oop.model;
 
-    import javafx.scene.paint.Paint;
-    import java.util.HashSet;
-    import java.util.List;
+import javafx.scene.paint.Paint;
+
+import java.util.HashSet;
+import java.util.List;
 
 
-    public class Animal implements WorldElement {
+public class Animal implements WorldElement {
     private MapDirection direction;
-    private int REPRODUCTION_ENERGY;
+    private final int REPRODUCTION_ENERGY;
     private Vector2d position;
-    public HashSet<Animal> offspring = new HashSet<>();
-    public HashSet<Animal> parents = new HashSet<>();
+    public Animal parent1;
+    public Animal parent2;
     private int energy;
     private Genomes genomes;
     private int age;
+    private int offspringCount;
     private int childrenCount;
-    private int parentEnergy;
+    private final int parentEnergy;
     private final int mingeneMutation;
     private final int maxgeneMutation;
 
     // constructor for initial animals
-    public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, HashSet<Animal> offspring, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
+    public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
         this.direction = MapDirection.randomDirection();
         this.position = initialPosition;
         this.energy = initialenergy;
-        this.offspring = offspring;
         this.genomes = new Genomes(genomeLength);
         this.age = 0;
+        this.parent1=null;
+        this.parent2=null;
+        this.offspringCount = 0;
         this.childrenCount = 0;
         this.REPRODUCTION_ENERGY = reproductionEnergy;
         this.parentEnergy = parentEnergy;
@@ -35,14 +39,15 @@
     }
 
     // constructor for children
-    public Animal(Vector2d position, int energy, Genomes genomes, HashSet<Animal> offspring, HashSet<Animal> parents, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
+    public Animal(Vector2d position, int energy, Genomes genomes, Animal parent1, Animal parent2, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
         this.direction = MapDirection.randomDirection();
         this.position = position;
         this.energy = energy;
         this.genomes = genomes;
-        this.offspring = offspring;
-        this.parents = parents;
         this.age = 0;
+        this.parent1 = parent1;
+        this.parent2 = parent2;
+        this.offspringCount = 0;
         this.childrenCount = 0;
         this.REPRODUCTION_ENERGY = reproductionEnergy;
         this.parentEnergy = parentEnergy;
@@ -50,54 +55,35 @@
         this.maxgeneMutation=maxgeneMutation;
     }
 
-//    public void addParent(Animal parent){
-//        this.parents.add(parent);
-//    }
-//    public void addChild(Animal child){
-//        this.offspring.add(child);
-//    }
+
+    public void offspringincrease(HashSet<Animal> ancestors){
+        if(this.parent1!= null && !ancestors.contains(this.parent1)){
+            this.parent1.offspringCount++;
+            ancestors.add(this.parent1);
+            this.parent1.offspringincrease(ancestors);
+        }
+        if(this.parent2!=null && !ancestors.contains(this.parent2)){
+            this.parent2.offspringCount++;
+            ancestors.add(this.parent2);
+            this.parent2.offspringincrease(ancestors);
+        }
+    }
+
 
     // sex
-public Animal reproduce(Animal partner) {
-    List<Integer> childGenes = this.genomes.GeneMerger(this, partner);
-    Genomes childGenomes = new Genomes(childGenes,this.mingeneMutation,this.maxgeneMutation);
-    HashSet<Animal> childParents = new HashSet<>();
-    childParents.add(this);
-    childParents.add(partner);
-    this.animalEnergyChange(-this.parentEnergy);
-    partner.animalEnergyChange(-this.parentEnergy);
-    Animal child = new Animal(this.position, 2 * this.parentEnergy, childGenomes, new HashSet<>(), childParents, this.REPRODUCTION_ENERGY, this.parentEnergy,this.mingeneMutation,this.maxgeneMutation);
-
-
-    child.parents.add(this);
-    child.parents.add(partner);
-    this.offspring.add(child);
-    partner.offspring.add(child);
-
-
-    for (Animal grandParent : this.parents) {
-        grandParent.offspring.add(child);
+    public Animal reproduce(Animal partner) {
+        List<Integer> childGenes = this.genomes.GeneMerger(this, partner);
+        Genomes childGenomes = new Genomes(childGenes,this.mingeneMutation,this.maxgeneMutation);
+        this.animalEnergyChange(-this.parentEnergy);
+        partner.animalEnergyChange(-this.parentEnergy);
+        this.childrenCount++;
+        partner.childrenCount++;
+        return new Animal(this.position, 2 * this.parentEnergy, childGenomes, this, partner, this.REPRODUCTION_ENERGY, this.parentEnergy, this.mingeneMutation, this.maxgeneMutation);
     }
-    for (Animal grandParent : partner.parents) {
-        grandParent.offspring.add(child);
-    }
-
-
-    child.parents.addAll(this.parents);
-    child.parents.addAll(partner.parents);
-
-    return child;
-}
 
 
     public int getEnergy() {
         return this.energy;
-    }
-    public int getChildrenCount() {
-        return this.offspring.size();
-    }
-    public int getParentsCount() {
-        return this.parents.size();
     }
 
     public void animalEnergyChange(int val) {
@@ -130,13 +116,13 @@ public Animal reproduce(Animal partner) {
     }
 
     public Paint toColor(int startEnergy) {
-    if (this.energy == 0) return javafx.scene.paint.Color.rgb(240, 248, 255);
-    if (this.energy < 0.2 * startEnergy) return javafx.scene.paint.Color.rgb(173, 216, 230);
-    if (this.energy < 0.4 * startEnergy) return javafx.scene.paint.Color.rgb(100, 149, 237);
-    if (this.energy < 0.6 * startEnergy) return javafx.scene.paint.Color.rgb(70, 130, 180);
-    if (this.energy < 0.8 * startEnergy) return javafx.scene.paint.Color.rgb(0, 0, 255);
-    if (this.energy < startEnergy) return javafx.scene.paint.Color.rgb(0, 0, 205);
-    return javafx.scene.paint.Color.rgb(0, 0, 51);
+        if (this.energy == 0) return javafx.scene.paint.Color.rgb(240, 248, 255);
+        if (this.energy < 0.2 * startEnergy) return javafx.scene.paint.Color.rgb(173, 216, 230);
+        if (this.energy < 0.4 * startEnergy) return javafx.scene.paint.Color.rgb(100, 149, 237);
+        if (this.energy < 0.6 * startEnergy) return javafx.scene.paint.Color.rgb(70, 130, 180);
+        if (this.energy < 0.8 * startEnergy) return javafx.scene.paint.Color.rgb(0, 0, 255);
+        if (this.energy < startEnergy) return javafx.scene.paint.Color.rgb(0, 0, 205);
+        return javafx.scene.paint.Color.rgb(0, 0, 51);
     }
 
     public void move(Integer direction, AbstractWorldMap validator) {
@@ -177,13 +163,20 @@ public Animal reproduce(Animal partner) {
 
 
     public void goThroughTunnel(Vector2d Position, SecretTunnels validator){
-            if(validator.objectAt(Position) instanceof Tunnel){
-                this.position = validator.getTunnel(Position).getConnected();
-            }
+        if(validator.objectAt(Position) instanceof Tunnel){
+            this.position = validator.getTunnel(Position).getConnected();
+        }
     }
 
     public Vector2d getPosition() {
         return this.position;
     }
 
+    public int getoffspringCount() {
+        return offspringCount;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
+    }
 }

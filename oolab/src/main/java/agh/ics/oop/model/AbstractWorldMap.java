@@ -4,9 +4,10 @@ package agh.ics.oop.model;
 import agh.ics.oop.model.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    protected Map<Vector2d, Animal> animals = new HashMap<>();
+    protected HashMap<Vector2d, Animal> animals = new HashMap<>();
     public final HashMap<Vector2d, Grass> grasses = new HashMap<>();
     protected ArrayList<MapChangeListener> mapChangeListeners;
     protected final int height;
@@ -45,6 +46,19 @@ public abstract class AbstractWorldMap implements WorldMap {
             grasses.put(grassPosition, new Grass(grassPosition));
         }
         mapChanged();
+    }
+    public Vector2d getMostPreferredPosition() {
+        int equatorStart = 2 * height / 5;
+        int equatorEnd = 3 * width / 5;
+
+        Map<Vector2d, Long> grassPositionsInPreferredArea = grasses.keySet().stream()
+                .filter(position -> position.getY() >= equatorStart && position.getY() < equatorEnd)
+                .collect(Collectors.groupingBy(position -> position, Collectors.counting()));
+
+        return grassPositionsInPreferredArea.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     @Override
