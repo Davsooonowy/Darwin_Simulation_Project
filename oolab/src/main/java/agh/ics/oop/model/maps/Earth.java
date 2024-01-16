@@ -1,4 +1,9 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.maps;
+
+import agh.ics.oop.model.Boundary;
+import agh.ics.oop.model.Vector2d;
+import agh.ics.oop.model.WorldElement;
+import agh.ics.oop.model.maps.AbstractWorldMap;
 
 import java.util.Set;
 
@@ -28,11 +33,6 @@ public class Earth extends AbstractWorldMap {
         Set<WorldElement> elements = super.getElements();
         elements.addAll(grasses.values());
         return elements;
-    }
-
-    @Override
-    public Boundary getCurrentBounds() {
-        return new Boundary(lowerLeft, upperRight);
     }
 
     int getGrassSize() {

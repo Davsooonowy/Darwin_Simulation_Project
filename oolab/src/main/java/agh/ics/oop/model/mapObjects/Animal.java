@@ -1,5 +1,8 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.mapObjects;
 
+import agh.ics.oop.model.*;
+import agh.ics.oop.model.maps.AbstractWorldMap;
+import agh.ics.oop.model.maps.SecretTunnels;
 import javafx.scene.paint.Paint;
 
 import java.util.HashSet;
@@ -24,7 +27,6 @@ public class Animal implements WorldElement {
     private int eatenPlants = 0;
     private int activeGenome;
 
-    // constructor for initial animals
     public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
         this.direction = MapDirection.randomDirection();
         this.position = initialPosition;
@@ -149,8 +151,8 @@ public class Animal implements WorldElement {
             }
             newPosition = this.position.add(this.direction.toUnitVector());
             if(!validator.verticaledge(newPosition)){
-                if(this.direction.toUnitVector().getX() >0){
-                    newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+                if(this.direction.toUnitVector().x() >0){
+                    newPosition = newPosition.add(new Vector2d(-newPosition.x(),0));
                 } else{
                     newPosition = newPosition.add(new Vector2d(validator.width,0));
                 }
@@ -158,8 +160,8 @@ public class Animal implements WorldElement {
             this.position=newPosition;
         } else{
             if(!validator.verticaledge(newPosition)){
-                if(this.direction.toUnitVector().getX() >0){
-                    newPosition = newPosition.add(new Vector2d(-newPosition.getX(),0));
+                if(this.direction.toUnitVector().x() >0){
+                    newPosition = newPosition.add(new Vector2d(-newPosition.x(),0));
                 } else{
                     newPosition = newPosition.add(new Vector2d(validator.width,0));
                 }

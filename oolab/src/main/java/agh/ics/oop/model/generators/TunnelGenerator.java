@@ -1,4 +1,7 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.generators;
+
+import agh.ics.oop.model.Vector2d;
+import agh.ics.oop.model.generators.AbstractGenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;

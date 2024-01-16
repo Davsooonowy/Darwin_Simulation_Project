@@ -1,5 +1,7 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.model.mapObjects.Animal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

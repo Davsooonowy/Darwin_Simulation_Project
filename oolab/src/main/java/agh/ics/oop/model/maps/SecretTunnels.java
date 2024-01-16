@@ -1,10 +1,15 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.maps;
+
+import agh.ics.oop.model.*;
+import agh.ics.oop.model.generators.TunnelGenerator;
+import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.mapObjects.Tunnel;
 
 import java.util.*;
 
 public class SecretTunnels extends AbstractWorldMap {
 
-    private final HashMap<Vector2d,Tunnel> tunnels = new HashMap<>();
+    private final HashMap<Vector2d, Tunnel> tunnels = new HashMap<>();
     private final List<List<Vector2d>> tunnelsConnections;
 
 
@@ -52,13 +57,6 @@ public class SecretTunnels extends AbstractWorldMap {
         elements.addAll(tunnels.values());
         return elements;
     }
-
-
-    @Override
-    public Boundary getCurrentBounds() {
-        return new Boundary(lowerLeft, upperRight);
-    }
-
 
     public Tunnel getTunnel(Vector2d position){
         return tunnels.get(position);

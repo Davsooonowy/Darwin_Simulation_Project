@@ -3,7 +3,9 @@ package agh.ics.oop;
 import java.util.*;
 import java.util.stream.Collectors;
 import agh.ics.oop.model.*;
-import agh.ics.oop.model.AbstractWorldMap;
+import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.maps.AbstractWorldMap;
+import agh.ics.oop.model.maps.SecretTunnels;
 
 public class Simulation extends Thread {
     private final int numOfAnimals;
@@ -47,11 +49,11 @@ public class Simulation extends Thread {
 
 
     private void addInitialAnimals() {
-        Boundary worldBoundary = map.getCurrentBounds();
+        Boundary worldBoundary = map.getBounds();
         Random random = new Random();
         for (int i = 0; i < numOfAnimals; i++) {
-            int x = random.nextInt(worldBoundary.upperRight().getX());
-            int y = random.nextInt(worldBoundary.upperRight().getY());
+            int x = random.nextInt(worldBoundary.upperRight().x());
+            int y = random.nextInt(worldBoundary.upperRight().y());
             Vector2d randomPosition = new Vector2d(x, y);
 
             Animal animal = new Animal(randomPosition, initialEnergy, genomeLength, reproductionEnergy, parentEnergy,mingeneMutation,maxgeneMutation);

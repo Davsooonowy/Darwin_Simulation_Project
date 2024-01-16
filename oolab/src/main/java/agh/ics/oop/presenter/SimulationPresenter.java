@@ -1,14 +1,20 @@
 package agh.ics.oop.presenter;
 
 import agh.ics.oop.*;
+import agh.ics.oop.Statistics.AnimalStatistics;
+import agh.ics.oop.Statistics.SimulationStatistics;
 import agh.ics.oop.model.*;
-import agh.ics.oop.model.AbstractWorldMap;
+import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.maps.AbstractWorldMap;
+import agh.ics.oop.model.maps.SecretTunnels;
+import agh.ics.oop.model.maps.WorldMap;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 import javafx.scene.Node;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -16,9 +22,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.TextField;
 
+import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SimulationPresenter implements MapChangeListener {
+
+    // fields
     private AbstractWorldMap worldMap;
     private int initialAnimalsNumber;
     private int initialEnergy;
@@ -28,11 +39,18 @@ public class SimulationPresenter implements MapChangeListener {
     private int reproduceEnergy;
     private int parentEnergy;
     private String behaviourvariant;
+    private boolean isAnimalStatisticsDisplayed = false;
     private static final Color GRASS_COLOR = javafx.scene.paint.Color.GREEN;
     private static final Color EMPTY_CELL_COLOR = javafx.scene.paint.Color.rgb(69, 38, 38);
     private static final Color TUNNEL_COLOR = javafx.scene.paint.Color.BLACK;
+    private Simulation simulation;
+    private AnimalStatistics animalStatistics;
+    private PrintWriter csvWriter;
+    private boolean generateCsv;
+    private int day = 0;
 
 
+    ///                                             FXML fields                                              ///
     @FXML
     private TextField mostCommonGenotypesField;
     @FXML
@@ -52,8 +70,6 @@ public class SimulationPresenter implements MapChangeListener {
 
     @FXML
     private TextField averageChildrenCountField;
-
-    private AnimalStatistics animalStatistics;
 
     @FXML
     private TextField genomeField;
@@ -79,11 +95,17 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     private TextField deathDayField;
 
+    @FXML
+    private Label currentDayField;
+
+    @FXML
+    private Button startStopButton;
+    @FXML
+    private GridPane mapGrid;
 
 
-    private PrintWriter csvWriter;
-    private boolean generateCsv;
-    private int day = 0;
+    ///                                             setters                                                    ///
+
 
     public void setMingeneMutation(int mingeneMutation){
         this.mingeneMutation=mingeneMutation;
@@ -125,6 +147,8 @@ public class SimulationPresenter implements MapChangeListener {
         this.generateCsv = generateCsv;
     }
 
+    ///                                map drawing and calculations                               ///
+
     private void clearGrid() {
         mapGrid.getChildren().retainAll(mapGrid.getChildren().get(0));
         mapGrid.getColumnConstraints().clear();
@@ -134,14 +158,14 @@ public class SimulationPresenter implements MapChangeListener {
     @FXML
     public void drawMap() {
         clearGrid();
-        Boundary boundary = worldMap.getCurrentBounds();
+        Boundary boundary = worldMap.getBounds();
         int gridSize = calculateGridSize(boundary);
         drawGrid(boundary, gridSize);
     }
 
     private int calculateGridSize(Boundary boundary) {
-        int mapWidth = boundary.upperRight().getX() - boundary.lowerLeft().getX() + 1;
-        int mapHeight = boundary.upperRight().getY() - boundary.lowerLeft().getY() + 1;
+        int mapWidth = boundary.upperRight().x() - boundary.lowerLeft().x() + 1;
+        int mapHeight = boundary.upperRight().y() - boundary.lowerLeft().y() + 1;
 
         int maxGridSize = Math.max(mapWidth, mapHeight);
         int cellSize = 800 / maxGridSize;
@@ -150,10 +174,10 @@ public class SimulationPresenter implements MapChangeListener {
     }
 
     private void drawGrid(Boundary boundary, int cellSize) {
-        for (int i = boundary.lowerLeft().getY(); i <= boundary.upperRight().getY(); i++) {
-            for (int j = boundary.lowerLeft().getX(); j <= boundary.upperRight().getX(); j++) {
+        for (int i = boundary.lowerLeft().y(); i <= boundary.upperRight().y(); i++) {
+            for (int j = boundary.lowerLeft().x(); j <= boundary.upperRight().x(); j++) {
                 Vector2d position = new Vector2d(j, i);
-                drawGridCell(position, j - boundary.lowerLeft().getX() + 1, boundary.upperRight().getY() - i + 1, cellSize);
+                drawGridCell(position, j - boundary.lowerLeft().x() + 1, boundary.upperRight().y() - i + 1, cellSize);
             }
         }
     }
@@ -163,27 +187,6 @@ public class SimulationPresenter implements MapChangeListener {
         Node node = createNodeForElement(element, position, cellSize);
         mapGrid.add(node, column, row);
     }
-
-    private boolean isAnimalStatisticsDisplayed = false;
-
-    private void handleAnimalClick(Animal animal) {
-    if (!isAnimalStatisticsDisplayed) {
-        animalStatistics = new AnimalStatistics(animal, simulation);
-
-        genomeField.setText(animalStatistics.getGenome());
-        activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
-        energyField.setText(String.valueOf(animalStatistics.getEnergy()));
-        eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
-        childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
-        offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
-        ageField.setText(String.valueOf(animalStatistics.getAge()));
-        deathDayField.setText(animalStatistics.getDeathDay());
-    } else {
-        updateStatistics(worldMap);
-    }
-
-    isAnimalStatisticsDisplayed = !isAnimalStatisticsDisplayed;
-}
 
     private Node createNodeForElement(WorldElement element, Vector2d position, int cellSize) {
         StackPane stackPane = createStackPane(cellSize);
@@ -211,38 +214,15 @@ public class SimulationPresenter implements MapChangeListener {
         return stackPane;
     }
 
-private Rectangle createCell(Vector2d position, int cellSize) {
-    Rectangle cell = new Rectangle(cellSize, cellSize);
-    if (worldMap.grassAt(position) != null) {
-        if (position.equals(worldMap.getMostPreferredPosition())) {
-            cell.setFill(Color.YELLOW); // Wyróżniamy preferowane przez rośliny pola na żółto
-        } else {
+    private Rectangle createCell(Vector2d position, int cellSize) {
+        Rectangle cell = new Rectangle(cellSize, cellSize);
+        if (worldMap.grassAt(position) != null) {
             cell.setFill(GRASS_COLOR);
+        } else {
+            cell.setFill(EMPTY_CELL_COLOR);
         }
-    } else {
-        cell.setFill(EMPTY_CELL_COLOR);
+        return cell;
     }
-    return cell;
-}
-
-    private Circle createAnimalCircle(Animal animal, int cellSize) {
-    Circle circle = new Circle(cellSize / 5);
-    SimulationStatistics stats = new SimulationStatistics(simulation, worldMap);
-    if (animal.getGenomes().equals(stats.getDominantGenotype())) {
-        circle.setFill(Color.RED); // Wyróżniamy zwierzęta z dominującym genotypem na czerwono
-    } else {
-        circle.setFill(animal.toColor(initialEnergy));
-    }
-    return circle;
-}
-
-    private Rectangle createTunnelRectangle(int cellSize) {
-        Rectangle tunnel = new Rectangle(cellSize / 5, cellSize / 5);
-        tunnel.setFill(TUNNEL_COLOR);
-        return tunnel;
-    }
-
-
 
     @Override
     public void mapChanged(WorldMap worldMap) {
@@ -250,23 +230,26 @@ private Rectangle createCell(Vector2d position, int cellSize) {
             drawMap();
             updateStatistics(worldMap);
             updateAnimalStatistics();
+            updateDay();
             day++;
         });
     }
 
-    private void updateAnimalStatistics() {
-    if (animalStatistics != null) {
-        genomeField.setText(animalStatistics.getGenome());
-        activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
-        energyField.setText(String.valueOf(animalStatistics.getEnergy()));
-        eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
-        childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
-        offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
-        ageField.setText(String.valueOf(animalStatistics.getAge()));
-        deathDayField.setText(String.valueOf(animalStatistics.getDeathDay()));
+    ///                                animal methods                                                    ///
+    private Circle createAnimalCircle(Animal animal, int cellSize) {
+        Circle circle = new Circle(cellSize / 5);
+        circle.setFill(animal.toColor(initialEnergy));
+        return circle;
     }
-}
 
+    ///                                tunnel methods                                                    ///
+    private Rectangle createTunnelRectangle(int cellSize) {
+        Rectangle tunnel = new Rectangle(cellSize / 5, cellSize / 5);
+        tunnel.setFill(TUNNEL_COLOR);
+        return tunnel;
+    }
+
+    ///                               statistics methods                                                 ///
     private void updateStatistics(WorldMap map) {
     SimulationStatistics stats = new SimulationStatistics(simulation, (AbstractWorldMap) map);
 
@@ -278,45 +261,75 @@ private Rectangle createCell(Vector2d position, int cellSize) {
     averageChildrenCountField.setText(String.format("%.2f", stats.getAverageChildrenCount()));
 
     mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
-}
 
+    if(generateCsv) {
+        csvWriter.printf("%d,%d,%d,%d,\"%s\",%.2f,%.2f,%.2f%n",
+                day,
+                stats.getTotalAnimals(),
+                stats.getTotalPlants(),
+                stats.getFreeFields(),
+                stats.getMostCommonGenotypes().toString(),
+                stats.getAverageEnergy(),
+                stats.getAverageLifeSpan(),
+                stats.getAverageChildrenCount()
+            );
+            csvWriter.flush();
+        }
+    }
+    private void handleAnimalClick(Animal animal) {
+        if (!isAnimalStatisticsDisplayed) {
+            animalStatistics = new AnimalStatistics(animal, simulation);
 
-//        if(generateCsv) {
-//            csvWriter.printf("%d,%d,%d,%d,%s,%.2f,%.2f,%.2f%n",
-//                    day,
-//                    stats.getTotalAnimals(),
-//                    stats.getTotalPlants(),
-//                    stats.getFreeFields(),
-//                    stats.getMostCommonGenotypes().toString(),
-//                    stats.getAverageEnergy(),
-//                    stats.getAverageLifeSpan(),
-//                    stats.getAverageChildrenCount()
-//            );
-//            csvWriter.flush();
-//        }
+            genomeField.setText(animalStatistics.getGenome());
+            activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
+            energyField.setText(String.valueOf(animalStatistics.getEnergy()));
+            eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
+            childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
+            offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
+            ageField.setText(String.valueOf(animalStatistics.getAge()));
+            deathDayField.setText(animalStatistics.getDeathDay());
+        } else {
+            updateStatistics(worldMap);
+        }
 
-    private Simulation simulation;
+        isAnimalStatisticsDisplayed = !isAnimalStatisticsDisplayed;
+    }
 
-    @FXML
-    private Button startStopButton;
+    private void updateAnimalStatistics() {
+        if (animalStatistics != null) {
+            genomeField.setText(animalStatistics.getGenome());
+            activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
+            energyField.setText(String.valueOf(animalStatistics.getEnergy()));
+            eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
+            childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
+            offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
+            ageField.setText(String.valueOf(animalStatistics.getAge()));
+            deathDayField.setText(String.valueOf(animalStatistics.getDeathDay()));
+        }
+    }
 
+    ///                                day methods                                                       ///
+    public void updateDay() {
+        currentDayField.setText(String.valueOf(simulation.getCurrentDay()));
+    }
+
+    ///                                start/stop methods                                               ///
     @FXML
     public void initialize() {
         startStopButton.setText("Start");
-//        if(generateCsv) {
-//            try {
-//                csvWriter = new PrintWriter(new FileWriter("simulation_data.csv", true));
-//                csvWriter.println("Day,Total Animals,Total Plants,Free Fields,Most Common Genotypes,Average Energy,Average Life Span,Average Children Count");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
 @FXML
 public void onStartStopButtonClicked() {
     try {
         if (simulation == null) {
+            if (generateCsv) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+                LocalDateTime now = LocalDateTime.now();
+                String filename = "simulation_data_" + dtf.format(now) + ".csv";
+                csvWriter = new PrintWriter(new FileWriter(filename, true));
+                csvWriter.println("Day,Total Animals,Total Plants,Free Fields,Most Common Genotypes,Average Energy,Average Life Span,Average Children Count");
+            }
             simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation, behaviourvariant);
             simulation.start();
             startStopButton.setText("Stop");
@@ -328,8 +341,6 @@ public void onStartStopButtonClicked() {
             startStopButton.setText("Stop");
         }} catch (Exception e) {
         System.out.println(e.getMessage());
+        }
     }
-}
-    @FXML
-    private GridPane mapGrid;
 }

@@ -1,7 +1,7 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.model.Earth;
-import agh.ics.oop.model.SecretTunnels;
+import agh.ics.oop.model.maps.Earth;
+import agh.ics.oop.model.maps.SecretTunnels;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
@@ -153,6 +153,7 @@ private boolean isNonNegativeInteger(String value, int minVal) {
 
         startButton.disableProperty().bind(areFieldsEmpty);
     }
+
 
 
     @FXML

@@ -1,4 +1,4 @@
-package agh.ics.oop;
+package agh.ics.oop.Apps;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

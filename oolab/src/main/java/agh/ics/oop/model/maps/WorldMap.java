@@ -1,7 +1,10 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.maps;
+import agh.ics.oop.model.*;
+import agh.ics.oop.model.mapObjects.Animal;
+
 import java.util.Set;
 
-public interface WorldMap extends MoveValidator {
+public interface WorldMap {
 
     void place(Animal animal);
 
@@ -13,7 +16,7 @@ public interface WorldMap extends MoveValidator {
 
     WorldElement objectAt(Vector2d position);
     Set<WorldElement> getElements();
-    Boundary getCurrentBounds();
+    Boundary getBounds();
 
 
 }

@@ -1,4 +1,7 @@
-package agh.ics.oop;
+package agh.ics.oop.Apps;
+
+import agh.ics.oop.Apps.AbstractApp;
+
 public class AppStart extends AbstractApp {
 
     @Override

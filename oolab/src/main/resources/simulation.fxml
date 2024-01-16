@@ -17,6 +17,8 @@
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"  />
             <VBox alignment="CENTER">
                 <Button fx:id="startStopButton" text="Start" onAction="#onStartStopButtonClicked" />
+                <Label text="Current Day:" />
+                <Label fx:id="currentDayField" styleClass="large-font" />
                 <Label text="Simulation Statistics:" />
                 <HBox>
                     <VBox>

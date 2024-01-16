@@ -1,4 +1,6 @@
-package agh.ics.oop;
+package agh.ics.oop.Apps;
+
+import agh.ics.oop.Apps.AbstractApp;
 
 public class SimulationApp extends AbstractApp {
 

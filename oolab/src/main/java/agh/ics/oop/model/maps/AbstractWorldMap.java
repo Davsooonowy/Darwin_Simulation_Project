@@ -1,5 +1,9 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.maps;
 
+import agh.ics.oop.model.*;
+import agh.ics.oop.model.generators.GrassGenerator;
+import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.mapObjects.Grass;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -8,8 +12,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected HashMap<Vector2d, Animal> animals = new HashMap<>();
     public final HashMap<Vector2d, Grass> grasses = new HashMap<>();
     protected ArrayList<MapChangeListener> mapChangeListeners;
-    protected final int height;
-    protected final int width;
+    protected  final Boundary boundary;
+    public final int height;
+    public final int width;
     protected final Vector2d lowerLeft;
     protected final Vector2d upperRight;
     protected final int plantEnergy;
@@ -35,8 +40,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.upperRight = new Vector2d(width - 1, height - 1);
         mapChangeListeners = new ArrayList<>();
         this.plantSpawnRate = plantSpawnRate;
+        this.boundary = new Boundary(lowerLeft, upperRight);
         placeGrass(initialGrassQuantity,getGrassPositions());
     }
+
+
 
     public void placeGrass(int grassQuantity, Set<Vector2d> grassPositions) {
         GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, grassPositions);
@@ -50,7 +58,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         int equatorEnd = 3 * width / 5;
 
         Map<Vector2d, Long> grassPositionsInPreferredArea = grasses.keySet().stream()
-                .filter(position -> position.getY() >= equatorStart && position.getY() < equatorEnd)
+                .filter(position -> position.y() >= equatorStart && position.y() < equatorEnd)
                 .collect(Collectors.groupingBy(position -> position, Collectors.counting()));
 
         return grassPositionsInPreferredArea.entrySet().stream()
@@ -61,10 +69,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void place(Animal animal){
-        if (canMoveTo(animal.position())) {
             animals.put(animal.position(), animal);
             mapChanged();
-        }
     }
 
     @Override
@@ -150,32 +156,24 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public boolean canMoveTo(Vector2d position) {
-        return !(animals.containsKey(position));
-    }
-
-    @Override
     public boolean isOccupied(Vector2d position) {
         return animals.containsKey(position);
     }
-
 
     public void addMapChangeListener(MapChangeListener listener) {
         mapChangeListeners.add(listener);
     }
 
-    public void removeMapChangeListener(MapChangeListener listener) {
-        mapChangeListeners.remove(listener);
+    public Boundary getBounds() {
+        return this.boundary;
     }
 
-    public abstract Boundary getCurrentBounds();
-
     public Boolean horizontaledge(Vector2d position) {
-        return position.getY() <= upperRight.getY() && position.getY() >= lowerLeft.getY();
+        return position.y() <= upperRight.y() && position.y() >= lowerLeft.y();
     }
 
     public Boolean verticaledge(Vector2d position) {
-        return position.getX() >= lowerLeft.getX() && position.getX() <= upperRight.getX();
+        return position.x() >= lowerLeft.x() && position.x() <= upperRight.x();
     }
 
     public int getFreeFields() {

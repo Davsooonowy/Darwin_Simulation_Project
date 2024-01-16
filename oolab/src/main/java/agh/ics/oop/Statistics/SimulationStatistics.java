@@ -1,13 +1,11 @@
-package agh.ics.oop;
+package agh.ics.oop.Statistics;
 
-import agh.ics.oop.model.*;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import agh.ics.oop.Simulation;
+import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.Genomes;
+import agh.ics.oop.model.maps.AbstractWorldMap;
 
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
