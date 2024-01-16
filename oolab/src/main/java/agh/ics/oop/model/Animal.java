@@ -1,5 +1,6 @@
 package agh.ics.oop.model;
 
+import agh.ics.oop.Simulation;
 import javafx.scene.paint.Paint;
 
 import java.util.HashSet;
@@ -20,6 +21,8 @@ public class Animal implements WorldElement {
     private final int parentEnergy;
     private final int mingeneMutation;
     private final int maxgeneMutation;
+    private int deathDay;
+    private int eatenPlants = 0;
 
     // constructor for initial animals
     public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
@@ -36,6 +39,7 @@ public class Animal implements WorldElement {
         this.parentEnergy = parentEnergy;
         this.mingeneMutation=mingeneMutation;
         this.maxgeneMutation=maxgeneMutation;
+        this.deathDay = -1;
     }
 
     // constructor for children
@@ -53,6 +57,7 @@ public class Animal implements WorldElement {
         this.parentEnergy = parentEnergy;
         this.mingeneMutation=mingeneMutation;
         this.maxgeneMutation=maxgeneMutation;
+        this.deathDay = -1;
     }
 
 
@@ -92,6 +97,7 @@ public class Animal implements WorldElement {
             this.energy = 0;
         }
     }
+
 
     // age management
     public void increaseAge() {
@@ -179,4 +185,11 @@ public class Animal implements WorldElement {
     public int getChildrenCount() {
         return childrenCount;
     }
+
+    public void addEeatenPlants() {
+        this.eatenPlants++;
+    }
+    public int getEatenPlants() {
+        return this.eatenPlants;
+}
 }

@@ -7,8 +7,6 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="800.0" minWidth="800.0"
@@ -20,16 +18,42 @@
             <VBox alignment="CENTER">
                 <Button fx:id="startStopButton" text="Start" onAction="#onStartStopButtonClicked" />
                 <Label text="Simulation Statistics:" />
-                <LineChart fx:id="statisticsChart" prefHeight="400" prefWidth="400">
-                    <xAxis>
-                        <NumberAxis />
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis />
-                    </yAxis>
-                </LineChart>
-                <Label text="Most Common Genotypes:" />
-                <TextField fx:id="mostCommonGenotypesField" editable="false" prefWidth="160" />
+                <HBox>
+                    <VBox>
+                        <Label text="Total Animals:" />
+                        <TextField fx:id="totalAnimalsField" editable="false"  prefWidth="160" />
+                        <Label text="Total Plants:" />
+                        <TextField fx:id="totalPlantsField" editable="false"  prefWidth="160" />
+                        <Label text="Free Fields:" />
+                        <TextField fx:id="freeFieldsField" editable="false"  prefWidth="160" />
+                        <Label text="Average Energy:" />
+                        <TextField fx:id="averageEnergyField" editable="false"  prefWidth="160" />
+                        <Label text="Average Life Span:" />
+                        <TextField fx:id="averageLifeSpanField" editable="false"  prefWidth="160" />
+                        <Label text="Average Children Count:" />
+                        <TextField fx:id="averageChildrenCountField" editable="false"  prefWidth="160" />
+                        <Label text="Most Common Genotypes:" />
+                        <TextField fx:id="mostCommonGenotypesField" editable="false" prefWidth="160" />
+                    </VBox>
+                    <VBox>
+                        <Label text="Genome:" />
+                        <TextField fx:id="genomeField" editable="false" prefWidth="160" />
+                        <Label text="Active Part:" />
+                        <TextField fx:id="activePartField" editable="false" prefWidth="160" />
+                        <Label text="Energy:" />
+                        <TextField fx:id="energyField" editable="false" prefWidth="160" />
+                        <Label text="Eaten Plants:" />
+                        <TextField fx:id="eatenPlantsField" editable="false" prefWidth="160" />
+                        <Label text="Children Count:" />
+                        <TextField fx:id="childrenCountField" editable="false" prefWidth="160" />
+                        <Label text="Offspring Count:" />
+                        <TextField fx:id="offspringCountField" editable="false" prefWidth="160" />
+                        <Label text="Age:" />
+                        <TextField fx:id="ageField" editable="false" prefWidth="160" />
+                        <Label text="Death Day:" />
+                        <TextField fx:id="deathDayField" editable="false" prefWidth="160" />
+                    </VBox>
+                </HBox>
             </VBox>
         </HBox>
     </center>

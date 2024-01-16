@@ -1,14 +1,20 @@
 package agh.ics.oop;
 
 import agh.ics.oop.model.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimulationStatistics {
     private final Simulation simulation;
     private final AbstractWorldMap map;
+
 
     public SimulationStatistics(Simulation simulation, AbstractWorldMap map) {
         this.simulation = simulation;
@@ -40,6 +46,8 @@ public List<Integer> getMostCommonGenotypes() {
             .map(Genomes::getGenes)
             .orElse(Collections.emptyList());
 }
+
+
 
 public Genomes getDominantGenotype() {
     return simulation.getAnimals().stream()

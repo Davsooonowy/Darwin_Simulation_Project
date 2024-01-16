@@ -191,11 +191,11 @@ public void onStartClicked() {
         simulationPresenter.setParentEnergy(parentenergy);
         simulationPresenter.setBehaviourVariant(behaviourvariant);
         if (selectedOption.equals("Earth")) {
-            Earth worldMap = new Earth(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
+            Earth worldMap = new Earth(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
             simulationPresenter.setWorldMap(worldMap);
             worldMap.addMapChangeListener(simulationPresenter);
         } else {
-            SecretTunnels worldMap = new SecretTunnels(mapWidth, mapHeight, plantEnergy, initialGrassNumber, plantspawnRate);
+            SecretTunnels worldMap = new SecretTunnels(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
             simulationPresenter.setWorldMap(worldMap);
             worldMap.addMapChangeListener(simulationPresenter);
         }

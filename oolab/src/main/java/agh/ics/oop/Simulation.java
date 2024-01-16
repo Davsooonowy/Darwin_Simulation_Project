@@ -21,6 +21,7 @@ public class Simulation extends Thread {
     private volatile boolean running = true;
     HashSet<Animal> ancestors = new HashSet<>();
     HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
+    private int day = 0;
 
     public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation, String behaviourvariant) {
         this.numOfAnimals = numOfAnimals;
@@ -34,6 +35,7 @@ public class Simulation extends Thread {
         this.behaviourvariant = behaviourvariant;
         addInitialAnimals();
     }
+
 
     public List<Animal> getAnimals() {
         return this.animals;
@@ -58,6 +60,9 @@ public class Simulation extends Thread {
         }
     }
 
+    public int getCurrentDay(){
+        return this.day;
+    }
 
     public void pauseSimulation() {
         running = false;
@@ -126,6 +131,7 @@ public class Simulation extends Thread {
                 Animal chosenAnimal = map.chooseAnimal(grassPosition);
                 if (chosenAnimal != null) {
                     map.eat(chosenAnimal);
+                    chosenAnimal.addEeatenPlants();
                 }
             }
         }
@@ -144,7 +150,6 @@ public class Simulation extends Thread {
     @Override
     public void run() {
         try {
-            int day = 0;
             while(!Thread.currentThread().isInterrupted()) {
                 synchronized (lock) {
                     while (!running) {
@@ -153,7 +158,7 @@ public class Simulation extends Thread {
                 }
 
                 //thread sleep
-                Thread.sleep(25);
+                Thread.sleep(300);
 
 
                 // removing dead bodies
@@ -168,7 +173,7 @@ public class Simulation extends Thread {
                 groupAndReproduceAnimals();
 
                 //thread sleep
-                Thread.sleep(25);
+                Thread.sleep(300);
 
                 // spawning grass
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());

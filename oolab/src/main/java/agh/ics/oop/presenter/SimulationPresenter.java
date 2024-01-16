@@ -1,13 +1,15 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
-import agh.ics.oop.SimulationStatistics;
+import agh.ics.oop.*;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -18,7 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,11 +43,55 @@ public class SimulationPresenter implements MapChangeListener {
     private static final Color EMPTY_CELL_COLOR = javafx.scene.paint.Color.rgb(69, 38, 38);
     private static final Color TUNNEL_COLOR = javafx.scene.paint.Color.BLACK;
 
-    @FXML
-    private TextField mostCommonGenotypesField;
+    private Animal trackedAnimal;
 
     @FXML
-    private LineChart<Number, Number> statisticsChart;
+    private TextField mostCommonGenotypesField;
+    @FXML
+    private TextField totalAnimalsField;
+
+    @FXML
+    private TextField totalPlantsField;
+
+    @FXML
+    private TextField freeFieldsField;
+
+    @FXML
+    private TextField averageEnergyField;
+
+    @FXML
+    private TextField averageLifeSpanField;
+
+    @FXML
+    private TextField averageChildrenCountField;
+
+    private AnimalStatistics animalStatistics;
+
+    @FXML
+    private TextField genomeField;
+
+    @FXML
+    private TextField activePartField;
+
+    @FXML
+    private TextField energyField;
+
+    @FXML
+    private TextField eatenPlantsField;
+
+    @FXML
+    private TextField childrenCountField;
+
+    @FXML
+    private TextField offspringCountField;
+
+    @FXML
+    private TextField ageField;
+
+    @FXML
+    private TextField deathDayField;
+
+
 
     private PrintWriter csvWriter;
     private boolean generateCsv;
@@ -128,6 +176,27 @@ public class SimulationPresenter implements MapChangeListener {
         mapGrid.add(node, column, row);
     }
 
+    private boolean isAnimalStatisticsDisplayed = false;
+
+    private void handleAnimalClick(Animal animal) {
+    if (!isAnimalStatisticsDisplayed) {
+        animalStatistics = new AnimalStatistics(animal, simulation);
+
+        genomeField.setText(animalStatistics.getGenome());
+        activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
+        energyField.setText(String.valueOf(animalStatistics.getEnergy()));
+        eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
+        childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
+        offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
+        ageField.setText(String.valueOf(animalStatistics.getAge()));
+        deathDayField.setText(animalStatistics.getDeathDay());
+    } else {
+        updateStatistics(worldMap);
+    }
+
+    isAnimalStatisticsDisplayed = !isAnimalStatisticsDisplayed;
+}
+
     private Node createNodeForElement(WorldElement element, Vector2d position, int cellSize) {
         StackPane stackPane = createStackPane(cellSize);
         Rectangle cell = createCell(position, cellSize);
@@ -135,6 +204,7 @@ public class SimulationPresenter implements MapChangeListener {
 
         if (element instanceof Animal) {
             Circle circle = createAnimalCircle((Animal) element, cellSize);
+            circle.setOnMouseClicked(event -> handleAnimalClick((Animal) element));
             stackPane.getChildren().add(circle);
         }
 
@@ -191,29 +261,35 @@ private Rectangle createCell(Vector2d position, int cellSize) {
         Platform.runLater(() -> {
             drawMap();
             updateStatistics(worldMap);
+            updateAnimalStatistics();
             day++;
         });
     }
 
+    private void updateAnimalStatistics() {
+    if (animalStatistics != null) {
+        genomeField.setText(animalStatistics.getGenome());
+        activePartField.setText(String.valueOf(animalStatistics.getActivePart()));
+        energyField.setText(String.valueOf(animalStatistics.getEnergy()));
+        eatenPlantsField.setText(String.valueOf(animalStatistics.getEatenPlants()));
+        childrenCountField.setText(String.valueOf(animalStatistics.getChildrenCount()));
+        offspringCountField.setText(String.valueOf(animalStatistics.getOffspringCount()));
+        ageField.setText(String.valueOf(animalStatistics.getAge()));
+        deathDayField.setText(String.valueOf(animalStatistics.getDeathDay()));
+    }
+}
+
     private void updateStatistics(WorldMap map) {
-        SimulationStatistics stats = new SimulationStatistics(simulation, (AbstractWorldMap) map);
-        XYChart.Series<Number, Number> series = statisticsChart.getData().get(0);
-        XYChart.Series<Number, Number> totalPlantsSeries = statisticsChart.getData().get(1);
-        XYChart.Series<Number, Number> freeFieldsSeries = statisticsChart.getData().get(2);
-        XYChart.Series<Number, Number> averageEnergySeries = statisticsChart.getData().get(3);
-        XYChart.Series<Number, Number> averageLifeSpanSeries = statisticsChart.getData().get(4);
-        XYChart.Series<Number, Number> averageChildrenCountSeries = statisticsChart.getData().get(5);
+    SimulationStatistics stats = new SimulationStatistics(simulation, (AbstractWorldMap) map);
 
-        if (day % 10 == 0) { // Update the chart every 10 days
-            totalPlantsSeries.getData().add(new XYChart.Data<>(day, stats.getTotalPlants()));
-            freeFieldsSeries.getData().add(new XYChart.Data<>(day, stats.getFreeFields()));
-            averageEnergySeries.getData().add(new XYChart.Data<>(day, stats.getAverageEnergy()));
-            averageLifeSpanSeries.getData().add(new XYChart.Data<>(day, stats.getAverageLifeSpan()));
-            averageChildrenCountSeries.getData().add(new XYChart.Data<>(day, stats.getAverageChildrenCount()));
-            series.getData().add(new XYChart.Data<>(day, stats.getTotalAnimals()));
-        }
+    totalAnimalsField.setText(String.valueOf(stats.getTotalAnimals()));
+    totalPlantsField.setText(String.valueOf(stats.getTotalPlants()));
+    freeFieldsField.setText(String.valueOf(stats.getFreeFields()));
+    averageEnergyField.setText(String.format("%.2f", stats.getAverageEnergy()));
+    averageLifeSpanField.setText(String.format("%.2f", stats.getAverageLifeSpan()));
+    averageChildrenCountField.setText(String.format("%.2f", stats.getAverageChildrenCount()));
 
-        mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
+    mostCommonGenotypesField.setText(stats.getMostCommonGenotypes().toString());
 }
 
 
@@ -239,31 +315,6 @@ private Rectangle createCell(Vector2d position, int cellSize) {
     @FXML
     public void initialize() {
         startStopButton.setText("Start");
-
-        XYChart.Series<Number, Number> totalAnimalsSeries = new XYChart.Series<>();
-        totalAnimalsSeries.setName("Total Animals");
-        statisticsChart.getData().add(totalAnimalsSeries);
-
-        XYChart.Series<Number, Number> totalPlantsSeries = new XYChart.Series<>();
-        totalPlantsSeries.setName("Total Plants");
-        statisticsChart.getData().add(totalPlantsSeries);
-
-        XYChart.Series<Number, Number> freeFieldsSeries = new XYChart.Series<>();
-        freeFieldsSeries.setName("Free Fields");
-        statisticsChart.getData().add(freeFieldsSeries);
-
-        XYChart.Series<Number, Number> averageEnergySeries = new XYChart.Series<>();
-        averageEnergySeries.setName("Average Energy");
-        statisticsChart.getData().add(averageEnergySeries);
-
-        XYChart.Series<Number, Number> averageLifeSpanSeries = new XYChart.Series<>();
-        averageLifeSpanSeries.setName("Average Life Span");
-        statisticsChart.getData().add(averageLifeSpanSeries);
-
-        XYChart.Series<Number, Number> averageChildrenCountSeries = new XYChart.Series<>();
-        averageChildrenCountSeries.setName("Average Children Count");
-        statisticsChart.getData().add(averageChildrenCountSeries);
-        statisticsChart.setLegendVisible(true);
 //        if(generateCsv) {
 //            try {
 //                csvWriter = new PrintWriter(new FileWriter("simulation_data.csv", true));
@@ -286,7 +337,6 @@ public void onStartStopButtonClicked() {
         } else if (simulationEngine.isRunning()) {
             simulationEngine.pauseSimulation();
             startStopButton.setText("Start");
-            drawMap(); // Aktualizujemy wygląd mapy po naciśnięciu przycisku stop
         } else {
             simulationEngine.resumeSimulation();
             startStopButton.setText("Stop");
@@ -294,7 +344,6 @@ public void onStartStopButtonClicked() {
         System.out.println(e.getMessage());
     }
 }
-
     @FXML
     private GridPane mapGrid;
 }
