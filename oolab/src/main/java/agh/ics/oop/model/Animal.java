@@ -24,6 +24,7 @@ public class Animal implements WorldElement {
     private int eatenPlants = 0;
     private int activeGenome;
 
+    // constructor for initial animals
     public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
         this.direction = MapDirection.randomDirection();
         this.position = initialPosition;
