@@ -23,6 +23,7 @@ public class Animal implements WorldElement {
     private final int maxgeneMutation;
     private int deathDay;
     private int eatenPlants = 0;
+    private int activeGenome;
 
     // constructor for initial animals
     public Animal(Vector2d initialPosition, int initialenergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation) {
@@ -73,6 +74,7 @@ public class Animal implements WorldElement {
             this.parent2.offspringincrease(ancestors);
         }
     }
+
 
 
     // sex
@@ -131,7 +133,8 @@ public class Animal implements WorldElement {
         return javafx.scene.paint.Color.rgb(0, 0, 51);
     }
 
-    public void move(Integer direction, AbstractWorldMap validator) {
+    public void move(int direction, AbstractWorldMap validator) {
+        this.activeGenome = direction;
         for(int i = 0; i < direction; i++) {
             this.direction = this.direction.next();
         }
@@ -172,6 +175,17 @@ public class Animal implements WorldElement {
         if(validator.objectAt(Position) instanceof Tunnel){
             this.position = validator.getTunnel(Position).getConnected();
         }
+    }
+
+    public void setDeathDay(int day) {
+        this.deathDay = day;
+    }
+
+    public int getActiveGenome() {
+        return activeGenome;
+    }
+    public int getDeathDay() {
+        return deathDay;
     }
 
     public Vector2d getPosition() {

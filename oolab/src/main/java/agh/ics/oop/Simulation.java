@@ -102,6 +102,7 @@ public class Simulation extends Thread {
                 map.place(child);
                 ancestors.clear();
                 child.offspringincrease(ancestors);
+                System.out.println(child + " was born");
             }
         }
     }
@@ -141,6 +142,7 @@ public class Simulation extends Thread {
         for (Animal animal : animals) {
             if (animal.isDead()) {
                 deadAnimals.add(animal);
+                animal.setDeathDay(day);
                 map.removeDeadAnimal(animal);
             }
         }
@@ -180,6 +182,7 @@ public class Simulation extends Thread {
 
                 //day increment
                 day++;
+                System.out.println(deadAnimals.size());
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

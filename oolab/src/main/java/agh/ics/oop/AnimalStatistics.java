@@ -4,11 +4,10 @@ import agh.ics.oop.model.Animal;
 
 // TODO: -generator pliku CSV (niedzialajcy checkobx, generoawnie jest)
 //TODO: -czyszczenie kodu (clean code)
-//TODO: -getActivePart()
 //TODO: -optymalizacja
 //TODO: -podświetlanie zwierzaków i trawy na zawołanie
 //TODO: -testy
-
+//TODO: -wywalenie simulationengine
 public class AnimalStatistics {
     private final Animal animal;
     private final Simulation simulation;
@@ -22,9 +21,8 @@ public class AnimalStatistics {
         return animal.getGenomes().getGenes().toString();
     }
 
-    public int getActivePart() { //TODO: implement this method
-        // Implement this method based on your Animal class
-        return 0;
+    public int getActivePart() {
+        return animal.getActiveGenome();
     }
 
     public int getEnergy() {
@@ -48,6 +46,6 @@ public class AnimalStatistics {
     }
 
     public String getDeathDay() {
-        return animal.isDead() ? String.valueOf(simulation.getCurrentDay()) : "Alive";
+        return animal.isDead() ? String.valueOf(animal.getDeathDay()) : "Alive";
 }
 }
