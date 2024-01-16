@@ -1,8 +1,6 @@
 package agh.ics.oop.model;
 
 
-import agh.ics.oop.model.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,35 +61,35 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void place(Animal animal){
-        if (canMoveTo(animal.getPosition())) {
-            animals.put(animal.getPosition(), animal);
+        if (canMoveTo(animal.position())) {
+            animals.put(animal.position(), animal);
             mapChanged();
         }
     }
 
     @Override
     public void move(Animal animal, Integer direction) {
-        animals.remove(animal.getPosition());
+        animals.remove(animal.position());
         animal.move(direction, this);
-        animals.put(animal.getPosition(), animal);
+        animals.put(animal.position(), animal);
         mapChanged();
     }
 
     public void removeDeadAnimal(Animal animal){
-        animals.remove(animal.getPosition());
+        animals.remove(animal.position());
         mapChanged();
     }
 
     @Override
     public void eat(Animal animal){
         animal.animalEnergyChange(plantEnergy);
-        grasses.remove(animal.getPosition());
+        grasses.remove(animal.position());
         mapChanged();
     }
     public List<Animal> getAnimalsOnField(Vector2d position) {
         List<Animal> animalsOnField = new ArrayList<>();
         for (Animal animal : animals.values()) {
-            if (animal.getPosition().equals(position)) {
+            if (animal.position().equals(position)) {
                 animalsOnField.add(animal);
             }
         }

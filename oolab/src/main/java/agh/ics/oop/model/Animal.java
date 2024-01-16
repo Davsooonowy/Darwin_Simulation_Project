@@ -1,6 +1,5 @@
 package agh.ics.oop.model;
 
-import agh.ics.oop.Simulation;
 import javafx.scene.paint.Paint;
 
 import java.util.HashSet;
@@ -173,7 +172,7 @@ public class Animal implements WorldElement {
 
     public void goThroughTunnel(Vector2d Position, SecretTunnels validator){
         if(validator.objectAt(Position) instanceof Tunnel){
-            this.position = validator.getTunnel(Position).getConnected();
+            this.position = validator.getTunnel(Position).connected();
         }
     }
 
@@ -188,7 +187,7 @@ public class Animal implements WorldElement {
         return deathDay;
     }
 
-    public Vector2d getPosition() {
+    public Vector2d position() {
         return this.position;
     }
 

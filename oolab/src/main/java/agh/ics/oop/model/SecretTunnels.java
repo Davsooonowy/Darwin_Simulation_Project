@@ -5,9 +5,8 @@ import java.util.*;
 public class SecretTunnels extends AbstractWorldMap {
 
     private final HashMap<Vector2d,Tunnel> tunnels = new HashMap<>();
-    private List<List<Vector2d>> tunnelsConnections = new ArrayList<>();
+    private final List<List<Vector2d>> tunnelsConnections;
 
-    private List<WorldElement> elements = new ArrayList<>();
 
     public SecretTunnels(int height, int width,int plantEnergy, int initialGrassQuantity, int plantSpawnRate) {
         super(width,height,plantEnergy,initialGrassQuantity,plantSpawnRate);
@@ -20,15 +19,6 @@ public class SecretTunnels extends AbstractWorldMap {
         generator.iterator(); // This will fill the positionTuples list
         tunnelsConnections = generator.getPositionTuples();
         placeTunnels();
-        System.out.println(tunnels);
-        System.out.println(tunnelsConnections);
-    }
-
-    void placeGrass(int grassQuantity) {
-        GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, getGrassPositions());
-        for (Vector2d grassPosition : grassGenerator) {
-            grasses.put(grassPosition, new Grass(grassPosition));
-        }
     }
 
     void placeTunnels(){
@@ -69,18 +59,15 @@ public class SecretTunnels extends AbstractWorldMap {
         return new Boundary(lowerLeft, upperRight);
     }
 
-    int getGrassSize() {
-        return grasses.size();
-    }
 
     public Tunnel getTunnel(Vector2d position){
         return tunnels.get(position);
     }
 
     public void wentThroughTunnel(Animal animal, Vector2d newPosition){
-        animals.remove(animal.getPosition());
+        animals.remove(animal.position());
         animal.goThroughTunnel(newPosition,this);
-        animals.put(animal.getPosition(), animal);
+        animals.put(animal.position(), animal);
         mapChanged();
     }
 }

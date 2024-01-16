@@ -82,7 +82,7 @@ public class Simulation extends Thread {
         groupedAnimals.clear();
         for (Animal animal : animals) {
             if (animal.getEnergy() >= reproductionEnergy) {
-                Vector2d position = animal.getPosition();
+                Vector2d position = animal.position();
                 if (!groupedAnimals.containsKey(position)) {
                     groupedAnimals.put(position, new ArrayList<>());
                 }
@@ -102,7 +102,6 @@ public class Simulation extends Thread {
                 map.place(child);
                 ancestors.clear();
                 child.offspringincrease(ancestors);
-                System.out.println(child + " was born");
             }
         }
     }
@@ -118,7 +117,7 @@ public class Simulation extends Thread {
                 }
             }
             if (map.getClass().equals(SecretTunnels.class)) {
-                ((SecretTunnels) map).wentThroughTunnel(animal, animal.getPosition());
+                ((SecretTunnels) map).wentThroughTunnel(animal, animal.position());
             }
             animal.animalEnergyChange(-1);
             animal.increaseAge();
@@ -182,7 +181,6 @@ public class Simulation extends Thread {
 
                 //day increment
                 day++;
-                System.out.println(deadAnimals.size());
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

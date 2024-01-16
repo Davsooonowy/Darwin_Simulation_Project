@@ -1,7 +1,5 @@
 package agh.ics.oop.presenter;
 
-import agh.ics.oop.Simulation;
-import agh.ics.oop.SimulationEngine;
 import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
 import javafx.beans.binding.Bindings;
@@ -12,12 +10,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 public class StartPresenter {
 
