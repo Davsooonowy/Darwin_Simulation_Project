@@ -2,12 +2,11 @@ package agh.ics.oop;
 import agh.ics.oop.model.Animal;
 
 
-// TODO: -generator pliku CSV (niedzialajcy checkobx, generoawnie jest)
-//TODO: -czyszczenie kodu (clean code)
-//TODO: -optymalizacja
-//TODO: -podświetlanie zwierzaków i trawy na zawołanie
-//TODO: -testy
-//TODO: -wywalenie simulationengine
+// TODO: -generator pliku CSV (niedzialajcy checkobx, generoawnie jest) XD
+//TODO: -czyszczenie kodu (clean code) Dawid
+//TODO: -optymalizacja both
+//TODO: -podświetlanie zwierzaków i trawy na zawołanie na koniec przed oddaniem xD
+//TODO: -testy Maciej W
 public class AnimalStatistics {
     private final Animal animal;
     private final Simulation simulation;

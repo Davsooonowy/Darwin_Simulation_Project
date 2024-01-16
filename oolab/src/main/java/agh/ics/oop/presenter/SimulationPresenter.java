@@ -4,10 +4,15 @@ import agh.ics.oop.*;
 import agh.ics.oop.model.*;
 import agh.ics.oop.model.AbstractWorldMap;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -15,8 +20,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class SimulationPresenter implements MapChangeListener {
     private AbstractWorldMap worldMap;
@@ -28,10 +38,12 @@ public class SimulationPresenter implements MapChangeListener {
     private int reproduceEnergy;
     private int parentEnergy;
     private String behaviourvariant;
+    private SimulationEngine simulationEngine;
     private static final Color GRASS_COLOR = javafx.scene.paint.Color.GREEN;
     private static final Color EMPTY_CELL_COLOR = javafx.scene.paint.Color.rgb(69, 38, 38);
     private static final Color TUNNEL_COLOR = javafx.scene.paint.Color.BLACK;
 
+    private Animal trackedAnimal;
 
     @FXML
     private TextField mostCommonGenotypesField;
@@ -316,15 +328,17 @@ private Rectangle createCell(Vector2d position, int cellSize) {
 @FXML
 public void onStartStopButtonClicked() {
     try {
-        if (simulation == null) {
+        if (simulationEngine == null) {
+            simulationEngine = new SimulationEngine(new ArrayList<>());
             simulation = new Simulation(initialAnimalsNumber, worldMap, initialEnergy, genomeLength,reproduceEnergy, parentEnergy, mingeneMutation,maxgeneMutation, behaviourvariant);
-            simulation.start();
+            simulationEngine.getSimulations().add(simulation);
+            simulationEngine.runAsync();
             startStopButton.setText("Stop");
-        } else if (simulation.isRunning()) {
-            simulation.pauseSimulation();
+        } else if (simulationEngine.isRunning()) {
+            simulationEngine.pauseSimulation();
             startStopButton.setText("Start");
         } else {
-            simulation.resumeSimulation();
+            simulationEngine.resumeSimulation();
             startStopButton.setText("Stop");
         }} catch (Exception e) {
         System.out.println(e.getMessage());

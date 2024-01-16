@@ -19,6 +19,10 @@ Button {
     -fx-padding: 10 20;
 }
 
+.large-font {
+    -fx-font-size: 20px;
+}
+
 GridPane {
     -fx-background-color: #ecf0f1;
     -fx-border-color: #bdc3c7;

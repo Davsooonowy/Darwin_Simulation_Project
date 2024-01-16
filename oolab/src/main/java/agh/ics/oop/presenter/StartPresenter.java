@@ -4,6 +4,7 @@ import agh.ics.oop.model.Earth;
 import agh.ics.oop.model.SecretTunnels;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -155,10 +156,11 @@ private boolean isNonNegativeInteger(String value, int minVal) {
     }
 
 
+
     @FXML
 public void onStartClicked() {
     try {
-        boolean generateCsv = generateCsvCheckBox.isSelected();
+        BooleanProperty generateCsv = generateCsvCheckBox.selectedProperty();
         String selectedOption = (String) MapVariant.getValue();
         String behaviourvariant = (String) BehaviourVariant.getValue();
         int mapWidth = parseTextFieldToInt(widthField);
