@@ -1,22 +1,74 @@
+/*!* startStyles.css *!*/
+
+/** {*/
+/*    -fx-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+/*}*/
+
+/*BorderPane {*/
+/*    background-color: #f0f0f0;*/
+/*}*/
+
+/*VBox {*/
+/*    -fx-spacing: 15;*/
+/*}*/
+
+/*Button {*/
+/*    -fx-background-color: #3498db;*/
+/*    -fx-text-fill: #ffffff;*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-padding: 10 20;*/
+/*}*/
+
+/*GridPane {*/
+/*    -fx-hgap: 10;*/
+/*    -fx-vgap: 10;*/
+/*}*/
+
+/*Label {*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-text-fill: #333333;*/
+/*}*/
+
+/*TextField {*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-padding: 8;*/
+/*    -fx-background-radius: 5;*/
+/*}*/
+
+/*ChoiceBox {*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-padding: 8;*/
+/*    -fx-background-radius: 5;*/
+/*}*/
+
+/*HBox {*/
+/*    -fx-spacing: 20;*/
+/*}*/
+
+/*#startButton {*/
+/*    -fx-background-color: #27ae60;*/
+/*}*/
+
 /* startStyles.css */
 
 * {
-    -fx-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -fx-font-family: 'Roboto', sans-serif;
 }
 
 BorderPane {
     background-color: #f0f0f0;
 }
 
-VBox {
+VBox, HBox {
     -fx-spacing: 15;
 }
 
 Button {
-    -fx-background-color: #3498db;
+    -fx-background-color: #0f9d58;
     -fx-text-fill: #ffffff;
     -fx-font-size: 14px;
     -fx-padding: 10 20;
+    -fx-background-radius: 5;
 }
 
 GridPane {
@@ -29,22 +81,14 @@ Label {
     -fx-text-fill: #333333;
 }
 
-TextField {
+TextField, ChoiceBox {
     -fx-font-size: 14px;
     -fx-padding: 8;
     -fx-background-radius: 5;
-}
-
-ChoiceBox {
-    -fx-font-size: 14px;
-    -fx-padding: 8;
-    -fx-background-radius: 5;
-}
-
-HBox {
-    -fx-spacing: 20;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d6d6d6;
 }
 
 #startButton {
-    -fx-background-color: #27ae60;
+    -fx-background-color: #4285f4;
 }

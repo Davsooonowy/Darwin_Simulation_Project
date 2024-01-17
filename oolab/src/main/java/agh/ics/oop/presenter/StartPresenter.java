@@ -12,7 +12,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiPredicate;
 
 public class StartPresenter {
@@ -28,7 +36,7 @@ public class StartPresenter {
     @FXML
     public TextField maxGeneMutation;
     @FXML
-    public ChoiceBox BehaviourVariant;
+    private ChoiceBox<String> BehaviourVariant;
 
     @FXML
     private TextField widthField;
@@ -37,7 +45,7 @@ public class StartPresenter {
     @FXML
     private TextField initialgrassNumberField;
     @FXML
-    private ChoiceBox MapVariant;
+    private ChoiceBox<String> MapVariant;
     @FXML
     private TextField initialanimalsNumberField;
     @FXML
@@ -52,6 +60,16 @@ public class StartPresenter {
     private Button startButton;
     @FXML
     private CheckBox generateCsvCheckBox;
+    @FXML
+    private Button loadConfigButton;
+
+    @FXML
+    private Button saveConfigButton;
+    @FXML
+    private TextField loadConfigIdField;
+
+    @FXML
+    private TextField saveConfigNameField;
 
 
 
@@ -115,6 +133,7 @@ private boolean isNonNegativeInteger(String value, int minVal) {
     public void initialize() {
         try {
 
+
             ///                               set values and validate in choice boxes            ///
             MapVariant.setItems(FXCollections.observableArrayList("Earth", "Secret Tunnels"));
             BehaviourVariant.setItems(FXCollections.observableArrayList("Complete predestination", "An Unexpected Journey"));
@@ -170,16 +189,122 @@ private boolean isNonNegativeInteger(String value, int minVal) {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        loadConfigButton.setOnAction(event -> {
+            String configId = loadConfigIdField.getText();
+            if (!configId.isEmpty()) {
+                try {
+                    loadConfigurations(configId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        saveConfigButton.setOnAction(event -> {
+            String configName = saveConfigNameField.getText();
+            if (!configName.isEmpty()) {
+                Map<String, String> configs = new HashMap<>();
+                configs.put("width", widthField.getText());
+                configs.put("height", heightField.getText());
+                configs.put("startEnergy", startEnergyField.getText());
+                configs.put("plantEnergy", plantEnergyField.getText());
+                configs.put("initialAnimalsNumber", initialanimalsNumberField.getText());
+                configs.put("initialGrassNumber", initialgrassNumberField.getText());
+                configs.put("plantSpawnRate", plantSpawnRate.getText());
+                configs.put("reproduceEnergy", reproduceEnergy.getText());
+                configs.put("parentEnergy", parentEnergy.getText());
+                configs.put("minGeneMutation", minGeneMutation.getText());
+                configs.put("maxGeneMutation", maxGeneMutation.getText());
+                configs.put("genomeLength", genomeLength.getText());
+                configs.put("mapVariant", (String) MapVariant.getValue());
+                configs.put("behaviourVariant", (String) BehaviourVariant.getValue());
+                configs.put("generateCsv", String.valueOf(generateCsvCheckBox.isSelected()));
+
+                try {
+                    saveConfigurations(configName, configs);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
+    private void saveConfigurations(String configName, Map<String, String> configs) throws IOException {
+    Gson gson = new Gson();
+    Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
+    Map<String, Map<String, String>> allConfigs;
+
+    // Read existing configurations
+    try (FileReader reader = new FileReader("configurations.json")) {
+        allConfigs = gson.fromJson(reader, type);
+        if (allConfigs == null) {
+            allConfigs = new HashMap<>();
+        }
+    }
+        configs.put("mapVariant", MapVariant.getValue().equals("Earth") ? "1" : "0");
+        configs.put("behaviourVariant", BehaviourVariant.getValue().equals("Complete predestination") ? "1" : "0");
+        configs.put("generateCsv", generateCsvCheckBox.isSelected() ? "1" : "0");
+    // Add new configuration
+        allConfigs.put(configName, configs);
+
+    // Write all configurations back to file
+    String json = gson.toJson(allConfigs);
+    try (FileWriter writer = new FileWriter("configurations.json")) {
+        writer.write(json);
+    }
+}
+
+    public void loadConfigurations(String configName) throws IOException {
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
+
+        try (FileReader reader = new FileReader("configurations.json")) {
+            if (reader.ready()) {
+                Map<String, Map<String, String>> allConfigs = gson.fromJson(reader, type);
+
+                if (allConfigs != null) {
+                    Map<String, String> configs = allConfigs.get(configName);
+
+                    if (configs != null) {
+                        widthField.setText(configs.get("width"));
+                        heightField.setText(configs.get("height"));
+                        startEnergyField.setText(configs.get("startEnergy"));
+                        plantEnergyField.setText(configs.get("plantEnergy"));
+                        initialanimalsNumberField.setText(configs.get("initialAnimalsNumber"));
+                        initialgrassNumberField.setText(configs.get("initialGrassNumber"));
+                        plantSpawnRate.setText(configs.get("plantSpawnRate"));
+                        reproduceEnergy.setText(configs.get("reproduceEnergy"));
+                        parentEnergy.setText(configs.get("parentEnergy"));
+                        minGeneMutation.setText(configs.get("minGeneMutation"));
+                        maxGeneMutation.setText(configs.get("maxGeneMutation"));
+                        genomeLength.setText(configs.get("genomeLength"));
+                        String mapVariantValue = configs.get("mapVariant").equals("1") ? "Earth" : "Secret Tunnels";
+                        String behaviourVariantValue = configs.get("behaviourVariant").equals("1") ? "Complete predestination" : "An Unexpected Journey";
+
+                        MapVariant.getSelectionModel().select(mapVariantValue);
+                        BehaviourVariant.getSelectionModel().select(behaviourVariantValue);
+                        generateCsvCheckBox.setSelected(configs.get("generateCsv").equals("1"));
+
+                    } else {
+                        System.out.println("Configuration with name " + configName + " not found.");
+                    }
+                } else {
+                    System.out.println("No configurations found.");
+                }
+            } else {
+                System.out.println("Configuration file is empty.");
+            }
+        }
+    }
 
     @FXML
 public void onStartClicked() {
     try {
         ///                                    get values from text fields                           ///
         boolean generateCsv = generateCsvCheckBox.isSelected();
-        String selectedOption = (String) MapVariant.getValue();
-        String behaviourvariant = (String) BehaviourVariant.getValue();
+        String selectedOption = MapVariant.getValue();
+        String behaviourvariant = BehaviourVariant.getValue();
         int mapWidth = parseTextFieldToInt(widthField);
         int mapHeight = parseTextFieldToInt(heightField);
         int initialGrassNumber = parseTextFieldToInt(initialgrassNumberField);
