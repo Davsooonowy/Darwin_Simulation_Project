@@ -2,12 +2,15 @@ package agh.ics.oop;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import agh.ics.oop.model.*;
+
 import agh.ics.oop.model.mapObjects.Animal;
 import agh.ics.oop.model.maps.AbstractWorldMap;
 import agh.ics.oop.model.maps.SecretTunnels;
+import agh.ics.oop.model.vector_records.Boundary;
+import agh.ics.oop.model.vector_records.Vector2d;
 
 public class Simulation extends Thread {
+    ///                                                   fields                                                 ///
     private final int numOfAnimals;
     private final int parentEnergy;
     private List<Animal> animals = new ArrayList<>();
@@ -25,6 +28,8 @@ public class Simulation extends Thread {
     HashMap<Vector2d, List<Animal>> groupedAnimals = new HashMap<>();
     private int day = 0;
 
+    ///                                                constructor                                          ///
+
     public Simulation(int numOfAnimals, AbstractWorldMap map, int initialEnergy, int genomeLength, int reproductionEnergy, int parentEnergy, int mingeneMutation,int maxgeneMutation, String behaviourvariant) {
         this.numOfAnimals = numOfAnimals;
         this.map = map;
@@ -38,6 +43,7 @@ public class Simulation extends Thread {
         addInitialAnimals();
     }
 
+    ///                                                getters                                                 ///
 
     public List<Animal> getAnimals() {
         return this.animals;
@@ -47,7 +53,12 @@ public class Simulation extends Thread {
         return this.deadAnimals;
     }
 
+    public int getCurrentDay(){
+        return this.day;
+    }
 
+
+    ///                                                add first animals                                   ///
     private void addInitialAnimals() {
         Boundary worldBoundary = map.getBounds();
         Random random = new Random();
@@ -62,10 +73,8 @@ public class Simulation extends Thread {
         }
     }
 
-    public int getCurrentDay(){
-        return this.day;
-    }
 
+    ///                                     start/stop methods                                         ///
     public void pauseSimulation() {
         running = false;
     }
@@ -80,6 +89,9 @@ public class Simulation extends Thread {
     public boolean isRunning() {
         return running;
     }
+
+
+    ///                                     reproducing                                                    ///
     public void groupAndReproduceAnimals() {
         groupedAnimals.clear();
         for (Animal animal : animals) {
@@ -107,6 +119,9 @@ public class Simulation extends Thread {
             }
         }
     }
+
+
+    ///                                     moving                                                            ///
     private void move_animals(int day){
         for (Animal animal : animals) {
             if(behaviourvariant.equals("Complete predestination")) {
@@ -126,6 +141,7 @@ public class Simulation extends Thread {
         }
     }
 
+    ///                                      eating                                                             ///
     private void eat() {
         if (!animals.isEmpty()) {
             Set<Vector2d> grassesToEat = map.getGrassPositions();
@@ -139,6 +155,7 @@ public class Simulation extends Thread {
         }
     }
 
+    ///                                      garbage disposal                                            ///
     private void removeDeadBodies(){
         for (Animal animal : animals) {
             if (animal.isDead()) {
@@ -150,6 +167,8 @@ public class Simulation extends Thread {
         animals = animals.stream().filter(animal -> !animal.isDead()).collect(Collectors.toList());
     }
 
+
+    ///                                      simulation run                                                ///
     @Override
     public void run() {
         try {
@@ -160,28 +179,20 @@ public class Simulation extends Thread {
                     }
                 }
 
-                //thread sleep
                 Thread.sleep(300);
 
-
-                // removing dead bodies
                 removeDeadBodies();
 
-                // moving
                 move_animals(day);
 
-                //eating
                 eat();
-                // reproducing
+
                 groupAndReproduceAnimals();
 
-                //thread sleep
                 Thread.sleep(300);
 
-                // spawning grass
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
 
-                //day increment
                 day++;
             }
         } catch (InterruptedException e) {

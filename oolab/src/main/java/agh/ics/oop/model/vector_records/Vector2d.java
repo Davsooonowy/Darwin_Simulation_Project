@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.vector_records;
 
 public record Vector2d(int x, int y) {
 

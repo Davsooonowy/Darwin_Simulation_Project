@@ -54,6 +54,8 @@ public class StartPresenter {
     private CheckBox generateCsvCheckBox;
 
 
+
+    ///                                validate text fields                                                ///
     private void validateTextField(TextField textField, BiPredicate<String, Integer> validationFunction, int minVal) {
     textField.textProperty().addListener((observable, oldValue, newValue) -> {
         if (!validationFunction.test(newValue, minVal)) {
@@ -75,9 +77,14 @@ private boolean isNonNegativeInteger(String value, int minVal) {
     private void validateTextFieldWithComparison(TextField lowerValue, TextField biggerValue) {
     lowerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
         String text = lowerValue.getText();
-        if (!newValue && !text.isEmpty()) {
-            if (!text.matches("\\d*") || Integer.parseInt(text) > Integer.parseInt(biggerValue.getText())) {
-                lowerValue.setText("");
+        if (!newValue && !text.isEmpty() && text.matches("\\d*")) {
+            int lowerNumber = Integer.parseInt(text);
+            String biggerText = biggerValue.getText();
+            if (biggerText.matches("\\d*")) {
+                int biggerNumber = Integer.parseInt(biggerText);
+                if (lowerNumber > biggerNumber) {
+                    lowerValue.setText("");
+                }
             }
         } else {
             infoLabel.setText("");
@@ -86,9 +93,14 @@ private boolean isNonNegativeInteger(String value, int minVal) {
 
     biggerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
         String text = biggerValue.getText();
-        if (!newValue && !text.isEmpty()) {
-            if (!text.matches("\\d*") || Integer.parseInt(text) < Integer.parseInt(lowerValue.getText())) {
-                biggerValue.setText("");
+        if (!newValue && !text.isEmpty() && text.matches("\\d*")) {
+            int biggerNumber = Integer.parseInt(text);
+            String lowerText = lowerValue.getText();
+            if (lowerText.matches("\\d*")) {
+                int lowerNumber = Integer.parseInt(lowerText);
+                if (biggerNumber < lowerNumber) {
+                    biggerValue.setText("");
+                }
             }
         } else {
             infoLabel.setText("");
@@ -101,64 +113,70 @@ private boolean isNonNegativeInteger(String value, int minVal) {
     }
     @FXML
     public void initialize() {
-        MapVariant.setItems(FXCollections.observableArrayList("Earth", "Secret Tunnels"));
-        BehaviourVariant.setItems(FXCollections.observableArrayList("Complete predestination", "An Unexpected Journey"));
-        validateTextField(startEnergyField, this::isNonNegativeInteger, 0);
-        validateTextField(plantEnergyField, this::isNonNegativeInteger,0);
-        validateTextField(widthField, this::isNonNegativeInteger,1);
-        validateTextField(heightField, this::isNonNegativeInteger,1);
-        validateTextField(initialgrassNumberField, this::isNonNegativeInteger,0);
-        validateTextField(initialanimalsNumberField, this::isNonNegativeInteger,0);
-        validateTextField(genomeLength, this::isNonNegativeInteger,1);
-        validateTextField(plantSpawnRate, this::isNonNegativeInteger,0);
-        validateTextField(parentEnergy, this::isNonNegativeInteger, 0);
-        validateTextField(reproduceEnergy, this::isNonNegativeInteger, 0);
-        validateTextField(minGeneMutation, this::isNonNegativeInteger, 0);
-        validateTextField(maxGeneMutation, this::isNonNegativeInteger, 0);
-        validateTextFieldWithComparison(minGeneMutation,maxGeneMutation);
-        validateTextFieldWithComparison(parentEnergy,reproduceEnergy);
-        validateTextFieldWithComparison(maxGeneMutation,genomeLength);
-        validateTextFieldWithComparison(minGeneMutation, genomeLength);
+        try {
 
-        BooleanBinding areFieldsEmpty = Bindings.createBooleanBinding(() ->
-                        startEnergyField.getText().isEmpty() ||
-                        plantEnergyField.getText().isEmpty() ||
-                        widthField.getText().isEmpty() ||
-                        heightField.getText().isEmpty() ||
-                        initialgrassNumberField.getText().isEmpty() ||
-                        initialanimalsNumberField.getText().isEmpty() ||
-                        genomeLength.getText().isEmpty() ||
-                        plantSpawnRate.getText().isEmpty() ||
-                        parentEnergy.getText().isEmpty() ||
-                        reproduceEnergy.getText().isEmpty() ||
-                        minGeneMutation.getText().isEmpty() ||
-                        maxGeneMutation.getText().isEmpty() ||
-                        MapVariant.getValue() == null ||
-                        BehaviourVariant.getValue() == null,
-                startEnergyField.textProperty(),
-                plantEnergyField.textProperty(),
-                widthField.textProperty(),
-                heightField.textProperty(),
-                initialgrassNumberField.textProperty(),
-                initialanimalsNumberField.textProperty(),
-                genomeLength.textProperty(),
-                plantSpawnRate.textProperty(),
-                parentEnergy.textProperty(),
-                reproduceEnergy.textProperty(),
-                minGeneMutation.textProperty(),
-                maxGeneMutation.textProperty(),
-                MapVariant.valueProperty(),
-                BehaviourVariant.valueProperty()
-        );
+            ///                               set values and validate in choice boxes            ///
+            MapVariant.setItems(FXCollections.observableArrayList("Earth", "Secret Tunnels"));
+            BehaviourVariant.setItems(FXCollections.observableArrayList("Complete predestination", "An Unexpected Journey"));
+            validateTextField(startEnergyField, this::isNonNegativeInteger, 0);
+            validateTextField(plantEnergyField, this::isNonNegativeInteger, 0);
+            validateTextField(widthField, this::isNonNegativeInteger, 1);
+            validateTextField(heightField, this::isNonNegativeInteger, 1);
+            validateTextField(initialgrassNumberField, this::isNonNegativeInteger, 0);
+            validateTextField(initialanimalsNumberField, this::isNonNegativeInteger, 0);
+            validateTextField(genomeLength, this::isNonNegativeInteger, 1);
+            validateTextField(plantSpawnRate, this::isNonNegativeInteger, 0);
+            validateTextField(parentEnergy, this::isNonNegativeInteger, 0);
+            validateTextField(reproduceEnergy, this::isNonNegativeInteger, 0);
+            validateTextField(minGeneMutation, this::isNonNegativeInteger, 0);
+            validateTextField(maxGeneMutation, this::isNonNegativeInteger, 0);
+            validateTextFieldWithComparison(minGeneMutation, maxGeneMutation);
+            validateTextFieldWithComparison(parentEnergy, reproduceEnergy);
+            validateTextFieldWithComparison(maxGeneMutation, genomeLength);
+            validateTextFieldWithComparison(minGeneMutation, genomeLength);
 
-        startButton.disableProperty().bind(areFieldsEmpty);
+            BooleanBinding areFieldsEmpty = Bindings.createBooleanBinding(() ->
+                            startEnergyField.getText().isEmpty() ||
+                                    plantEnergyField.getText().isEmpty() ||
+                                    widthField.getText().isEmpty() ||
+                                    heightField.getText().isEmpty() ||
+                                    initialgrassNumberField.getText().isEmpty() ||
+                                    initialanimalsNumberField.getText().isEmpty() ||
+                                    genomeLength.getText().isEmpty() ||
+                                    plantSpawnRate.getText().isEmpty() ||
+                                    parentEnergy.getText().isEmpty() ||
+                                    reproduceEnergy.getText().isEmpty() ||
+                                    minGeneMutation.getText().isEmpty() ||
+                                    maxGeneMutation.getText().isEmpty() ||
+                                    MapVariant.getValue() == null ||
+                                    BehaviourVariant.getValue() == null,
+                    startEnergyField.textProperty(),
+                    plantEnergyField.textProperty(),
+                    widthField.textProperty(),
+                    heightField.textProperty(),
+                    initialgrassNumberField.textProperty(),
+                    initialanimalsNumberField.textProperty(),
+                    genomeLength.textProperty(),
+                    plantSpawnRate.textProperty(),
+                    parentEnergy.textProperty(),
+                    reproduceEnergy.textProperty(),
+                    minGeneMutation.textProperty(),
+                    maxGeneMutation.textProperty(),
+                    MapVariant.valueProperty(),
+                    BehaviourVariant.valueProperty()
+            );
+
+            startButton.disableProperty().bind(areFieldsEmpty);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-
 
 
     @FXML
 public void onStartClicked() {
     try {
+        ///                                    get values from text fields                           ///
         boolean generateCsv = generateCsvCheckBox.isSelected();
         String selectedOption = (String) MapVariant.getValue();
         String behaviourvariant = (String) BehaviourVariant.getValue();
@@ -178,6 +196,8 @@ public void onStartClicked() {
         Parent root = loader.load();
 
         SimulationPresenter simulationPresenter = loader.getController();
+
+        ///                                    set values in simulation presenter                ///
         simulationPresenter.setGenerateCsv(generateCsv);
         simulationPresenter.setInitialanimalsNumberField(animalNumber);
         simulationPresenter.setInitialEnergy(initialEnergy);

@@ -1,6 +1,6 @@
 package agh.ics.oop.model.generators;
 
-import agh.ics.oop.model.Vector2d;
+import agh.ics.oop.model.vector_records.Vector2d;
 
 import java.util.*;
 

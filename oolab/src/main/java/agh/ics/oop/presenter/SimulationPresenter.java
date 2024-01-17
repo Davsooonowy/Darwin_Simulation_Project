@@ -3,11 +3,14 @@ package agh.ics.oop.presenter;
 import agh.ics.oop.*;
 import agh.ics.oop.Statistics.AnimalStatistics;
 import agh.ics.oop.Statistics.SimulationStatistics;
-import agh.ics.oop.model.*;
 import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.mapObjects.WorldElement;
 import agh.ics.oop.model.maps.AbstractWorldMap;
+import agh.ics.oop.model.maps.MapChangeListener;
 import agh.ics.oop.model.maps.SecretTunnels;
 import agh.ics.oop.model.maps.WorldMap;
+import agh.ics.oop.model.vector_records.Boundary;
+import agh.ics.oop.model.vector_records.Vector2d;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 

@@ -1,8 +1,10 @@
 package agh.ics.oop.model.mapObjects;
 
-import agh.ics.oop.model.*;
+import agh.ics.oop.model.mapObjects.properties.Genomes;
+import agh.ics.oop.model.mapObjects.properties.MapDirection;
 import agh.ics.oop.model.maps.AbstractWorldMap;
 import agh.ics.oop.model.maps.SecretTunnels;
+import agh.ics.oop.model.vector_records.Vector2d;
 import javafx.scene.paint.Paint;
 
 import java.util.HashSet;

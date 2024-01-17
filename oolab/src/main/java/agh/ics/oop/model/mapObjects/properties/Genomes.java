@@ -1,4 +1,4 @@
-package agh.ics.oop.model;
+package agh.ics.oop.model.mapObjects.properties;
 
 import agh.ics.oop.model.mapObjects.Animal;
 

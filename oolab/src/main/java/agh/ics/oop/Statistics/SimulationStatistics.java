@@ -2,7 +2,7 @@ package agh.ics.oop.Statistics;
 
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.mapObjects.Animal;
-import agh.ics.oop.model.Genomes;
+import agh.ics.oop.model.mapObjects.properties.Genomes;
 import agh.ics.oop.model.maps.AbstractWorldMap;
 
 

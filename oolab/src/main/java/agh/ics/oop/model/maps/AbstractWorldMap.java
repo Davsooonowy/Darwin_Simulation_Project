@@ -1,14 +1,18 @@
 package agh.ics.oop.model.maps;
 
-import agh.ics.oop.model.*;
 import agh.ics.oop.model.generators.GrassGenerator;
 import agh.ics.oop.model.mapObjects.Animal;
 import agh.ics.oop.model.mapObjects.Grass;
+import agh.ics.oop.model.mapObjects.WorldElement;
+import agh.ics.oop.model.vector_records.Boundary;
+import agh.ics.oop.model.vector_records.Vector2d;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AbstractWorldMap implements WorldMap {
+
+    ///                                                   fields                                                 ///
     protected HashMap<Vector2d, Animal> animals = new HashMap<>();
     public final HashMap<Vector2d, Grass> grasses = new HashMap<>();
     protected ArrayList<MapChangeListener> mapChangeListeners;
@@ -20,17 +24,8 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final int plantEnergy;
     protected final int plantSpawnRate;
 
-    public Set<WorldElement> getElements() {
-        return new HashSet<>(animals.values());
-    }
 
-    public Set<Vector2d> getGrassPositions() {
-        return grasses.keySet();
-    }
-
-    public int getPlantSpawnRate(){
-        return plantSpawnRate;
-    }
+    ///                                                constructor                                          ///
 
     public AbstractWorldMap(int width, int height,int plantEnergy,int initialGrassQuantity, int plantSpawnRate) {
         this.height = height;
@@ -44,15 +39,46 @@ public abstract class AbstractWorldMap implements WorldMap {
         placeGrass(initialGrassQuantity,getGrassPositions());
     }
 
-
-
-    public void placeGrass(int grassQuantity, Set<Vector2d> grassPositions) {
-        GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, grassPositions);
-        for (Vector2d grassPosition : grassGenerator) {
-            grasses.put(grassPosition, new Grass(grassPosition));
-        }
-        mapChanged();
+    ///                                                getters                                                 ///
+    public Set<WorldElement> getElements() {
+        return new HashSet<>(animals.values());
     }
+
+    public Set<Vector2d> getGrassPositions() {
+        return grasses.keySet();
+    }
+
+    public int getPlantSpawnRate(){
+        return plantSpawnRate;
+    }
+
+    public List<Animal> getAnimalsOnField(Vector2d position) {
+        List<Animal> animalsOnField = new ArrayList<>();
+        for (Animal animal : animals.values()) {
+            if (animal.position().equals(position)) {
+                animalsOnField.add(animal);
+            }
+        }
+        return animalsOnField;
+    }
+
+    public Boundary getBounds() {
+        return this.boundary;
+    }
+
+    public int getFreeFields() {
+        List<Vector2d> occupiedFields = new ArrayList<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Vector2d position = new Vector2d(x, y);
+                if (objectAt(position) instanceof Animal) {
+                    occupiedFields.add(position);
+                }
+            }
+        }
+        return width * height - occupiedFields.size();
+    }
+
     public Vector2d getMostPreferredPosition() {
         int equatorStart = 2 * height / 5;
         int equatorEnd = 3 * width / 5;
@@ -67,6 +93,22 @@ public abstract class AbstractWorldMap implements WorldMap {
                 .orElse(null);
     }
 
+
+    ///                                                grass                                                    ///
+
+    public void placeGrass(int grassQuantity, Set<Vector2d> grassPositions) {
+        GrassGenerator grassGenerator = new GrassGenerator(width, height, grassQuantity, grassPositions);
+        for (Vector2d grassPosition : grassGenerator) {
+            grasses.put(grassPosition, new Grass(grassPosition));
+        }
+        mapChanged();
+    }
+
+    public WorldElement grassAt(Vector2d position){
+        return grasses.get(position);
+    }
+
+    ///                                                operations on animals                          ///
     @Override
     public void place(Animal animal){
             animals.put(animal.position(), animal);
@@ -91,15 +133,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         animal.animalEnergyChange(plantEnergy);
         grasses.remove(animal.position());
         mapChanged();
-    }
-    public List<Animal> getAnimalsOnField(Vector2d position) {
-        List<Animal> animalsOnField = new ArrayList<>();
-        for (Animal animal : animals.values()) {
-            if (animal.position().equals(position)) {
-                animalsOnField.add(animal);
-            }
-        }
-        return animalsOnField;
     }
 
     public void sortAnimals(List<Animal> animalsOnField) {
@@ -151,10 +184,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         return animals.get(position);
     }
 
-    public WorldElement grassAt(Vector2d position){
-        return grasses.get(position);
-    }
-
     @Override
     public boolean isOccupied(Vector2d position) {
         return animals.containsKey(position);
@@ -164,29 +193,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         mapChangeListeners.add(listener);
     }
 
-    public Boundary getBounds() {
-        return this.boundary;
-    }
-
     public Boolean horizontaledge(Vector2d position) {
         return position.y() <= upperRight.y() && position.y() >= lowerLeft.y();
     }
 
     public Boolean verticaledge(Vector2d position) {
         return position.x() >= lowerLeft.x() && position.x() <= upperRight.x();
-    }
-
-    public int getFreeFields() {
-        List<Vector2d> occupiedFields = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Vector2d position = new Vector2d(x, y);
-                if (objectAt(position) instanceof Animal) {
-                    occupiedFields.add(position);
-                }
-            }
-        }
-        return width * height - occupiedFields.size();
     }
 
     public synchronized void mapChanged() {

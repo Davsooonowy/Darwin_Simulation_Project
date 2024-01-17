@@ -1,6 +1,8 @@
 package agh.ics.oop.model.maps;
-import agh.ics.oop.model.*;
 import agh.ics.oop.model.mapObjects.Animal;
+import agh.ics.oop.model.mapObjects.WorldElement;
+import agh.ics.oop.model.vector_records.Boundary;
+import agh.ics.oop.model.vector_records.Vector2d;
 
 import java.util.Set;
 
