@@ -11,7 +11,7 @@
             xmlns:fx="http://javafx.com/fxml"
             minHeight="800.0" minWidth="800.0"
             fx:controller="agh.ics.oop.presenter.SimulationPresenter"
-            stylesheets="@simulationStyles.css">
+            stylesheets="@styles/simulationStyles.css">
     <center>
         <HBox alignment="CENTER">
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"  />

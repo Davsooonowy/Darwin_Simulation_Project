@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane minHeight="550.0" minWidth="850.0" stylesheets="@startStyles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.ics.oop.presenter.StartPresenter">
+<BorderPane minHeight="550.0" minWidth="850.0" stylesheets="@styles/startStyles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="agh.ics.oop.presenter.StartPresenter">
     <center>
         <HBox prefHeight="583.0" prefWidth="431.0" spacing="10">
             <GridPane hgap="10" prefHeight="593.0" prefWidth="408.0" vgap="10">
