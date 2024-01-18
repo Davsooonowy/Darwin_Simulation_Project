@@ -75,56 +75,22 @@ public class StartPresenter {
 
     ///                                validate text fields                                                ///
     private void validateTextField(TextField textField, BiPredicate<String, Integer> validationFunction, int minVal) {
-    textField.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (!validationFunction.test(newValue, minVal)) {
-            textField.setText(oldValue);
-        }
-    });
-}
-
-private boolean isNonNegativeInteger(String value, int minVal) {
-    if (value == null || value.isEmpty()) {
-        return false;
-    }
-    if (!value.matches("\\d*")) {
-        return false;
-    }
-    return Integer.parseInt(value) >= minVal;
-}
-
-    private void validateTextFieldWithComparison(TextField lowerValue, TextField biggerValue) {
-    lowerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
-        String text = lowerValue.getText();
-        if (!newValue && !text.isEmpty() && text.matches("\\d*")) {
-            int lowerNumber = Integer.parseInt(text);
-            String biggerText = biggerValue.getText();
-            if (biggerText.matches("\\d*")) {
-                int biggerNumber = Integer.parseInt(biggerText);
-                if (lowerNumber > biggerNumber) {
-                    lowerValue.setText("");
-                }
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!validationFunction.test(newValue, minVal)) {
+                textField.setText(oldValue);
             }
-        } else {
-            infoLabel.setText("");
-        }
-    });
+        });
+    }
 
-    biggerValue.focusedProperty().addListener((observable, oldValue, newValue) -> {
-        String text = biggerValue.getText();
-        if (!newValue && !text.isEmpty() && text.matches("\\d*")) {
-            int biggerNumber = Integer.parseInt(text);
-            String lowerText = lowerValue.getText();
-            if (lowerText.matches("\\d*")) {
-                int lowerNumber = Integer.parseInt(lowerText);
-                if (biggerNumber < lowerNumber) {
-                    biggerValue.setText("");
-                }
-            }
-        } else {
-            infoLabel.setText("");
+    private boolean isNonNegativeInteger(String value, int minVal) {
+        if (value == null || value.isEmpty()) {
+            return false;
         }
-    });
-}
+        if (!value.matches("\\d*")) {
+            return false;
+        }
+        return Integer.parseInt(value) >= minVal;
+    }
 
     private int parseTextFieldToInt(TextField textField) {
         return Integer.parseInt(textField.getText());
@@ -149,10 +115,6 @@ private boolean isNonNegativeInteger(String value, int minVal) {
             validateTextField(reproduceEnergy, this::isNonNegativeInteger, 0);
             validateTextField(minGeneMutation, this::isNonNegativeInteger, 0);
             validateTextField(maxGeneMutation, this::isNonNegativeInteger, 0);
-            validateTextFieldWithComparison(minGeneMutation, maxGeneMutation);
-            validateTextFieldWithComparison(parentEnergy, reproduceEnergy);
-            validateTextFieldWithComparison(maxGeneMutation, genomeLength);
-            validateTextFieldWithComparison(minGeneMutation, genomeLength);
 
             BooleanBinding areFieldsEmpty = Bindings.createBooleanBinding(() ->
                             startEnergyField.getText().isEmpty() ||
@@ -186,9 +148,10 @@ private boolean isNonNegativeInteger(String value, int minVal) {
             );
 
             startButton.disableProperty().bind(areFieldsEmpty);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
+
+        ///                                     load and save configurations                       ///
 
         loadConfigButton.setOnAction(event -> {
             String configId = loadConfigIdField.getText();
@@ -214,11 +177,11 @@ private boolean isNonNegativeInteger(String value, int minVal) {
                 configs.put("plantSpawnRate", plantSpawnRate.getText());
                 configs.put("reproduceEnergy", reproduceEnergy.getText());
                 configs.put("parentEnergy", parentEnergy.getText());
-                configs.put("minGeneMutation", minGeneMutation.getText());
+                configs.put("minGeneMutation", minGeneMutation.  getText());
                 configs.put("maxGeneMutation", maxGeneMutation.getText());
                 configs.put("genomeLength", genomeLength.getText());
-                configs.put("mapVariant", (String) MapVariant.getValue());
-                configs.put("behaviourVariant", (String) BehaviourVariant.getValue());
+                configs.put("mapVariant", MapVariant.getValue());
+                configs.put("behaviourVariant", BehaviourVariant.getValue());
                 configs.put("generateCsv", String.valueOf(generateCsvCheckBox.isSelected()));
 
                 try {
@@ -235,7 +198,6 @@ private boolean isNonNegativeInteger(String value, int minVal) {
     Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
     Map<String, Map<String, String>> allConfigs;
 
-    // Read existing configurations
     try (FileReader reader = new FileReader("configurations.json")) {
         allConfigs = gson.fromJson(reader, type);
         if (allConfigs == null) {
@@ -245,17 +207,15 @@ private boolean isNonNegativeInteger(String value, int minVal) {
         configs.put("mapVariant", MapVariant.getValue().equals("Earth") ? "1" : "0");
         configs.put("behaviourVariant", BehaviourVariant.getValue().equals("Complete predestination") ? "1" : "0");
         configs.put("generateCsv", generateCsvCheckBox.isSelected() ? "1" : "0");
-    // Add new configuration
         allConfigs.put(configName, configs);
 
-    // Write all configurations back to file
     String json = gson.toJson(allConfigs);
     try (FileWriter writer = new FileWriter("configurations.json")) {
         writer.write(json);
     }
 }
 
-    public void loadConfigurations(String configName) throws IOException {
+    private void loadConfigurations(String configName) throws IOException {
         Gson gson = new Gson();
         Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
 

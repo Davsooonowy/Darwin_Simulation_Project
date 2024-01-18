@@ -2,12 +2,6 @@ package agh.ics.oop.Statistics;
 import agh.ics.oop.Simulation;
 import agh.ics.oop.model.mapObjects.Animal;
 
-
-//TODO: -czyszczenie kodu (clean code) Dawid
-//TODO: -optymalizacja both
-//TODO: -podświetlanie zwierzaków i trawy na zawołanie na koniec przed oddaniem xD
-//TODO: -testy Maciej W
-//TODO: walidacja danych, errory
 public class AnimalStatistics {
     private final Animal animal;
     private final Simulation simulation;

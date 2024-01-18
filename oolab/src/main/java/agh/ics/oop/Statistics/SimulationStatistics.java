@@ -45,19 +45,6 @@ public List<Integer> getMostCommonGenotypes() {
             .orElse(Collections.emptyList());
 }
 
-
-
-public Genomes getDominantGenotype() {
-    return simulation.getAnimals().stream()
-            .collect(Collectors.groupingBy(Animal::getGenomes, Collectors.counting()))
-            .entrySet().stream()
-            .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
-            .orElse(null);
-}
-
-
-
     public double getAverageEnergy() {
         return Math.round(simulation.getAnimals().stream()
                 .mapToInt(Animal::getEnergy)
