@@ -18,7 +18,7 @@ public class Animal implements WorldElement {
     public Animal parent1;
     public Animal parent2;
     private int energy;
-    private Genomes genomes;
+    private final Genomes genomes;
     private int age;
     private int offspringCount;
     private int childrenCount;
@@ -118,16 +118,12 @@ public class Animal implements WorldElement {
         return this.genomes;
     }
 
-    public boolean canReproduce() {
-        return this.energy >= REPRODUCTION_ENERGY;
-    }
-
     public boolean isDead() {
         return this.energy <= 0;
     }
 
     public Paint toColor(int startEnergy) {
-        if (this.energy == 0) return javafx.scene.paint.Color.rgb(240, 248, 255);
+        if (this.energy == 0) return javafx.scene.paint.Color.rgb(255, 0, 0);
         if (this.energy < 0.2 * startEnergy) return javafx.scene.paint.Color.rgb(173, 216, 230);
         if (this.energy < 0.4 * startEnergy) return javafx.scene.paint.Color.rgb(100, 149, 237);
         if (this.energy < 0.6 * startEnergy) return javafx.scene.paint.Color.rgb(70, 130, 180);
@@ -141,7 +137,7 @@ public class Animal implements WorldElement {
         for(int i = 0; i < direction; i++) {
             this.direction = this.direction.next();
         }
-        Vector2d newPosition = this.position.add(this.direction.toUnitVector());;
+        Vector2d newPosition = this.position.add(this.direction.toUnitVector());
 
         if(validator.horizontaledge(newPosition) && validator.verticaledge(newPosition)){
             this.position = newPosition;
