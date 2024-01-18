@@ -10,8 +10,8 @@ import java.util.*;
 
 public class SecretTunnels extends AbstractWorldMap {
 
-    private final HashMap<Vector2d, Tunnel> tunnels = new HashMap<>();
-    private final List<List<Vector2d>> tunnelsConnections;
+    private HashMap<Vector2d, Tunnel> tunnels = new HashMap<>();
+    private List<List<Vector2d>> tunnelsConnections;
 
 
     public SecretTunnels(int height, int width,int plantEnergy, int initialGrassQuantity, int plantSpawnRate) {
@@ -22,7 +22,7 @@ public class SecretTunnels extends AbstractWorldMap {
             tunnelsQuantity +=1;
         }
         TunnelGenerator generator = new TunnelGenerator(width, height, tunnelsQuantity);
-        generator.iterator(); // This will fill the positionTuples list
+        generator.iterator();
         tunnelsConnections = generator.getPositionTuples();
         placeTunnels();
     }
@@ -69,4 +69,17 @@ public class SecretTunnels extends AbstractWorldMap {
         animals.put(animal.position(), animal);
         mapChanged();
     }
+
+    public List<List<Vector2d>> getTunnelsConnections() {
+        return tunnelsConnections;
+    }
+
+    public void setTunnelsConnections(List<List<Vector2d>> tunnelsConnections){
+        this.tunnelsConnections = tunnelsConnections;
+    }
+
+    public void setTunnels(HashMap<Vector2d, Tunnel> tunnels){
+        this.tunnels = tunnels;
+    }
+
 }

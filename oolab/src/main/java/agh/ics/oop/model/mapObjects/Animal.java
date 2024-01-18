@@ -141,8 +141,7 @@ public class Animal implements WorldElement {
         for(int i = 0; i < direction; i++) {
             this.direction = this.direction.next();
         }
-        Vector2d newPosition;
-        newPosition = this.position.add(this.direction.toUnitVector());
+        Vector2d newPosition = this.position.add(this.direction.toUnitVector());;
 
         if(validator.horizontaledge(newPosition) && validator.verticaledge(newPosition)){
             this.position = newPosition;
@@ -151,15 +150,6 @@ public class Animal implements WorldElement {
             for(int i = 0; i < 4; i++) {
                 this.direction = this.direction.next();
             }
-            newPosition = this.position.add(this.direction.toUnitVector());
-            if(!validator.verticaledge(newPosition)){
-                if(this.direction.toUnitVector().x() >0){
-                    newPosition = newPosition.add(new Vector2d(-newPosition.x(),0));
-                } else{
-                    newPosition = newPosition.add(new Vector2d(validator.width,0));
-                }
-            }
-            this.position=newPosition;
         } else{
             if(!validator.verticaledge(newPosition)){
                 if(this.direction.toUnitVector().x() >0){
@@ -209,4 +199,16 @@ public class Animal implements WorldElement {
     public int getEatenPlants() {
         return this.eatenPlants;
 }
+
+    public MapDirection getDirection() {
+        return this.direction;
+    }
+
+    void setDirection(MapDirection direction) {
+        this.direction = direction;
+    }
+
+    public Vector2d getPosition() {
+        return this.position;
+    }
 }

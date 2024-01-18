@@ -63,8 +63,8 @@ public class Simulation extends Thread {
         Boundary worldBoundary = map.getBounds();
         Random random = new Random();
         for (int i = 0; i < numOfAnimals; i++) {
-            int x = random.nextInt(worldBoundary.upperRight().x());
-            int y = random.nextInt(worldBoundary.upperRight().y());
+            int x = random.nextInt(worldBoundary.upperRight().x()+1);
+            int y = random.nextInt(worldBoundary.upperRight().y()+1);
             Vector2d randomPosition = new Vector2d(x, y);
 
             Animal animal = new Animal(randomPosition, initialEnergy, genomeLength, reproductionEnergy, parentEnergy,mingeneMutation,maxgeneMutation);
@@ -122,7 +122,7 @@ public class Simulation extends Thread {
 
 
     ///                                     moving                                                            ///
-    private void move_animals(int day){
+    void move_animals(int day){
         for (Animal animal : animals) {
             if(behaviourvariant.equals("Complete predestination")) {
                 map.move(animal, animal.getGenomes().getGenes().get(day % genomeLength));
@@ -142,7 +142,7 @@ public class Simulation extends Thread {
     }
 
     ///                                      eating                                                             ///
-    private void eat() {
+    void eat() {
         if (!animals.isEmpty()) {
             Set<Vector2d> grassesToEat = map.getGrassPositions();
             for (Vector2d grassPosition : new HashSet<>(grassesToEat)) {
@@ -156,7 +156,7 @@ public class Simulation extends Thread {
     }
 
     ///                                      garbage disposal                                            ///
-    private void removeDeadBodies(){
+    void removeDeadBodies(){
         for (Animal animal : animals) {
             if (animal.isDead()) {
                 deadAnimals.add(animal);
