@@ -13,9 +13,9 @@ import java.util.List;
 
 public class Animal implements WorldElement {
     private MapDirection direction;
-    private final int REPRODUCTION_ENERGY;
+    private final int REPRODUCTION_ENERGY; // wielkie litery raczej dla stałych statycznych
     private Vector2d position;
-    public Animal parent1;
+    public Animal parent1; // public; what could possibly go wrong?
     public Animal parent2;
     private int energy;
     private final Genomes genomes;
@@ -65,7 +65,7 @@ public class Animal implements WorldElement {
     }
 
 
-    public void offspringincrease(HashSet<Animal> ancestors){
+    public void offspringincrease(HashSet<Animal> ancestors){ //camelCase
         if(this.parent1!= null && !ancestors.contains(this.parent1)){
             this.parent1.offspringCount++;
             ancestors.add(this.parent1);
@@ -148,7 +148,7 @@ public class Animal implements WorldElement {
             }
         } else{
             if(!validator.verticaledge(newPosition)){
-                if(this.direction.toUnitVector().x() >0){
+                if(this.direction.toUnitVector().x() >0){ // ?
                     newPosition = newPosition.add(new Vector2d(-newPosition.x(),0));
                 } else{
                     newPosition = newPosition.add(new Vector2d(validator.width,0));
@@ -160,7 +160,7 @@ public class Animal implements WorldElement {
     }
 
 
-    public void goThroughTunnel(Vector2d Position, SecretTunnels validator){
+    public void goThroughTunnel(Vector2d Position, SecretTunnels validator){ // ?
         if(validator.objectAt(Position) instanceof Tunnel){
             this.position = validator.getTunnel(Position).connected();
         }

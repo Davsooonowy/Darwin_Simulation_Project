@@ -14,7 +14,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     ///                                                   fields                                                 ///
     protected HashMap<Vector2d, Animal> animals = new HashMap<>();
-    public final HashMap<Vector2d, Grass> grasses = new HashMap<>();
+    public final HashMap<Vector2d, Grass> grasses = new HashMap<>(); // public?
     protected ArrayList<MapChangeListener> mapChangeListeners;
     protected  final Boundary boundary;
     public final int height;
@@ -193,7 +193,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         mapChangeListeners.add(listener);
     }
 
-    public Boolean horizontaledge(Vector2d position) {
+    public Boolean horizontaledge(Vector2d position) { // nazwa
         return position.y() <= upperRight.y() && position.y() >= lowerLeft.y();
     }
 
@@ -201,7 +201,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return position.x() >= lowerLeft.x() && position.x() <= upperRight.x();
     }
 
-    public synchronized void mapChanged() {
+    public synchronized void mapChanged() { // public?
         for (MapChangeListener listener : mapChangeListeners) {
             listener.mapChanged(this);
         }

@@ -16,7 +16,7 @@ public enum MapDirection {
 
     public MapDirection next(){
         return switch (this) {
-            case NORTH -> NORTHEAST;
+            case NORTH -> NORTHEAST;  // bardzo się opłaci to zrobić na ordinal() i values()
             case NORTHEAST -> EAST;
             case EAST -> SOUTHEAST;
             case SOUTHEAST -> SOUTH;
@@ -34,7 +34,7 @@ public enum MapDirection {
 
     public Vector2d toUnitVector(){
         return switch (this) {
-            case NORTH -> new Vector2d(0, 1);
+            case NORTH -> new Vector2d(0, 1); // co wywołanie
             case NORTHEAST -> new Vector2d(1, 1);
             case WEST -> new Vector2d(-1, 0);
             case NORTHWEST -> new Vector2d(-1, 1);

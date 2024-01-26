@@ -20,16 +20,12 @@ public class GrassGenerator implements Iterable<Vector2d> {
     @Override
     public Iterator<Vector2d> iterator() {
         return new Iterator<>() {
-            private final List<Vector2d> positions;
-
-            {
-                positions = generateRandomPositions();
-            }
+            private final List<Vector2d> positions= generateRandomPositions();
 
             private List<Vector2d> generateRandomPositions() {
                 List<Vector2d> preferredPositions = new ArrayList<>();
                 List<Vector2d> nonPreferredPositions = new ArrayList<>();
-                Random random = new Random();
+                Random random = new Random(); // ...
 
                 int equatorStart = 2 * maxHeight / 5;
                 int equatorEnd = 3 * maxHeight / 5;

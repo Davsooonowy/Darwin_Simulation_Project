@@ -54,6 +54,6 @@ public class TunnelGenerator extends AbstractGenerator {
     }
 
     public List<List<Vector2d>> getPositionTuples() {
-        return positionTuples;
+        return positionTuples; // dehermetyzacja
     }
 }

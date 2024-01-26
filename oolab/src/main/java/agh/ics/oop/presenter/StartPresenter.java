@@ -72,7 +72,6 @@ public class StartPresenter {
     private TextField saveConfigNameField;
 
 
-
     ///                                validate text fields                                                ///
     private void validateTextField(TextField textField, BiPredicate<String, Integer> validationFunction, int minVal) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -95,6 +94,7 @@ public class StartPresenter {
     private int parseTextFieldToInt(TextField textField) {
         return Integer.parseInt(textField.getText());
     }
+
     @FXML
     public void initialize() {
         try {
@@ -177,7 +177,7 @@ public class StartPresenter {
                 configs.put("plantSpawnRate", plantSpawnRate.getText());
                 configs.put("reproduceEnergy", reproduceEnergy.getText());
                 configs.put("parentEnergy", parentEnergy.getText());
-                configs.put("minGeneMutation", minGeneMutation.  getText());
+                configs.put("minGeneMutation", minGeneMutation.getText());
                 configs.put("maxGeneMutation", maxGeneMutation.getText());
                 configs.put("genomeLength", genomeLength.getText());
                 configs.put("mapVariant", MapVariant.getValue());
@@ -194,30 +194,32 @@ public class StartPresenter {
     }
 
     private void saveConfigurations(String configName, Map<String, String> configs) throws IOException {
-    Gson gson = new Gson();
-    Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
-    Map<String, Map<String, String>> allConfigs;
+        Gson gson = new Gson();
+        Type type = new TypeToken<Map<String, Map<String, String>>>() {
+        }.getType();
+        Map<String, Map<String, String>> allConfigs;
 
-    try (FileReader reader = new FileReader("configurations.json")) {
-        allConfigs = gson.fromJson(reader, type);
-        if (allConfigs == null) {
-            allConfigs = new HashMap<>();
+        try (FileReader reader = new FileReader("configurations.json")) {
+            allConfigs = gson.fromJson(reader, type);
+            if (allConfigs == null) {
+                allConfigs = new HashMap<>();
+            }
         }
-    }
         configs.put("mapVariant", MapVariant.getValue().equals("Earth") ? "1" : "0");
         configs.put("behaviourVariant", BehaviourVariant.getValue().equals("Complete predestination") ? "1" : "0");
         configs.put("generateCsv", generateCsvCheckBox.isSelected() ? "1" : "0");
         allConfigs.put(configName, configs);
 
-    String json = gson.toJson(allConfigs);
-    try (FileWriter writer = new FileWriter("configurations.json")) {
-        writer.write(json);
+        String json = gson.toJson(allConfigs);
+        try (FileWriter writer = new FileWriter("configurations.json")) {
+            writer.write(json);
+        }
     }
-}
 
     private void loadConfigurations(String configName) throws IOException {
         Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Map<String, String>>>(){}.getType();
+        Type type = new TypeToken<Map<String, Map<String, String>>>() {
+        }.getType();
 
         try (FileReader reader = new FileReader("configurations.json")) {
             if (reader.ready()) {
@@ -259,56 +261,56 @@ public class StartPresenter {
     }
 
     @FXML
-public void onStartClicked() {
-    try {
-        ///                                    get values from text fields                           ///
-        boolean generateCsv = generateCsvCheckBox.isSelected();
-        String selectedOption = MapVariant.getValue();
-        String behaviourvariant = BehaviourVariant.getValue();
-        int mapWidth = parseTextFieldToInt(widthField);
-        int mapHeight = parseTextFieldToInt(heightField);
-        int initialGrassNumber = parseTextFieldToInt(initialgrassNumberField);
-        int animalNumber = parseTextFieldToInt(initialanimalsNumberField);
-        int initialEnergy = parseTextFieldToInt(startEnergyField);
-        int plantEnergy = parseTextFieldToInt(plantEnergyField);
-        int genomelength = parseTextFieldToInt(genomeLength);
-        int plantspawnRate = parseTextFieldToInt(plantSpawnRate);
-        int parentenergy = parseTextFieldToInt(parentEnergy);
-        int reproduceenergy = parseTextFieldToInt(reproduceEnergy);
-        int mingeneMutation = parseTextFieldToInt(minGeneMutation);
-        int maxgeneMutation = parseTextFieldToInt(maxGeneMutation);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
-        Parent root = loader.load();
+    public void onStartClicked() {
+        try {
+            ///                                    get values from text fields                           ///
+            boolean generateCsv = generateCsvCheckBox.isSelected();
+            String selectedOption = MapVariant.getValue();
+            String behaviourvariant = BehaviourVariant.getValue();
+            int mapWidth = parseTextFieldToInt(widthField);
+            int mapHeight = parseTextFieldToInt(heightField);
+            int initialGrassNumber = parseTextFieldToInt(initialgrassNumberField);
+            int animalNumber = parseTextFieldToInt(initialanimalsNumberField);
+            int initialEnergy = parseTextFieldToInt(startEnergyField);
+            int plantEnergy = parseTextFieldToInt(plantEnergyField);
+            int genomelength = parseTextFieldToInt(genomeLength);
+            int plantspawnRate = parseTextFieldToInt(plantSpawnRate);
+            int parentenergy = parseTextFieldToInt(parentEnergy);
+            int reproduceenergy = parseTextFieldToInt(reproduceEnergy);
+            int mingeneMutation = parseTextFieldToInt(minGeneMutation);
+            int maxgeneMutation = parseTextFieldToInt(maxGeneMutation);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
+            Parent root = loader.load();
 
-        SimulationPresenter simulationPresenter = loader.getController();
+            SimulationPresenter simulationPresenter = loader.getController();
 
-        ///                                    set values in simulation presenter                ///
-        simulationPresenter.setGenerateCsv(generateCsv);
-        simulationPresenter.setInitialanimalsNumberField(animalNumber);
-        simulationPresenter.setInitialEnergy(initialEnergy);
-        simulationPresenter.setGenomeLength(genomelength);
-        simulationPresenter.setMingeneMutation(mingeneMutation);
-        simulationPresenter.setMaxgeneMutation(maxgeneMutation);
-        simulationPresenter.setreproduceEnergy(reproduceenergy);
-        simulationPresenter.setParentEnergy(parentenergy);
-        simulationPresenter.setBehaviourVariant(behaviourvariant);
-        if (selectedOption.equals("Earth")) {
-            Earth worldMap = new Earth(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
-            simulationPresenter.setWorldMap(worldMap);
-            worldMap.addMapChangeListener(simulationPresenter);
-        } else {
-            SecretTunnels worldMap = new SecretTunnels(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
-            simulationPresenter.setWorldMap(worldMap);
-            worldMap.addMapChangeListener(simulationPresenter);
+            ///                                    set values in simulation presenter                ///
+            simulationPresenter.setGenerateCsv(generateCsv);
+            simulationPresenter.setInitialanimalsNumberField(animalNumber);
+            simulationPresenter.setInitialEnergy(initialEnergy);
+            simulationPresenter.setGenomeLength(genomelength);
+            simulationPresenter.setMingeneMutation(mingeneMutation);
+            simulationPresenter.setMaxgeneMutation(maxgeneMutation);
+            simulationPresenter.setreproduceEnergy(reproduceenergy);
+            simulationPresenter.setParentEnergy(parentenergy);
+            simulationPresenter.setBehaviourVariant(behaviourvariant);
+            if (selectedOption.equals("Earth")) {
+                Earth worldMap = new Earth(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
+                simulationPresenter.setWorldMap(worldMap);
+                worldMap.addMapChangeListener(simulationPresenter);
+            } else {
+                SecretTunnels worldMap = new SecretTunnels(mapHeight, mapWidth, plantEnergy, initialGrassNumber, plantspawnRate);
+                simulationPresenter.setWorldMap(worldMap);
+                worldMap.addMapChangeListener(simulationPresenter);
+            }
+
+            simulationPresenter.onStartStopButtonClicked();
+
+            Stage simulationStage = new Stage();
+            simulationStage.setScene(new Scene(root));
+            simulationStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        simulationPresenter.onStartStopButtonClicked();
-
-        Stage simulationStage = new Stage();
-        simulationStage.setScene(new Scene(root));
-        simulationStage.show();
-    } catch (IOException e) {
-        e.printStackTrace();
     }
-}
-}
+} // duża klasa

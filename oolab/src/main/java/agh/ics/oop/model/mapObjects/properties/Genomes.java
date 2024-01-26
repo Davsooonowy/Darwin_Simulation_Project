@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Genomes {
+public class Genomes { // Genome
     private final List<Integer> genes;
 
 
@@ -25,10 +25,10 @@ public class Genomes {
     }
 
     public List<Integer> getGenes() {
-        return this.genes;
+        return this.genes; // dehermetyzacja
     }
 
-    public List<Integer> GeneMerger(Animal mommy, Animal daddy){
+    public List<Integer> GeneMerger(Animal mommy, Animal daddy){  // Panowie widzą, że ta metoda potrzebuje 3 genotypów i zwraca listę?
 
         Animal strongerParent = mommy.getEnergy() > daddy.getEnergy() ? mommy : daddy;
         Animal weakerParent = mommy.getEnergy() > daddy.getEnergy() ? daddy : mommy;
@@ -37,7 +37,7 @@ public class Genomes {
         double strongerParentEnergyRatio = strongerParent.getEnergy() / totalEnergy;
         double weakerParentEnergyRatio = weakerParent.getEnergy() / totalEnergy;
 
-        Random random = new Random();
+        Random random = new Random(); // co wywołanie?
         List<Integer> newGenes = new ArrayList<>();
         boolean side = random.nextBoolean();
         if (side){
@@ -49,9 +49,9 @@ public class Genomes {
         }
         return newGenes;
     }
-    public void Mutate(int mingeneMutation,int maxgeneMutation){
+    public void Mutate(int mingeneMutation,int maxgeneMutation){ // camelCase; public?
         List<Integer> allGenes = new ArrayList<>();
-        Random random = new Random();
+        Random random = new Random(); // co wywołanie?
         int numberOfMutations;
         if(mingeneMutation == maxgeneMutation){
             numberOfMutations = mingeneMutation;

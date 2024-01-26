@@ -1,4 +1,4 @@
-package agh.ics.oop.Apps;
+package agh.ics.oop.Apps; // pakiety raczej camelCase
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

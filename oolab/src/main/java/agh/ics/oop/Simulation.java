@@ -46,11 +46,11 @@ public class Simulation extends Thread {
     ///                                                getters                                                 ///
 
     public List<Animal> getAnimals() {
-        return this.animals;
+        return this.animals; // dehermetyzacja
     }
 
     public List<Animal> getDeadAnimals() {
-        return this.deadAnimals;
+        return this.deadAnimals;  // dehermetyzacja
     }
 
     public int getCurrentDay(){
@@ -133,7 +133,7 @@ public class Simulation extends Thread {
                     map.move(animal,animal.getGenomes().getGenes().get(genomeLength - 1 - (day % genomeLength)));
                 }
             }
-            if (map.getClass().equals(SecretTunnels.class)) {
+            if (map.getClass().equals(SecretTunnels.class)) { // czy to jest miejsce na obsługę specyfiki konkretnej mapy?
                 ((SecretTunnels) map).wentThroughTunnel(animal, animal.position());
             }
             animal.animalEnergyChange(-1);
@@ -172,7 +172,7 @@ public class Simulation extends Thread {
     @Override
     public void run() {
         try {
-            while(!Thread.currentThread().isInterrupted()) {
+            while(!isInterrupted()) { // ta klasa dziedziczy z Thread
                 synchronized (lock) {
                     while (!running) {
                         lock.wait();
@@ -180,23 +180,16 @@ public class Simulation extends Thread {
                 }
 
                 Thread.sleep(300);
-
                 removeDeadBodies();
-
                 move_animals(day);
-
                 eat();
-
                 groupAndReproduceAnimals();
-
                 Thread.sleep(300);
-
                 map.placeGrass(map.getPlantSpawnRate(), map.getGrassPositions());
-
                 day++;
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt(); // ?
         }
     }
 }

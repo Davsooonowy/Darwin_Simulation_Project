@@ -346,4 +346,4 @@ public void onStartStopButtonClicked() {
         System.out.println(e.getMessage());
         }
     }
-}
+} // duża klasa
